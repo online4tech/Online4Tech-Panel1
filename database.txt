@@ -1,0 +1,15 @@
+# Online4Tech Super Database (Category|Name|URL)
+P_PANEL|Online4Tech Panel v7.0 (Official)|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.0_all.ipk
+P_PANEL|AJPanel Latest|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/ajpanel.ipk
+P_IPTV|E2iPlayer Full|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/e2iplayer.ipk
+P_IPTV|MultiStalker Pro|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/multistalker.ipk
+P_SUB_EPG|SubsSupport (Arabic Subtitles)|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/subssupport.ipk
+P_SUB_EPG|EPG Import Mod|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/epgimport.ipk
+P_SYS|DreamExplorer (File Manager)|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/dreamexplorer.ipk
+P_SYS|CacheFlush (RAM Cleaner)|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/plugins/cacheflush.ipk
+S_OPEN|MetrixHD Mod FHD|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/skins/metrixhd.ipk
+S_OPEN|MadMax Impossible FHD|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/skins/madmax.ipk
+S_OPEN|Aglare FHD Mod|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/skins/aglare.ipk
+S_DREAM|DreamOS Skin (.deb)|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/skins/dreamos_skin.deb
+CAM|NCam Official|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/cams/ncam.ipk
+CAM|OSCam Emu Latest|https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/cams/oscam.ipk
