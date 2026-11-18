@@ -12,7 +12,7 @@ echo "Connecting to Online4Tech Store Server..."
 wget --no-check-certificate -qO "$DB_FILE" "$DB_URL"
 
 if [ ! -s "$DB_FILE" ]; then
-    echo "[ERROR] Failed to download database from GitHub!"
+    echo "[ERROR] Failed to download o4t_database.json from GitHub!"
     exit 1
 fi
 
@@ -23,7 +23,7 @@ else
 fi
 
 cat << 'EOF' > "$PY_RUNNER"
-import json, os, sys
+import json, os, sys, re
 
 DB_PATH = "/tmp/o4t_database.json"
 
@@ -36,6 +36,12 @@ C_NC     = "\033[0m"
 
 def clear_screen():
     os.system("clear")
+
+def clean_ascii(text):
+    # إزالة أي نصوص عربية بين أقواس أو حروف غير لاتينية لمنع تشوه شاشة Telnet
+    text = re.sub(r'\([^)]*[\u0600-\u06FF]+[^)]*\)', '', text)
+    text = re.sub(r'[\u0600-\u06FF]+', '', text)
+    return " ".join(text.split()).strip()
 
 def get_input(prompt_text):
     try:
@@ -70,7 +76,8 @@ def show_items_menu(data, section_key, section_title):
             print(f"{C_WHITE}   ONLINE4TECH - {section_title.upper()}{C_NC}")
             print(f"{C_CYAN}===================================================={C_NC}")
             for idx, sub in enumerate(items, 1):
-                print(f"  {C_YELLOW}[{idx:2d}]{C_NC} {sub.get('title', sub.get('section'))}")
+                sub_t = clean_ascii(sub.get('title', sub.get('section')))
+                print(f"  {C_YELLOW}[{idx:2d}]{C_NC} {sub_t}")
             print(f"{C_CYAN}----------------------------------------------------{C_NC}")
             print(f"  {C_RED}[ 0]{C_NC} Back")
             print(f"{C_CYAN}===================================================={C_NC}")
@@ -79,7 +86,7 @@ def show_items_menu(data, section_key, section_title):
                 break
             if choice.isdigit() and 1 <= int(choice) <= len(items):
                 sub_item = items[int(choice) - 1]
-                show_items_menu(data, sub_item["section"], sub_item.get("title", sub_item["section"]))
+                show_items_menu(data, sub_item["section"], clean_ascii(sub_item.get("title", sub_item["section"])))
         return
 
     page_size = 20
@@ -96,8 +103,7 @@ def show_items_menu(data, section_key, section_title):
 
         for i in range(start, end):
             item = items[i]
-            raw_name = item.get("name", "Unknown")
-            clean_name = raw_name.split("(")[0].strip() if "(" in raw_name else raw_name
+            clean_name = clean_ascii(item.get("name", "Unknown"))
             installed = "[*]" if item.get("path") and os.path.exists(item.get("path")) else "   "
             print(f" {C_GREEN}{installed}{C_NC} {C_YELLOW}[{i+1:3d}]{C_NC} {clean_name}")
 
@@ -119,8 +125,7 @@ def show_items_menu(data, section_key, section_title):
             page -= 1
         elif choice.isdigit() and 1 <= int(choice) <= total:
             sel = items[int(choice) - 1]
-            raw_name = sel.get("name", "Item")
-            clean_name = raw_name.split("(")[0].strip() if "(" in raw_name else raw_name
+            clean_name = clean_ascii(sel.get("name", "Item"))
             if sel.get("remove_cmd"):
                 print(f"\n  {C_GREEN}[1]{C_NC} Install: {clean_name}")
                 print(f"  {C_RED}[2]{C_NC} Remove / Uninstall: {clean_name}")
@@ -167,8 +172,7 @@ def main():
         print(f"{C_GREEN}    Vu+ & Dreambox Complete Management Center       {C_NC}")
         print(f"{C_CYAN}===================================================={C_NC}")
         for idx, sec in enumerate(sections, 1):
-            raw_t = sec.get("title", sec.get("section"))
-            clean_t = raw_t.split("(")[0].strip() if "(" in raw_t else raw_t
+            clean_t = clean_ascii(sec.get("title", sec.get("section")))
             print(f"  {C_YELLOW}[{idx:2d}]{C_NC} {clean_t}")
         print(f"  {C_YELLOW}[99]{C_NC} Receiver System Commands & Maintenance")
         print(f"{C_CYAN}----------------------------------------------------{C_NC}")
@@ -182,8 +186,7 @@ def main():
             system_tools_menu()
         elif choice.isdigit() and 1 <= int(choice) <= len(sections):
             sec = sections[int(choice) - 1]
-            raw_t = sec.get("title", sec.get("section"))
-            clean_t = raw_t.split("(")[0].strip() if "(" in raw_t else raw_t
+            clean_t = clean_ascii(sec.get("title", sec.get("section")))
             show_items_menu(data, sec["section"], clean_t)
 
 if __name__ == "__main__":
