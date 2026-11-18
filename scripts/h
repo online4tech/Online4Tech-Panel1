@@ -1,0 +1,5 @@
+wget -qO-  https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/s4aUpdater.tar.gz  --output-document=/tmp/s4aUpdater.tar.gz
+tar zxvf /tmp/s4aUpdater.tar.gz -C /usr/lib/enigma2/python/Plugins/Extensions/
+rm -rf /tmp/s4aUpdater.tar.gz
+opkg update
+opkg install python3-requests openssl libdvbcsa1

@@ -1,0 +1,720 @@
+#!/bin/sh
+#wget -q "--no-check-certificate" https://raw.githubusercontent.com/fairbird/FootOnsat/main/Download/install.sh -O - | /bin/sh
+VERSION=11.3
+PLUGIN_PATH="/usr/lib/enigma2/python/Plugins/Extensions/FootOnSat"
+DB_FILE="$PLUGIN_PATH/db/footonsat.db"
+ASSETS_PATH="$PLUGIN_PATH/assets"
+IGNORE_PATH="$PLUGIN_PATH/ignore"
+TMP_DB="/tmp/footonsat.db"
+TMP_ASSETS="/tmp/assets"
+
+EXTERNAL_PATH=""
+INSTALL_CHOICE=""
+MOUNTS=$(df -h | awk '$6 ~ /^\/media\// && $1 ~ /^\/dev\// {print $6}' | sort -u)
+
+# Check settings file first for the saved path
+SETTINGS_FILE="/etc/enigma2/settings"
+SAVED_PATH=""
+if [ -f "$SETTINGS_FILE" ]; then
+    SAVED_PATH=$(grep "^config.plugins.FootOnSat.installpath=" "$SETTINGS_FILE" | cut -d'=' -f2)
+fi
+
+# Auto-detect path if settings are empty
+if [ -z "$SAVED_PATH" ] && [ -L "$PLUGIN_PATH" ]; then
+    SAVED_PATH=$(readlink -f "$PLUGIN_PATH")
+fi
+
+# If a path is saved (or auto-detected), use it directly without asking
+if [ -n "$SAVED_PATH" ]; then
+    if echo "$SAVED_PATH" | grep -q "^/media/"; then
+        BASE_DIR=$(echo "$SAVED_PATH" | sed -E 's#/[Ff]oot[Oo]n[Ss]at/?$##g')
+        EXTERNAL_PATH="$BASE_DIR/FootOnSat"
+        INSTALL_CHOICE="2"
+        echo "Using external path: $EXTERNAL_PATH"
+    else
+        INSTALL_CHOICE="1"
+        echo "Using internal path."
+    fi
+else
+    # If no setting found, check if it's already installed internally (default path)
+    if [ -d "$PLUGIN_PATH" ] && [ ! -L "$PLUGIN_PATH" ]; then
+        INSTALL_CHOICE="1"
+        echo "Using default internal path (already installed)."
+    else
+        # If truly not installed, check if we have a real terminal (Telnet)
+        if (exec < /dev/tty) 2>/dev/null; then
+            # Interactive mode for Telnet
+            echo "================================================="
+            echo "Select Installation Method / اختر طريقة التثبيت"
+            echo "================================================="
+            echo "1) Install Internally (Default) / تثبيت داخلي (افتراضي)"
+            echo ""
+            if [ -n "$MOUNTS" ]; then
+                echo "2) Install on External Storage / تثبيت على مساحة خارجية"
+                echo ""
+            fi
+            echo "3) Cancel Installation / إلغاء التثبيت"
+            echo "================================================="
+
+            if [ -n "$MOUNTS" ]; then
+                read -p "Enter choice [1-3] (default 1) / أدخل الخيار: " INSTALL_CHOICE < /dev/tty
+            else
+                read -p "Enter choice [1 or 3] (default 1) / أدخل الخيار: " INSTALL_CHOICE < /dev/tty
+            fi
+            if [ -z "$INSTALL_CHOICE" ]; then INSTALL_CHOICE="1"; fi
+            if [ "$INSTALL_CHOICE" = "3" ]; then
+                echo "Installation cancelled by user."
+                exit 0
+            fi
+            if [ "$INSTALL_CHOICE" = "2" ]; then
+                if [ -z "$MOUNTS" ]; then
+                    echo "No external mounts found. Defaulting to internal."
+                    INSTALL_CHOICE="1"
+                else
+                    echo "Available Mounts:"
+                    echo ""
+                    i=1
+                    for m in $MOUNTS; do
+                        echo "  $i) $m"
+                        echo ""
+                        eval "MOUNT_$i=$m"
+                        i=$((i+1))
+                    done
+                    echo "  $i) Cancel Installation"
+                    echo ""
+                    read -p "Select mount point [1-$i]: " MOUNT_CHOICE < /dev/tty
+                    if [ "$MOUNT_CHOICE" = "$i" ]; then exit 0; fi
+                    eval "SELECTED_MOUNT=\$MOUNT_$MOUNT_CHOICE"
+                    if [ -z "$SELECTED_MOUNT" ] || [ ! -d "$SELECTED_MOUNT" ]; then
+                        echo "Invalid selection. Defaulting to internal."
+                        INSTALL_CHOICE="1"
+                    else
+                        EXTERNAL_PATH="$SELECTED_MOUNT/FootOnSat"
+                        echo "Selected: $EXTERNAL_PATH"
+                    fi
+                fi
+            fi
+        else
+            # GUI mode and no setting found
+            echo "No saved setting found. Defaulting to internal."
+            INSTALL_CHOICE="1"
+        fi
+    fi
+fi
+
+E2Settings='/etc/enigma2/settings'
+SETTING_NAME="config.plugins.FootOnSat.icons"
+CURRENT_VALUE=$(
+    grep "^$SETTING_NAME=" "$E2Settings" \
+    | awk -F '=' '{print $2}' \
+    | tr -d '\n\r' \
+    | sed 's#s/##'
+)
+
+[ -z "$CURRENT_VALUE" ] && CURRENT_VALUE="icons_default"
+
+if [ -f /etc/apt/apt.conf ] ; then
+	STATUS='/var/lib/dpkg/status'
+	OS='DreamOS'
+elif [ -f /etc/opkg/opkg.conf ] ; then
+	STATUS='/var/lib/opkg/status'
+	OS='Opensource'
+fi
+
+ARCH=$(uname -m)
+
+if echo "$ARCH" | grep -qi 'armv7l'; then
+	echo ':Your Device IS ARM processor ...'
+	DEVICE="arm"
+elif echo "$ARCH" | grep -qi 'aarch64'; then
+	echo ':Your Device IS AARCH64 processor ...'
+	DEVICE="arm64"
+elif echo "$ARCH" | grep -qi 'mips'; then
+	echo ':Your Device IS MIPS processor ...'
+	DEVICE="mips"
+elif echo "$ARCH" | grep -qi 'sh4'; then
+	echo ':Your Device IS SH4 processor ...'
+	DEVICE="sh4"
+else
+	echo 'Unknown Device'
+	DEVICE="unknown"
+fi
+
+# Find the highest python3.xx version in /usr/bin
+PYTHON_BIN=$(ls /usr/bin/python3.*[0-9] 2>/dev/null | \
+    sed 's/[^0-9]*\([0-9]\+\)$/\1/' | sort -n | tail -n 1 | \
+    xargs -I{} ls /usr/bin/python3.{} 2>/dev/null | head -n 1)
+if [ -n "$PYTHON_BIN" ]; then
+    PYTHON_VERSION=$(basename "$PYTHON_BIN")
+    # Check if /usr/bin/python3 symlink exists
+    if [ ! -L /usr/bin/python3 ]; then
+        echo "Creating symlink: /usr/bin/python3 -> $PYTHON_BIN"
+        sudo ln -sf "$PYTHON_BIN" /usr/bin/python3
+    else
+        echo "/usr/bin/python3 symlink already exists"
+    fi
+	echo ""
+    # Check if /usr/bin/python symlink exists
+    if [ ! -L /usr/bin/python ]; then
+        echo "Creating symlink: /usr/bin/python -> $PYTHON_BIN"
+        sudo ln -sf "$PYTHON_BIN" /usr/bin/python
+    else
+        echo "/usr/bin/python symlink already exists"
+    fi
+	echo ""
+fi
+
+if [ -d $PLUGIN_PATH ]; then
+
+	if [ -f "$DB_FILE" ]; then
+		echo ""
+		echo "Backup old db..."
+		cp -a "$DB_FILE" "$TMP_DB" >/dev/null 2>&1
+	fi
+	echo ""
+#	echo "Backup current style ..."
+#	mkdir -p "$TMP_ASSETS/compet" >/dev/null 2>&1
+#	mkdir -p "$TMP_ASSETS/skin" >/dev/null 2>&1
+#	cp -a "$ASSETS_PATH/compet/icons" "$TMP_ASSETS/compet" >/dev/null 2>&1
+#	cp -a "$ASSETS_PATH/skin" "$TMP_ASSETS" >/dev/null 2>&1
+#	cp -a "$ASSETS_PATH/icon" "$TMP_ASSETS" >/dev/null 2>&1
+#    echo "Remove old version."
+#    if [ "$OS" = "Opensource" ]; then
+#        opkg remove enigma2-plugin-extensions-footonsat
+#    else
+#       apt-get purge --auto-remove enigma2-plugin-extensions-footonsat
+#    fi
+
+fi
+echo ""
+if python --version 2>&1 | grep -q '^Python 3\.'; then
+   echo "You have Python3 image"
+   PYTHON='PY3'
+   SQLITE3='python3-sqlite3'
+   PYSIX='python3-six'
+   SOUP4='python3-beautifulsoup4'
+   DIFFLIB='python3-difflib'
+   THREADING='python3-threading'
+   PLI='python3-pillow'
+   REQUESTES='python3-requests'
+   JSON='python3-json'
+   UJSON='python3-ujson'
+   IO='python3-io'
+   EMAIL='python3-email'
+   DATETIME='python3-datetime'
+   FFMPEG='ffmpeg'
+   CURL='curl'
+   CURL_impersonate='curl-impersonate'
+   MPEGTSMUX='gstreamer1.0-plugins-bad-mpegtsmux'
+else
+   echo "You have Python2 image"
+   PYTHON='PY2'
+   SQLITE3='python-sqlite3'
+   PYSIX='python-six'
+   SOUP4='python-beautifulsoup4'
+   DIFFLIB='python-difflib'
+   THREADING='python-threading'
+   PLI='python-imaging'
+   REQUESTES='python-requests'
+   JSON='python-json'
+   UJSON='python-ujson'
+   IO='python-io'
+   EMAIL='python-email'
+   DATETIME='python-datetime'
+   GDB='gdb'
+   FFMPEG='ffmpeg'
+   CURL='curl'
+   CURL_impersonate='curl-impersonate'
+   MPEGTSMUX='gstreamer1.0-plugins-bad-mpegtsmux'
+fi
+
+if grep -q "$CURL" "$STATUS"; then
+    curl='Installed'
+fi
+
+if grep -q "$CURL_impersonate" "$STATUS" || [ -f "/usr/bin/curl-impersonate" ]; then
+    curl_impersonate='Installed'
+fi
+
+if grep -q "$MPEGTSMUX" "$STATUS"; then
+    mpegtsmux='Installed'
+fi
+
+if grep -q "$SQLITE3" "$STATUS"; then
+    sqlite='Installed'
+fi
+
+if grep -q "$PYSIX" "$STATUS"; then
+    six='Installed'
+fi
+
+if grep -q "$SOUP4" "$STATUS"; then
+    beautifulsoup4='Installed'
+fi
+
+if grep -q "$DIFFLIB" "$STATUS"; then
+    difflib='Installed'
+fi
+
+if grep -q "$THREADING" "$STATUS"; then
+    threading='Installed'
+fi
+
+if grep -q "$PLI" "$STATUS"; then
+    pil='Installed'
+fi
+
+if grep -q "$REQUESTES" "$STATUS"; then
+    requestes='Installed'
+fi
+
+if grep -q "$JSON" "$STATUS"; then
+    json='Installed'
+fi
+
+if grep -q "$UJSON" "$STATUS"; then
+    ujson='Installed'
+fi
+
+if grep -q "$IO" "$STATUS"; then
+    io='Installed'
+fi
+
+if grep -q "$EMAIL" "$STATUS"; then
+    email='Installed'
+fi
+
+if grep -q "$DATETIME" "$STATUS"; then
+    datetime='Installed'
+fi
+
+if grep -q "$FFMPEG" "$STATUS"; then
+    ffmpeg='Installed'
+fi
+
+if grep -q 'enigma2-plugin-systemplugins-serviceapp' "$STATUS"; then
+    serviceapp='Installed'
+fi
+
+if grep -q 'enigma2-plugin-systemplugins-serviceapp-dreamos' "$STATUS"; then
+    serviceapp='Installed'
+fi
+
+if grep -q 'exteplayer3' "$STATUS"; then
+    exteplayer3='Installed'
+fi
+
+if grep -q 'exteplayer3-dreamos' "$STATUS"; then
+    exteplayer3='Installed'
+fi
+
+if [ "$OS" = "Opensource" ]; then
+	if grep -q 'alsa-utils-aplay' "$STATUS"; then
+		aplay='Installed'
+	fi
+else
+	aplay='Installed'
+fi
+
+if [ "$OS" = "DreamOS" ] && [ "$DEVICE" = "arm64" ]; then
+	if grep -q "$GDB" "$STATUS"; then
+		gdb='Installed'
+	fi
+else
+	gdb='Installed'
+fi
+
+if [ "$sqlite" = "Installed" -a "$six" = "Installed" -a "$aplay" = "Installed" -a "$beautifulsoup4" = "Installed" -a \
+      "$difflib" = "Installed" -a "$threading" = "Installed" -a "$pil" = "Installed" -a "$requestes" = "Installed" -a \
+      "$json" = "Installed" -a "$ujson" = "Installed" -a "$io" = "Installed" -a "$datetime" = "Installed" -a "$email" = "Installed" -a \
+      "$ffmpeg" = "Installed" -a "$curl" = "Installed" -a "$curl_impersonate" = "Installed" -a "$mpegtsmux" = "Installed" -a "$gdb" = "Installed" ]; then
+     echo ""
+else
+
+    if [ "$OS" != "DreamOS" ]; then
+        echo "=========================================================================="
+        echo "Some Depends Need to Be downloaded From Feeds ...."
+        echo "=========================================================================="
+        echo "Opkg Update ..."
+        echo "========================================================================"
+        opkg update > /dev/null 2>&1
+        echo "========================================================================"
+        echo " Downloading packages depend ......"
+        opkg install alsa-utils-aplay > /dev/null 2>&1
+        echo "========================================================================"
+        echo "========================================================================"
+        opkg install $CURL > /dev/null 2>&1
+        opkg install $CURL_impersonate > /dev/null 2>&1
+        opkg install $FFMPEG > /dev/null 2>&1
+        opkg install $MPEGTSMUX > /dev/null 2>&1
+        opkg install $SQLITE3 > /dev/null 2>&1
+        opkg install $PYSIX > /dev/null 2>&1
+        opkg install $SOUP4 > /dev/null 2>&1
+        opkg install $DIFFLIB > /dev/null 2>&1
+        opkg install $THREADING > /dev/null 2>&1
+        opkg install $PLI > /dev/null 2>&1
+        opkg install $REQUESTES > /dev/null 2>&1
+        opkg install $JSON > /dev/null 2>&1
+        opkg install $UJSON > /dev/null 2>&1
+        opkg install $IO > /dev/null 2>&1
+        opkg install $EMAIL > /dev/null 2>&1
+        opkg install $DATETIME > /dev/null 2>&1
+        echo "========================================================================"
+    else
+        echo "=========================================================================="
+        echo "Some Depends Need to Be downloaded From Feeds ...."
+        echo "=========================================================================="
+        echo "apt Update ..."
+        echo "========================================================================"
+        apt-get update > /dev/null 2>&1
+        echo "========================================================================"
+        echo " Downloading packages depend ......"
+        echo "========================================================================"
+        echo "========================================================================"
+        apt-get install $CURL -y > /dev/null 2>&1
+        apt-get install $CURL_impersonate -y > /dev/null 2>&1
+        apt-get install $FFMPEG -y > /dev/null 2>&1
+        apt-get install $MPEGTSMUX -y > /dev/null 2>&1
+        apt-get install $SQLITE3 -y > /dev/null 2>&1
+        apt-get install $PYSIX -y > /dev/null 2>&1
+        apt-get install $SOUP4 -y > /dev/null 2>&1
+        apt-get install $DIFFLIB -y > /dev/null 2>&1
+        apt-get install $THREADING -y > /dev/null 2>&1
+        apt-get install $PLI -y > /dev/null 2>&1
+        apt-get install $REQUESTES -y > /dev/null 2>&1
+        apt-get install $JSON -y > /dev/null 2>&1
+        apt-get install $UJSON -y > /dev/null 2>&1
+        apt-get install $IO -y > /dev/null 2>&1
+        apt-get install $EMAIL -y > /dev/null 2>&1
+        apt-get install $DATETIME -y > /dev/null 2>&1
+        apt-get install $GDB -y > /dev/null 2>&1
+        echo "========================================================================"
+    fi
+fi
+
+if ! grep -q 'enigma2-plugin-systemplugins-serviceapp' "$STATUS" || ! grep -q 'enigma2-plugin-systemplugins-serviceapp-dreamos' "$STATUS"; then
+	if [ "$OS" == "DreamOS" ]; then
+		echo " Downloading serviceapp + exteplayer3 For DreamOS ......"
+		wget https://raw.githubusercontent.com/Blacker91/serviceapp-dreamos/dreamos/installer.sh -O - | /bin/sh > /dev/null 2>&1
+	else
+		echo " Downloading serviceapp + exteplayer3 For Open source......"
+		opkg update > /dev/null 2>&1
+		opkg install enigma2-plugin-systemplugins-serviceapp > /dev/null 2>&1
+		opkg install exteplayer3 > /dev/null 2>&1
+
+	fi
+fi
+
+if ! grep -q 'alsa-utils-aplay' "$STATUS"; then
+	if [ "$OS" = "DreamOS" ] && [ "$DEVICE" = "arm64" ]; then
+		cd /tmp
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/alsa-utils-aplay.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/alsa-utils-amixer.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/alsa-utils-arecord.deb"
+		dpkg -i --force-overwrite *.deb > /dev/null 2>&1
+		apt-get install -f -y > /dev/null 2>&1
+		rm -f *.deb > /dev/null 2>&1
+		cd ..
+	fi
+fi
+
+if [ "$OS" = "DreamOS" ] && ! grep -q "$UJSON" "$STATUS"; then
+	cd /tmp
+	if [ "$DEVICE" = "arm" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-ujson_1.35-r0.0_armhf.deb"
+	elif [ "$DEVICE" = "mips" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-ujson_1.35-r0.0_mipsel.deb"
+	elif [ "$DEVICE" = "arm64" ]; then
+		#wget -q "https://raw.githubusercontent.com/fairbird/FootOnsat/main/Download/Pacakges/python/python-ujson_1.35-r0.0_arrch664.deb"
+		echo ""
+	fi
+	dpkg -i --force-overwrite *.deb > /dev/null 2>&1
+	apt-get install -f -y > /dev/null 2>&1
+	rm -f *.deb > /dev/null 2>&1
+	cd ..
+fi
+
+if [ "$OS" = "DreamOS" ] && ! grep -q "$SOUP4" "$STATUS"; then
+	cd /tmp
+	if [ "$DEVICE" = "arm" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-beautifulsoup4_4.8.2-r0.0_armhf.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-soupsieve_1.9.4-r0.1_armhf.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-lxml_3.6.0-r0.1_armhf.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-html5lib_0.9999999-r0.1_armhf.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-functools-lru-cache_1.6.1-r0.0_armhf.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-init_1.0-r0.0_armhf.deb"
+	elif [ "$DEVICE" = "mips" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-beautifulsoup4_4.8.2-r0.1_mipsel.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-soupsieve_1.9.4-r0.0_mipsel.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-lxml_3.6.0-r0.1_mipsel.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-html5lib_0.9999999-r0.1_mipsel.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-functools-lru-cache_1.6.1-r0.2_mipsel.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-init_1.0-r0.1_mipsel.deb"
+	elif [ "$DEVICE" = "arm64" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-beautifulsoup4_4.8.2-r0.0_arm64.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-soupsieve_1.9.4-r0.0_arm64.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-lxml_3.7.3-r0.0_arm64.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-html5lib_0.999999999-r0.0_arm64.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-functools-lru-cache_1.6.1-r0.0_arm64.deb"
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-backports-init_1.0-r0.0_arm64.deb"
+		echo ""
+	fi
+	dpkg -i --force-overwrite *.deb > /dev/null 2>&1
+	apt-get install -f -y > /dev/null 2>&1
+	rm -f *.deb > /dev/null 2>&1
+	cd ..
+fi
+
+if [ "$OS" = "DreamOS" ] && ! grep -q "$PLI" "$STATUS"; then
+	cd /tmp
+	if [ "$DEVICE" = "arm" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-imaging_1.1.7-r5.4_armhf.deb"
+	elif [ "$DEVICE" = "mips" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-imaging_1.1.7-r5.4_mipsel.deb"
+	elif [ "$DEVICE" = "arm64" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/python-imaging_1.1.7-r5.0_arm64.deb"
+		echo ""
+	fi
+	dpkg -i --force-overwrite *.deb > /dev/null 2>&1
+	apt-get install -f -y > /dev/null 2>&1
+	rm -f *.deb > /dev/null 2>&1
+	cd ..
+fi
+
+if ! grep -q "$CURL_impersonate" "$STATUS" || [ ! -f "/usr/bin/curl-impersonate" ]; then
+	cd /tmp
+	if [ "$DEVICE" = "arm" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/curl-impersonate-armv7.tar.gz"
+		PACKAGE="curl-impersonate-armv7.tar.gz"
+	elif [ "$DEVICE" = "mips" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/curl-impersonate-mipsel.tar.gz"
+		PACKAGE="curl-impersonate-mipsel.tar.gz"
+	elif [ "$DEVICE" = "arm64" ]; then
+		wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/curl-impersonate-arm64.tar.gz"
+		PACKAGE="curl-impersonate-arm64.tar.gz"
+	fi
+
+	if [ -f "/tmp/$PACKAGE" ]; then
+		cd /tmp
+		tar -xzf $PACKAGE -C /usr/bin/ > /dev/null 2>&1
+		chmod +x /usr/bin/curl-impersonate /usr/bin/curl_chrome150 > /dev/null 2>&1
+		rm -f $PACKAGE
+		cd ..
+	fi
+fi
+
+MISSING_PKGS=""
+check_pkg() {
+	if ! grep -q "$1" "$STATUS"; then
+		echo "####################################################"
+		echo "#           $1 Not found in feed           #"
+		echo "####################################################"
+
+		if [ "$1" != "$UJSON" ] && [ "$1" != "$MPEGTSMUX" ] && [ "$1" != "$CURL_impersonate" ]; then
+			MISSING_PKGS="true"
+		fi
+	fi
+}
+check_pkg "$CURL"
+check_pkg "$CURL_impersonate"
+check_pkg "$SQLITE3"
+check_pkg "$PYSIX"
+check_pkg "$SOUP4"
+check_pkg "$DIFFLIB"
+check_pkg "$THREADING"
+check_pkg "$PLI"
+check_pkg "$REQUESTES"
+check_pkg "$JSON"
+check_pkg "$UJSON"
+check_pkg "$IO"
+check_pkg "$EMAIL"
+check_pkg "$DATETIME"
+check_pkg "$FFMPEG"
+check_pkg "$MPEGTSMUX"
+
+#if [ "$OS" != "DreamOS" ]; then
+#	check_pkg "enigma2-plugin-systemplugins-serviceapp"
+#	check_pkg "exteplayer3"
+#fi
+
+if [ "$OS" = "DreamOS" ] && [ "$DEVICE" = "arm64" ]; then
+	check_pkg "$GDB"
+fi
+
+if [ "$MISSING_PKGS" = "true" ]; then
+	exit 1
+fi
+
+# Always force plugin installation
+SKIP_INSTALL="false"
+
+# Download and extract the plugin only if it needs to be installed or updated
+if [ "$SKIP_INSTALL" = "false" ]; then
+    echo " ** Download and install FootOnsat ** "
+    echo ""
+    
+    WORK_DIR="/tmp"
+    cd "$WORK_DIR"
+    rm -rf *main* >/dev/null 2>&1
+    rm -rf *FootOnsat* >/dev/null 2>&1
+    
+    rm -rf main.tar.gz
+    rm -rf FootOnsat-main
+    
+    # Download and extract directly to RAM to save space
+    wget -q --no-check-certificate "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/main.tar.gz" -O - | tar -xz
+    
+    if [ -d "FootOnsat-main" ]; then
+        echo "Archive verified successfully"
+        echo "remove old version"
+        echo ""
+        if [ "$INSTALL_CHOICE" = "1" ]; then
+            rm -rf $PLUGIN_PATH >/dev/null 2>&1
+        fi
+        echo "Send new version"
+        echo ""
+        
+        OLD_ACTIVE_PATH=$(readlink -f "$PLUGIN_PATH" 2>/dev/null)
+
+        if [ "$INSTALL_CHOICE" = "2" ]; then
+            cp -r FootOnsat-main/usr / >/dev/null 2>&1
+            rm -rf $PLUGIN_PATH >/dev/null 2>&1
+            
+            if [ -n "$OLD_ACTIVE_PATH" ] && [ -d "$OLD_ACTIVE_PATH" ] && [ "$OLD_ACTIVE_PATH" != "$EXTERNAL_PATH" ]; then
+                echo "Moving plugin from old path: $OLD_ACTIVE_PATH"
+                rm -rf "$OLD_ACTIVE_PATH"
+            fi
+            
+            rm -rf "$EXTERNAL_PATH"
+            mkdir -p "$EXTERNAL_PATH"
+            cp -r FootOnsat-main/usr/lib/enigma2/python/Plugins/Extensions/FootOnSat/* "$EXTERNAL_PATH/"
+            echo "$VERSION" > "$EXTERNAL_PATH/.version"
+        else
+            if [ -n "$OLD_ACTIVE_PATH" ] && [ "$OLD_ACTIVE_PATH" != "$PLUGIN_PATH" ] && [ -d "$OLD_ACTIVE_PATH" ]; then
+                echo "Moving plugin from external path: $OLD_ACTIVE_PATH to internal"
+                rm -rf "$OLD_ACTIVE_PATH"
+            fi
+            rm -rf $PLUGIN_PATH >/dev/null 2>&1
+            cp -r FootOnsat-main/usr / >/dev/null 2>&1
+        fi
+    else
+        echo "Download failed or corrupted, trying with curl..."
+        rm -rf FootOnsat-main
+        curl -Lk "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/main.tar.gz" | tar -xz
+        
+        if [ -d "FootOnsat-main" ]; then
+            echo "Archive verified successfully via curl"
+            if [ "$INSTALL_CHOICE" = "1" ]; then
+                rm -rf $PLUGIN_PATH >/dev/null 2>&1
+            fi
+            
+            if [ "$INSTALL_CHOICE" = "2" ]; then
+                OLD_ACTIVE_PATH=$(readlink -f "$PLUGIN_PATH" 2>/dev/null)
+                cp -r FootOnsat-main/usr / >/dev/null 2>&1
+                rm -rf $PLUGIN_PATH >/dev/null 2>&1
+                
+                if [ -n "$OLD_ACTIVE_PATH" ] && [ -d "$OLD_ACTIVE_PATH" ] && [ "$OLD_ACTIVE_PATH" != "$EXTERNAL_PATH" ]; then
+                    echo "Moving plugin from old path: $OLD_ACTIVE_PATH"
+                    rm -rf "$OLD_ACTIVE_PATH"
+                fi
+                
+                rm -rf "$EXTERNAL_PATH"
+                mkdir -p "$EXTERNAL_PATH"
+                cp -r FootOnsat-main/usr/lib/enigma2/python/Plugins/Extensions/FootOnSat/* "$EXTERNAL_PATH/"
+                echo "$VERSION" > "$EXTERNAL_PATH/.version"
+            else
+                cp -r FootOnsat-main/usr / >/dev/null 2>&1
+            fi
+        else
+            echo "Critical Error: Archive is still corrupted after retry"
+            exit 1
+        fi
+    fi
+fi
+
+# Create a symbolic link from the system plugin path to the external storage
+if [ "$INSTALL_CHOICE" = "2" ]; then
+    echo "Creating symlink: $PLUGIN_PATH -> $EXTERNAL_PATH"
+    rm -rf "$PLUGIN_PATH"
+    ln -sfn "$EXTERNAL_PATH" "$PLUGIN_PATH"
+fi
+
+# Restore previous database and UI style if a fresh installation occurred
+if [ -d "$PLUGIN_PATH" ]; then
+	if [ -f "$TMP_DB" ]; then
+		echo ""
+		echo "Restore old db ..."
+		cp -a "$TMP_DB" "$DB_FILE" >/dev/null 2>&1
+	fi
+	echo ""
+	echo "Restore current style is: $CURRENT_VALUE"
+	echo ""
+	FILE_NAME=""
+	case "$CURRENT_VALUE" in
+	    "icons_renkli")
+		  FILE_NAME="icons_renkli.tar.gz"
+		  ;;
+	    "icons_buwalla")
+		  FILE_NAME="icons_buwalla.tar.gz"
+		  ;;
+	    "icons_italia2012")
+		  FILE_NAME="icons_italia2012.tar.gz"
+		  ;;
+	    *)
+		  FILE_NAME="icons_default.tar.gz"
+		  ;;
+	esac
+	if [ -n "$FILE_NAME" ] && [ "$SKIP_INSTALL" = "false" ]; then
+	    cd /tmp/FootOnsat-main/Download/Style-Icons-Files
+	    tar -xzf "${FILE_NAME}" >/dev/null 2>&1
+	    cp -r assets "$PLUGIN_PATH" >/dev/null 2>&1
+	fi
+fi
+
+#################
+BANNERS_TMP_TAR="/tmp/banners_main.tar.gz"
+BANNERS_TMP_DIR="/tmp/banners_extract"
+BANNERS_SHA_FILE="$PLUGIN_PATH/assets/compet/.last_commit.sha"
+wget -q "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/packages/main.tar.gz" -O "$BANNERS_TMP_TAR"
+if [ -f "$BANNERS_TMP_TAR" ]; then
+    mkdir -p "$BANNERS_TMP_DIR"
+    tar -xzf "$BANNERS_TMP_TAR" -C "$BANNERS_TMP_DIR"
+    SRC_PATH=$(ls -d $BANNERS_TMP_DIR/* | head -n 1)/banners
+    cp -r "$SRC_PATH/package.json" "$PLUGIN_PATH/assets/compet/"
+    [ ! -d "$PLUGIN_PATH/assets/compet/FHD" ] && mkdir -p "$PLUGIN_PATH/assets/compet/FHD"
+    [ ! -d "$PLUGIN_PATH/assets/standings" ] && mkdir -p "$PLUGIN_PATH/assets/standings"
+    [ ! -d "$PLUGIN_PATH/assets/teamlog" ] && mkdir -p "$PLUGIN_PATH/assets/teamlog"
+    cp -r "$SRC_PATH/FHD/"*.png "$PLUGIN_PATH/assets/compet/FHD/"
+    cp -r "$SRC_PATH/standings/"*.png "$PLUGIN_PATH/assets/standings/"
+    cp -r "$SRC_PATH/teamlog/"*.png "$PLUGIN_PATH/assets/teamlog/"
+    CUR_SHA=$(curl -s "https://api.github.com/repos/fairbird/Banners_FootOnSat/commits?path=banners&per_page=1" | grep '"sha"' | head -n 1 | cut -d '"' -f 4)
+    if [ -n "$CUR_SHA" ]; then
+        echo "$CUR_SHA" > "$BANNERS_SHA_FILE"
+    fi
+    rm -rf "$BANNERS_TMP_TAR" "$BANNERS_TMP_DIR"
+fi
+##################
+
+echo "clean tmp ..."
+cd /tmp
+rm -rf *FootOnsat* >/dev/null 2>&1
+rm -rf *footonsat* >/dev/null 2>&1
+rm -rf *main* >/dev/null 2>&1
+#rm -rf *assets* >/dev/null 2>&1
+#rm -rf *ui* >/dev/null 2>&1
+rm -rf "$TMP_DB" >/dev/null 2>&1
+cd ..
+echo
+echo
+echo ""
+echo "#########################################################"
+echo "#          FootOnsat INSTALLED SUCCESSFULLY             #"
+echo "#        BY ZIKO & Redouane & Raed (fairbird)           #"
+echo "#########################################################"
+echo "#                Restart Enigma2 GUI                    #"
+echo "#########################################################"
+sleep 2
+sync
+[ -w /proc/sys/vm/drop_caches ] && echo 3 > /proc/sys/vm/drop_caches
+killall -9 enigma2
+exit 0
