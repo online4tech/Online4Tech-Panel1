@@ -1,3 +1,4 @@
+from .o4t_store import Online4TechStoreScreen
 # -*- coding: utf-8 -*-
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
