@@ -28,6 +28,8 @@ def to_str(val):
         return ""
     if not PY3 and isinstance(val, unicode):
         return val.encode("utf-8")
+    if PY3 and isinstance(val, bytes):
+        return val.decode("utf-8", "ignore")
     return str(val)
 
 def split_name_desc(raw_name, fallback_desc=""):
@@ -133,24 +135,21 @@ SKIN_FHD = """
 
     <widget zPosition="4" name="left_desc" position="55,620" size="350,220" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
 
-    <!-- ارتفاع 740 بكسل يعرض 10 بطاقات كاملة بالضبط بدون قص البطاقة رقم 11 -->
     <widget zPosition="3" name="page_info" position="465,134" size="380,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
     <widget zPosition="3" name="section_heading" position="860,126" size="550,40" font="Regular;29" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
     <widget zPosition="3" name="list" position="460,180" size="960,740" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
-    <!-- ارتفاع 700 بكسل يعرض 14 فئة كاملة بالضبط -->
     <widget zPosition="3" name="right_header" position="1480,162" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
     <widget zPosition="3" name="side_list" position="1468,210" size="404,700" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
     <widget zPosition="3" name="side_page_lbl" position="1480,918" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
 
-    <!-- ارتفاع 750 بكسل يعرض 3 صفوف شبكة كاملة (12 بطاقة) -->
     <widget zPosition="4" name="grid_list" position="55,175" size="1810,750" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
     <widget zPosition="3" name="key_red" position="1635,1003" size="180,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
     <widget zPosition="3" name="key_green" position="1325,1003" size="210,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
     <widget zPosition="3" name="key_yellow" position="945,1003" size="290,36" font="Regular;21" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="right" />
     <widget zPosition="3" name="key_blue" position="655,1003" size="230,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="3" name="mode_badge" position="75,1003" size="540,36" font="Regular;20" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="left" />
+    <widget zPosition="3" name="mode_badge" position="75,1003" size="560,36" font="Regular;20" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="left" />
 </screen>
 """
 
@@ -181,10 +180,10 @@ class Online4TechStoreScreen(Screen):
         self["side_page_lbl"] = Label("")
 
         self["key_red"] = Label("خروج")
-        self["key_green"] = Label("تثبيت / فتح")
+        self["key_green"] = Label("دخول للقسم")
         self["key_yellow"] = Label("عرض شبكة 4x3")
         self["key_blue"] = Label("تحديث السيرفر")
-        self["mode_badge"] = Label("حديث | متعدد     < > الفئات     0: بحث")
+        self["mode_badge"] = Label("الأقسام  |  OK أو < > للتحرك داخل القسم")
 
         self["list"] = O4TCardList([])
         self["side_list"] = O4TSideList([])
@@ -205,13 +204,16 @@ class Online4TechStoreScreen(Screen):
         }, -1)
 
         self.db = {}
-        self.mode = "main"
+        self.focus_pane = "side"
         self.nav_stack = []
         self.view_style = "list"
         self.current_items = []
         self.main_cats_meta = []
         self.active_cat_idx = 0
         self.grid_index = 0
+
+        self.icon_cache = {}
+        self.cached_sys_info = ""
 
         self.card_norm = None
         self.card_sel = None
@@ -233,7 +235,8 @@ class Online4TechStoreScreen(Screen):
         for p in ["/etc/issue", "/etc/image-version"]:
             if os.path.exists(p):
                 try:
-                    txt = open(p, "r").read().splitlines()[0].replace("\\n", "").replace("\\l", "").strip()
+                    raw = open(p, "rb").read().decode("utf-8", "ignore")
+                    txt = raw.splitlines()[0].replace("\\n", "").replace("\\l", "").strip()
                     if txt:
                         return txt[:22]
                 except Exception:
@@ -245,14 +248,15 @@ class Online4TechStoreScreen(Screen):
         try:
             model = "Vu+ DUO4K"
             if os.path.exists("/proc/stb/info/vumodel"):
-                model = "Vu+ " + open("/proc/stb/info/vumodel").read().strip().upper()
+                model = "Vu+ " + open("/proc/stb/info/vumodel", "rb").read().decode("utf-8", "ignore").strip().upper()
             elif os.path.exists("/proc/stb/info/boxtype"):
-                model = open("/proc/stb/info/boxtype").read().strip().upper()
+                model = open("/proc/stb/info/boxtype", "rb").read().decode("utf-8", "ignore").strip().upper()
             lines.append("Box: " + model)
             lines.append("Image: " + self.detect_image_name())
             lines.append("Python: %d.%d.%d" % sys.version_info[:3])
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.settimeout(0.4)
                 s.connect(("8.8.8.8", 80))
                 ip = s.getsockname()[0]
                 s.close()
@@ -265,10 +269,22 @@ class Online4TechStoreScreen(Screen):
             tot_gb = (st.f_blocks * st.f_frsize) / (1024.0 ** 3)
             lines.append("Flash: %.1fGB / %.1fGB" % (free_gb, tot_gb))
             if os.path.exists("/proc/meminfo"):
-                mem = open("/proc/meminfo").read()
-                tot_m = int([x for x in mem.splitlines() if "MemTotal" in x][0].split()[1]) // 1024
-                avl_m = int([x for x in mem.splitlines() if "MemAvailable" in x][0].split()[1]) // 1024
-                lines.append("Ram: %dMB / %dMB" % (tot_m - avl_m, tot_m))
+                mem_lines = open("/proc/meminfo", "rb").read().decode("utf-8", "ignore").splitlines()
+                mem_map = {}
+                for line in mem_lines:
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        try:
+                            mem_map[parts[0].rstrip(":")] = int(parts[1])
+                        except Exception:
+                            pass
+                tot_m = mem_map.get("MemTotal", 0) // 1024
+                if "MemAvailable" in mem_map:
+                    avl_m = mem_map["MemAvailable"] // 1024
+                else:
+                    avl_m = (mem_map.get("MemFree", 0) + mem_map.get("Buffers", 0) + mem_map.get("Cached", 0)) // 1024
+                if tot_m > 0:
+                    lines.append("Ram: %dMB / %dMB" % (max(0, tot_m - avl_m), tot_m))
         except Exception:
             pass
         return "\n\n".join(lines)
@@ -297,10 +313,29 @@ class Online4TechStoreScreen(Screen):
             p = os.path.join(ICONS_PATH, fname)
             if os.path.exists(p):
                 setattr(self, attr, LoadPixmap(p))
+        self.cached_sys_info = self.get_sys_info_text()
         self.update_clock()
         self.timer.start(10000)
         self.apply_view_visibility()
         self.load_database(force=False)
+
+    def update_footer_hints(self):
+        if self.view_style == "grid":
+            self["key_red"].setText("رجوع")
+            self["key_green"].setText("تثبيت / فتح")
+            self["key_yellow"].setText("عرض القائمة")
+            self["mode_badge"].setText("وضع الشبكة 4x3  |  أصفر للعودة للقائمة")
+            return
+
+        self["key_yellow"].setText("عرض شبكة 4x3")
+        if self.focus_pane == "side":
+            self["key_red"].setText("خروج")
+            self["key_green"].setText("دخول للقسم")
+            self["mode_badge"].setText("الأقسام  |  OK أو < > للتحرك داخل القسم")
+        else:
+            self["key_red"].setText("رجوع" if self.nav_stack else "رجوع للأقسام")
+            self["key_green"].setText("تثبيت / فتح")
+            self["mode_badge"].setText("داخل القسم  |  < > للأقسام  |  0: بحث")
 
     def apply_view_visibility(self):
         is_grid = (self.view_style == "grid")
@@ -320,16 +355,19 @@ class Online4TechStoreScreen(Screen):
             for w in ["left_info", "preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
                 self[w].hide()
             self["grid_list"].show()
-            self["key_yellow"].setText("عرض القائمة")
-            self["mode_badge"].setText("وضع الشبكة 4x3  |  أصفر للعودة للقائمة")
         else:
             self["grid_list"].hide()
-            self["key_yellow"].setText("عرض شبكة 4x3")
-            self["mode_badge"].setText("حديث | متعدد     < > الفئات     0: بحث")
+        self.update_footer_hints()
 
     def toggle_view_mode(self):
-        self.view_style = "grid" if self.view_style == "list" else "list"
+        if self.view_style == "list":
+            self.view_style = "grid"
+        else:
+            self.view_style = "list"
+            if self.current_items:
+                self.focus_pane = "center"
         self.apply_view_visibility()
+        self.refresh_sidebar()
         self.render_current_items()
         self.update_left_panel()
 
@@ -350,7 +388,9 @@ class Online4TechStoreScreen(Screen):
             self.db = json.loads(raw)
             self.nav_stack = []
             self.build_main_categories_meta()
-            self.show_main()
+            self.active_cat_idx = 0
+            self.focus_pane = "side"
+            self.preview_active_category()
         except Exception as e:
             self["center_header"].setText("Error: " + str(e))
 
@@ -373,10 +413,14 @@ class Online4TechStoreScreen(Screen):
             })
 
     def get_icon_pix(self, icon_key):
+        if icon_key in self.icon_cache:
+            return self.icon_cache[icon_key]
         ic_file = os.path.join(ICONS_PATH, "ic_%s.png" % icon_key)
         if not os.path.exists(ic_file):
             ic_file = os.path.join(ICONS_PATH, "ic_default.png")
-        return LoadPixmap(ic_file) if os.path.exists(ic_file) else None
+        pix = LoadPixmap(ic_file) if os.path.exists(ic_file) else None
+        self.icon_cache[icon_key] = pix
+        return pix
 
     def refresh_sidebar(self):
         side_entries = []
@@ -392,7 +436,8 @@ class Online4TechStoreScreen(Screen):
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 12, 10, 56, 30, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, str(meta["count"]), cnt_col, cnt_col))
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 78, 6, 305, 38, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(meta["title"]), txt_col, 0x00f5d061))
             if is_act:
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 392, 8, 5, 34, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "", 0x00f5d061, 0x00f5d061, 0x00f5d061, 0x00f5d061))
+                bar_col = 0x00f5d061 if self.focus_pane == "side" else 0x0094a3b8
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 388, 6, 12, 38, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "|", bar_col, bar_col))
             side_entries.append(res)
         self["side_list"].setList(side_entries)
         if side_entries and 0 <= self.active_cat_idx < total:
@@ -401,7 +446,8 @@ class Online4TechStoreScreen(Screen):
 
     def make_list_card(self, entry, is_selected):
         ic_pix = self.get_icon_pix(entry["icon"])
-        bg_pix = self.card_sel if is_selected else self.card_norm
+        show_gold = (is_selected and self.focus_pane == "center")
+        bg_pix = self.card_sel if show_gold else self.card_norm
         title = to_str(entry["title"])
         subtitle = to_str(entry["subtitle"])
         badge = to_str(entry["badge"])
@@ -413,7 +459,7 @@ class Online4TechStoreScreen(Screen):
         if ic_pix:
             res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 874, 5, 64, 64, ic_pix))
 
-        t_col = 0x00f5d061 if is_selected else 0x00ffffff
+        t_col = 0x00f5d061 if show_gold else 0x00ffffff
         if subtitle:
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 485, 12, 375, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 118, 12, 355, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
@@ -466,8 +512,7 @@ class Online4TechStoreScreen(Screen):
         per_page = 12 if self.view_style == "grid" else 10
         tot_pages = max(1, (total + per_page - 1) // per_page)
         cur_page = min(tot_pages, (self.grid_index // per_page) + 1)
-        unit = "عنصر" if self.mode == "main" else "حزمة"
-        self["page_info"].setText("%d %s   صفحة %d/%d" % (total, unit, cur_page, tot_pages))
+        self["page_info"].setText("%d حزمة   صفحة %d/%d" % (total, cur_page, tot_pages))
 
     def render_current_items(self):
         self.update_page_counter()
@@ -484,11 +529,13 @@ class Online4TechStoreScreen(Screen):
     def update_left_panel(self):
         if self.view_style == "grid":
             return
-        if self.mode == "main":
+        if self.focus_pane == "side" or not self.current_items:
             for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
                 self[w].hide()
             self["left_title"].setText("النظام")
-            self["left_info"].setText(self.get_sys_info_text())
+            if not self.cached_sys_info:
+                self.cached_sys_info = self.get_sys_info_text()
+            self["left_info"].setText(self.cached_sys_info)
             self["left_info"].show()
             return
 
@@ -497,7 +544,7 @@ class Online4TechStoreScreen(Screen):
             self[w].show()
 
         self["left_title"].setText("معاينة الحزمة")
-        if not self.current_items or self.grid_index < 0 or self.grid_index >= len(self.current_items):
+        if self.grid_index < 0 or self.grid_index >= len(self.current_items):
             return
         entry = self.current_items[self.grid_index]
         data = entry["data"]
@@ -528,21 +575,8 @@ class Online4TechStoreScreen(Screen):
             desc_line = sub_desc if sub_desc else name
             self["left_desc"].setText("%s\nاضغط OK أو الزر الأخضر للتثبيت المباشر على الرسيفر." % desc_line)
 
-    def show_main(self):
-        self.mode = "main"
-        self.nav_stack = []
-        self.grid_index = self.active_cat_idx
-        self["key_red"].setText("خروج")
-        self["section_heading"].setText("انيجما 2")
-        self.current_items = list(self.main_cats_meta)
-        self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
-
-    def show_items_list(self, items_list, sec_name, icon_hint=""):
-        self.mode = "section"
+    def populate_items(self, items_list, sec_name, icon_hint=""):
         self.grid_index = 0
-        self["key_red"].setText("رجوع")
         ar_sec_title, _, ic_key = resolve_cat_meta(sec_name, icon_hint, len(items_list))
         self["section_heading"].setText(to_str(ar_sec_title))
 
@@ -576,6 +610,44 @@ class Online4TechStoreScreen(Screen):
         self.refresh_sidebar()
         self.render_current_items()
         self.update_left_panel()
+        self.update_footer_hints()
+
+    def preview_active_category(self):
+        if not self.main_cats_meta:
+            return
+        self.nav_stack = []
+        cat_meta = self.main_cats_meta[self.active_cat_idx]
+        cat_data = cat_meta["data"]
+        sub_list = self.get_sub_items(cat_data) or []
+        self.populate_items(sub_list, cat_meta["title"], cat_data.get("section", ""))
+
+    def enter_center_pane(self):
+        if not self.current_items:
+            self.session.open(MessageBox, "هذا القسم فارغ حاليا.", MessageBox.TYPE_INFO, timeout=3)
+            return
+        self.focus_pane = "center"
+        if self.grid_index < 0 or self.grid_index >= len(self.current_items):
+            self.grid_index = 0
+        self.refresh_sidebar()
+        self.render_current_items()
+        self.update_left_panel()
+        self.update_footer_hints()
+
+    def return_to_sidebar(self):
+        self.focus_pane = "side"
+        self.refresh_sidebar()
+        self.render_current_items()
+        self.update_left_panel()
+        self.update_footer_hints()
+
+    def after_install_cb(self, *args):
+        for entry in self.current_items:
+            path = entry["data"].get("path", "")
+            if path:
+                entry["installed"] = os.path.exists(path)
+        self.cached_sys_info = self.get_sys_info_text()
+        self.render_current_items()
+        self.update_left_panel()
 
     def open_search(self):
         self.session.openWithCallback(self.run_search, VirtualKeyBoard, title="ابحث عن بلجن أو ملف قنوات في Online4Tech:", text="")
@@ -596,64 +668,77 @@ class Online4TechStoreScreen(Screen):
                 if kw in name.lower() and item.get("cmd") and name not in seen:
                     seen.add(name)
                     results.append(item)
-        self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.mode, self.grid_index))
-        self.show_items_list(results, "بحث: " + to_str(keyword), "plugins")
+        self.focus_pane = "center"
+        self.nav_stack = []
+        self.populate_items(results, "بحث: " + to_str(keyword), "plugins")
 
     def move_up(self):
-        total = len(self.current_items)
-        if not total:
-            return
         if self.view_style == "grid":
             if self.grid_index >= 4:
                 self.grid_index -= 4
+                self.render_current_items()
+            return
+
+        if self.focus_pane == "side":
+            total_cats = len(self.main_cats_meta)
+            if total_cats:
+                self.active_cat_idx = (self.active_cat_idx - 1) % total_cats
+                self.preview_active_category()
         else:
-            self.grid_index = (self.grid_index - 1) % total
-            if self.mode == "main":
-                self.active_cat_idx = self.grid_index
-                self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
+            total = len(self.current_items)
+            if total:
+                self.grid_index = (self.grid_index - 1) % total
+                self.render_current_items()
+                self.update_left_panel()
 
     def move_down(self):
-        total = len(self.current_items)
-        if not total:
-            return
         if self.view_style == "grid":
-            if self.grid_index + 4 < total:
+            if self.grid_index + 4 < len(self.current_items):
                 self.grid_index += 4
+                self.render_current_items()
+            return
+
+        if self.focus_pane == "side":
+            total_cats = len(self.main_cats_meta)
+            if total_cats:
+                self.active_cat_idx = (self.active_cat_idx + 1) % total_cats
+                self.preview_active_category()
         else:
-            self.grid_index = (self.grid_index + 1) % total
-            if self.mode == "main":
-                self.active_cat_idx = self.grid_index
-                self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
+            total = len(self.current_items)
+            if total:
+                self.grid_index = (self.grid_index + 1) % total
+                self.render_current_items()
+                self.update_left_panel()
 
     def move_left(self):
         if self.view_style == "grid":
             if self.grid_index + 1 < len(self.current_items):
                 self.grid_index += 1
                 self.render_current_items()
-        elif self.main_cats_meta:
-            self.active_cat_idx = (self.active_cat_idx + 1) % len(self.main_cats_meta)
-            cat_data = self.main_cats_meta[self.active_cat_idx]["data"]
-            sub_list = self.get_sub_items(cat_data) or []
-            self.nav_stack = []
-            self.show_items_list(sub_list, self.main_cats_meta[self.active_cat_idx]["title"], cat_data.get("section", ""))
+            return
+
+        if self.focus_pane == "side":
+            self.enter_center_pane()
+        else:
+            self.return_to_sidebar()
 
     def move_right(self):
         if self.view_style == "grid":
             if self.grid_index > 0:
                 self.grid_index -= 1
                 self.render_current_items()
-        elif self.main_cats_meta:
-            self.active_cat_idx = (self.active_cat_idx - 1) % len(self.main_cats_meta)
-            cat_data = self.main_cats_meta[self.active_cat_idx]["data"]
-            sub_list = self.get_sub_items(cat_data) or []
-            self.nav_stack = []
-            self.show_items_list(sub_list, self.main_cats_meta[self.active_cat_idx]["title"], cat_data.get("section", ""))
+            return
+
+        if self.focus_pane == "center":
+            self.return_to_sidebar()
+        else:
+            self.enter_center_pane()
 
     def ok_pressed(self):
+        if self.view_style == "list" and self.focus_pane == "side":
+            self.enter_center_pane()
+            return
+
         if not self.current_items or self.grid_index < 0 or self.grid_index >= len(self.current_items):
             return
         entry = self.current_items[self.grid_index]
@@ -663,40 +748,41 @@ class Online4TechStoreScreen(Screen):
 
         if sub_list is not None:
             if len(sub_list) == 0:
-                self.session.open(MessageBox, "هذا القسم (%s) فارغ حاليا." % title, MessageBox.TYPE_INFO, timeout=4)
+                self.session.open(MessageBox, "هذا القسم الفرعي (%s) فارغ حاليا." % title, MessageBox.TYPE_INFO, timeout=4)
                 return
-            if self.mode == "main":
-                self.active_cat_idx = self.grid_index
-            self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.mode, self.grid_index))
-            self.show_items_list(sub_list, title, data.get("section", ""))
+            self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.grid_index))
+            self.populate_items(sub_list, title, data.get("section", ""))
             return
 
         cmd = data.get("cmd", "")
         if cmd:
-            self.session.open(Console, title="Online4Tech: " + title, cmdlist=[to_str(cmd)])
+            self.session.openWithCallback(self.after_install_cb, Console, title="Online4Tech: " + title, cmdlist=[to_str(cmd)])
         else:
             self.session.open(MessageBox, "لا يوجد أمر تثبيت مسجل لهذا العنصر (%s)." % title, MessageBox.TYPE_INFO, timeout=4)
 
     def refresh_server(self):
         self["center_header"].setText("جاري مزامنة قاعدة بيانات Online4Tech...")
+        self.cached_sys_info = self.get_sys_info_text()
         self.load_database(force=True)
         self["center_header"].setText("ابحث عن البلاجينات والإضافات (اضغط زر 0)")
 
     def back_pressed(self):
+        if self.view_style == "grid":
+            self.toggle_view_mode()
+            return
+
         if self.nav_stack:
-            prev_items, prev_heading, prev_mode, prev_idx = self.nav_stack.pop()
-            if prev_mode == "main":
-                self.show_main()
-            else:
-                self.mode = "section"
-                self.current_items = prev_items
-                self.grid_index = prev_idx
-                self["section_heading"].setText(prev_heading)
-                self.refresh_sidebar()
-                self.render_current_items()
-                self.update_left_panel()
-        elif self.mode == "section":
-            self.show_main()
+            prev_items, prev_heading, prev_idx = self.nav_stack.pop()
+            self.current_items = prev_items
+            self.grid_index = prev_idx
+            self.focus_pane = "center"
+            self["section_heading"].setText(prev_heading)
+            self.refresh_sidebar()
+            self.render_current_items()
+            self.update_left_panel()
+            self.update_footer_hints()
+        elif self.focus_pane == "center":
+            self.return_to_sidebar()
         else:
             self.timer.stop()
             self.close()
