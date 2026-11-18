@@ -60,7 +60,7 @@ class O4TSideList(MenuList):
     def __init__(self, items, is_fhd=True):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
         self.l.setItemHeight(52 if is_fhd else 38)
-        self.l.setFont(0, gFont("Regular", 22 if is_fhd else 16))
+        self.l.setFont(0, gFont("Regular", 19 if is_fhd else 14))
 
 SKIN_FHD = """
 <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
@@ -349,7 +349,7 @@ class Online4TechStoreScreen(Screen):
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 5, 4, 950, 68, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "", 0x00161922, 0x00262012, 0x00161922, 0x00262012))
             if ic_pix:
                 res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 875, 6, 64, 64, ic_pix))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 440, 12, 415, 52, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(title), 0x00ffffff, 0x00f5d061))
+            tx_x = 440 if subtitle else 140; tx_w = 415 if subtitle else 715; res.append((eListboxPythonMultiContent.TYPE_TEXT, tx_x, 12, tx_w, 52, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(title), 0x00ffffff, 0x00f5d061))
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 140, 12, 285, 52, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, to_str(subtitle), 0x00cbd5e1, 0x00ffffff))
             if is_installed:
                 res.append((eListboxPythonMultiContent.TYPE_TEXT, 20, 18, 105, 40, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "مثبت", 0x00ff5555, 0x00ff8888))
@@ -470,7 +470,7 @@ class Online4TechStoreScreen(Screen):
                 inst = bool(path and os.path.exists(path))
                 self.current_items.append({
                     "title": name,
-                    "subtitle": "Online4Tech Official",
+                    "subtitle": "",
                     "badge": "",
                     "icon": ic_key,
                     "installed": inst,
