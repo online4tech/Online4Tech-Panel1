@@ -9,7 +9,7 @@ from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
-from enigma import eListboxPythonMultiContent, gFont, getDesktop, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
+from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
 from Tools.LoadPixmap import LoadPixmap
 
 PY3 = sys.version_info[0] >= 3
@@ -30,21 +30,25 @@ def to_str(val):
         return val.encode("utf-8")
     return str(val)
 
-# قاموس تعريب شامل وأوصاف دقيقة لجميع الأقسام
 CAT_INFO = [
     ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "default"),
-    ("fav",         "المفضلة",                 "الإضافات والبلاجينات الأكثر استخداما", "default"),
-    ("depend",      "تحديث المكتبات",          "تحديث مكتبات البايثون ومشغلات النظام", "tools"),
-    ("backup",      "صور الباك اب",            "تحميل وتثبيت صور انيجما 2", "display"),
+    ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة", "default"),
+    ("depend",      "تحديث المكتبات",          "تحديث مكتبات البايثون ومشغلات النظام", "feeds"),
+    ("ciefp",       "إضافات سييف",             "إدارة وتثبيت بلاجينات وملفات سييف", "ciefp"),
+    ("multiboot",   "ملتي بوت",                "تثبيت وإدارة بلاجينات الملتي بوت ومثبتات الصور", "multiboot"),
+    ("restore",     "الاستعادة والنسخ",        "استعادة الإعدادات والنسخ الاحتياطي للنظام", "tools"),
+    ("remove",      "حذف الإضافات",            "إزالة وحذف البلاجينات والحزم من الرسيفر", "remove"),
+    ("backup",      "صور الباك اب",            "تحميل وتثبيت صور انيجما 2 الجاهزة", "display"),
+    ("image",       "صور الأجهزة",             "تحميل وتثبيت صور انيجما 2 الخام والباك اب", "display"),
     ("panel",       "البانلات",                "استكشف بانلات انيجما 2 مع روابط المطورين", "panels"),
-    ("novaler",     "أجهزة نوفالر",            "بلاجينات وأدوات خاصة لأجهزة نوفالر", "plugins"),
-    ("plugin",      "الإضافات",                "إدارة وتثبيت البلاجينات المنوعة", "plugins"),
+    ("novaler",     "نوفالر",                  "بلاجينات وأدوات لأجهزة نوفالر", "novaler"),
+    ("plugin",      "الإضافات",                "إدارة وتثبيت البلاجينات", "plugins"),
     ("channel",     "ملفات القنوات",           "تحديث وتثبيت أحدث ملفات القنوات", "channels"),
     ("feed",        "الفيدات",                 "تحديث وتثبيت الفيدات", "feeds"),
     ("bootlogo",    "شعارات الإقلاع",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display"),
-    ("spinner",     "أيقونات التحميل",         "تغيير شعار التحميل الدوار (Spinner)", "display"),
-    ("cam",         "السوفتكامات",             "إدارة وتثبيت إيموهات التشفير", "cams"),
-    ("emu",         "السوفتكامات",             "إدارة وتثبيت إيموهات التشفير", "cams"),
+    ("spinner",     "العرض والسبينر",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display"),
+    ("cam",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير", "cams"),
+    ("emu",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير", "cams"),
     ("picon",       "البيكونات",               "تثبيت وإدارة شعارات القنوات", "picons"),
     ("skin",        "السكينات",                "اختيار وتطبيق السكينات", "skins"),
     ("media",       "الميديا و IPTV",          "مشغلات الميديا والصوتيات والآي بي تي في", "plugins"),
@@ -53,9 +57,9 @@ CAT_INFO = [
     ("quran",       "القرآن الكريم",           "تطبيقات وإذاعات القرآن الكريم", "plugins"),
     ("islamic",     "إسلاميات",                "تطبيقات القرآن الكريم ومواقيت الصلاة", "plugins"),
     ("epg",         "دليل البرامج",            "مصادر وإضافات دليل البرامج الإلكتروني", "feeds"),
-    ("tool",        "الأدوات",                 "أدوات وإضافات خدمية مفيدة", "tools"),
+    ("tool",        "الأدوات",                 "أدوات وإضافات مفيدة", "tools"),
     ("system",      "خدمات النظام",            "إعدادات وأوامر صيانة الرسيفر", "tools"),
-    ("setting",     "الإعدادات",               "ضبط إعدادات الرسيفر والشبكة", "tools"),
+    ("setting",     "الإعدادات",               "جرب قنوات وترددات وإعدادات جديدة", "channels"),
 ]
 
 def resolve_cat_meta(raw_name, sec_key, cnt):
@@ -64,113 +68,112 @@ def resolve_cat_meta(raw_name, sec_key, cnt):
         if key_sub in combined:
             return ar_title, ar_desc, ic
     clean_title = to_str(raw_name).split("(")[0].strip() or to_str(sec_key)
-    return clean_title, "%d حزمة متاحة في هذا القسم" % cnt, "default"
+    return clean_title, "%d حزمة متاحة في هذا القسم" % cnt, "plugins"
 
 def guess_icon(sec_name):
     _, _, ic = resolve_cat_meta(sec_name, sec_name, 0)
     return ic
 
 class O4TCardList(MenuList):
-    def __init__(self, items, is_fhd=True):
+    def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(74 if is_fhd else 52)
-        self.l.setFont(0, gFont("Regular", 23 if is_fhd else 17))
-        self.l.setFont(1, gFont("Regular", 18 if is_fhd else 14))
+        self.l.setItemHeight(74)
+        self.l.setFont(0, gFont("Regular", 24))
+        self.l.setFont(1, gFont("Regular", 19))
 
 class O4TGridRows(MenuList):
-    def __init__(self, items, is_fhd=True):
+    def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(250 if is_fhd else 170)
-        self.l.setFont(0, gFont("Regular", 23 if is_fhd else 17))
-        self.l.setFont(1, gFont("Regular", 18 if is_fhd else 14))
+        self.l.setItemHeight(250)
+        self.l.setFont(0, gFont("Regular", 25))
+        self.l.setFont(1, gFont("Regular", 19))
 
 class O4TSideList(MenuList):
-    def __init__(self, items, is_fhd=True):
+    def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(50 if is_fhd else 36)
-        self.l.setFont(0, gFont("Regular", 20 if is_fhd else 15))
-        self.l.setFont(1, gFont("Regular", 17 if is_fhd else 13))
+        self.l.setItemHeight(50)
+        self.l.setFont(0, gFont("Regular", 21))
+        self.l.setFont(1, gFont("Regular", 17))
 
 SKIN_FHD = """
 <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
-    <!-- الشريط العلوي -->
-    <eLabel zPosition="1" position="0,0" size="1920,115" backgroundColor="#0f1218" />
-    <eLabel zPosition="2" position="0,114" size="1920,2" backgroundColor="#262b38" />
+    <!-- الخلفية الجرافيكية الكاملة بالصناديق المنحنية -->
+    <widget zPosition="1" name="bg_main" position="0,0" size="1920,1080" alphatest="blend" />
 
-    <widget zPosition="3" name="clock_lbl" position="55,12" size="260,48" font="Regular;40" foregroundColor="#ffffff" backgroundColor="#0f1218" transparent="1" halign="center" />
-    <widget zPosition="3" name="date_lbl" position="55,60" size="260,26" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#0f1218" transparent="1" halign="center" />
-    <widget zPosition="3" name="net_lbl" position="55,86" size="260,24" font="Regular;16" foregroundColor="#22c55e" backgroundColor="#0f1218" transparent="1" halign="center" />
+    <!-- الساعة والتاريخ (أعلى اليسار) -->
+    <widget zPosition="3" name="clock_lbl" position="55,12" size="260,48" font="Regular;40" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="center" />
+    <widget zPosition="3" name="date_lbl" position="55,62" size="260,26" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
 
-    <eLabel zPosition="2" position="460,26" size="960,58" backgroundColor="#161922" />
-    <widget zPosition="3" name="center_header" position="480,26" size="920,58" font="Regular;22" foregroundColor="#cbd5e1" backgroundColor="#161922" transparent="1" halign="center" valign="center" />
+    <!-- نص شريط البحث العلوي -->
+    <widget zPosition="3" name="center_header" position="645,28" size="710,56" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#161a24" transparent="1" halign="right" valign="center" />
 
-    <eLabel zPosition="3" text="Online4TechPanel" position="1480,16" size="390,46" font="Regular;34" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="center" />
-    <eLabel zPosition="3" text="Online4Tech | الإصدار 7.5" position="1480,66" size="390,28" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#0f1218" transparent="1" halign="center" />
+    <!-- شعار البانل (أعلى اليمين) -->
+    <eLabel zPosition="3" text="Online4TechPanel" position="1480,18" size="390,46" font="Regular;34" foregroundColor="#f5d061" backgroundColor="#0b0d12" transparent="1" halign="center" />
+    <eLabel zPosition="3" text="Online4Tech | الإصدار 7.5" position="1480,66" size="390,28" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
 
-    <!-- العمود الأيسر: النظام أو بطاقة المعاينة -->
-    <widget zPosition="1" name="left_bg" position="40,165" size="380,800" backgroundColor="#11141c" />
-    <widget zPosition="3" name="left_title" position="55,182" size="350,36" font="Regular;23" foregroundColor="#94a3b8" backgroundColor="#11141c" transparent="1" halign="center" />
-    <widget zPosition="2" name="left_line" position="65,226" size="330,1" backgroundColor="#262b38" />
-    <widget zPosition="4" name="preview_icon" position="198,250" size="64,64" alphatest="blend" />
-    <widget zPosition="3" name="left_pkg_name" position="55,330" size="350,70" font="Regular;25" foregroundColor="#f5d061" backgroundColor="#11141c" transparent="1" halign="center" valign="center" />
-    <widget zPosition="3" name="left_info" position="55,245" size="350,690" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#11141c" transparent="1" halign="center" />
+    <!-- العمود الأيسر: معلومات النظام أو بطاقة المعاينة المفصولة بدون أي تداخل -->
+    <widget zPosition="3" name="left_title" position="55,192" size="350,34" font="Regular;22" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
+    <widget zPosition="3" name="left_info" position="55,250" size="350,650" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
+
+    <!-- عناصر معاينة الحزمة المفصولة (تظهر عند الدخول للأقسام فقط) -->
+    <widget zPosition="4" name="preview_icon" position="155,245" size="150,150" alphatest="blend" />
+    <widget zPosition="4" name="left_pkg_name" position="55,412" size="350,42" font="Regular;26" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="center" />
+    <widget zPosition="4" name="left_pkg_ver" position="55,456" size="350,30" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
+
+    <widget zPosition="4" name="left_stat_lbl" position="235,515" size="150,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="4" name="left_stat_val" position="65,515" size="165,32" font="Regular;20" foregroundColor="#ef4444" backgroundColor="#12151d" transparent="1" halign="left" />
+
+    <widget zPosition="4" name="left_cat_lbl" position="235,558" size="150,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="4" name="left_cat_val" position="65,558" size="165,32" font="Regular;20" foregroundColor="#ffffff" backgroundColor="#12151d" transparent="1" halign="left" />
+
+    <widget zPosition="4" name="left_desc" position="55,620" size="350,220" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
 
     <!-- العمود الأوسط: قائمة البطاقات -->
-    <widget zPosition="3" name="page_info" position="465,126" size="380,34" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
-    <widget zPosition="3" name="section_heading" position="860,122" size="550,38" font="Regular;28" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
-    <widget zPosition="3" name="list" position="460,168" size="960,795" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
+    <widget zPosition="3" name="page_info" position="465,134" size="380,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
+    <widget zPosition="3" name="section_heading" position="860,126" size="550,40" font="Regular;29" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
+    <widget zPosition="3" name="list" position="460,174" size="960,785" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
-    <!-- العمود الأيمن: الفئات والأقسام -->
-    <widget zPosition="1" name="right_bg" position="1460,145" size="420,820" backgroundColor="#11141c" />
-    <widget zPosition="3" name="right_header" position="1480,160" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#11141c" transparent="1" halign="center" />
-    <widget zPosition="2" name="right_line" position="1480,202" size="380,1" backgroundColor="#262b38" />
-    <widget zPosition="3" name="side_list" position="1468,212" size="404,700" backgroundColor="#11141c" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
-    <widget zPosition="3" name="side_page_lbl" position="1480,922" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#11141c" transparent="1" halign="right" />
+    <!-- العمود الأيمن: الفئات -->
+    <widget zPosition="3" name="right_header" position="1480,162" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
+    <widget zPosition="3" name="side_list" position="1468,210" size="404,700" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
+    <widget zPosition="3" name="side_page_lbl" position="1480,918" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
 
     <!-- وضع الشبكة 4x3 -->
-    <widget zPosition="3" name="grid_list" position="55,168" size="1810,780" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
+    <widget zPosition="4" name="grid_list" position="55,172" size="1810,780" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
-    <!-- الشريط السفلي -->
-    <eLabel zPosition="1" position="0,990" size="1920,90" backgroundColor="#0f1218" />
-    <eLabel zPosition="2" position="0,990" size="1920,2" backgroundColor="#262b38" />
-
-    <eLabel zPosition="3" position="1830,1022" size="20,20" backgroundColor="#ef4444" />
-    <widget zPosition="3" name="key_red" position="1640,1015" size="180,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
-
-    <eLabel zPosition="3" position="1560,1022" size="20,20" backgroundColor="#22c55e" />
-    <widget zPosition="3" name="key_green" position="1340,1015" size="210,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
-
-    <eLabel zPosition="3" position="1260,1022" size="20,20" backgroundColor="#eab308" />
-    <widget zPosition="3" name="key_yellow" position="960,1015" size="290,36" font="Regular;21" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="right" />
-
-    <eLabel zPosition="3" position="880,1022" size="20,20" backgroundColor="#3b82f6" />
-    <widget zPosition="3" name="key_blue" position="640,1015" size="230,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
-
-    <widget zPosition="3" name="mode_badge" position="60,1015" size="540,36" font="Regular;20" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="left" />
+    <!-- نصوص الشريط السفلي -->
+    <widget zPosition="3" name="key_red" position="1635,1003" size="180,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="3" name="key_green" position="1325,1003" size="210,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="3" name="key_yellow" position="945,1003" size="290,36" font="Regular;21" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="3" name="key_blue" position="655,1003" size="230,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
+    <widget zPosition="3" name="mode_badge" position="75,1003" size="540,36" font="Regular;20" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="left" />
 </screen>
 """
 
 class Online4TechStoreScreen(Screen):
     def __init__(self, session):
-        self.is_fhd = True
         self.skin = SKIN_FHD
         Screen.__init__(self, session)
 
+        self["bg_main"] = Pixmap()
         self["clock_lbl"] = Label("")
         self["date_lbl"] = Label("")
-        self["net_lbl"] = Label("NET: ONLINE")
-        self["center_header"] = Label("🔍  ابحث عن البلاجينات والإضافات وملفات القنوات (اضغط زر 0)")
-        self["left_bg"] = Label("")
+        self["center_header"] = Label("ابحث عن البلاجينات والإضافات (اضغط زر 0)")
         self["left_title"] = Label("النظام")
-        self["left_line"] = Label("")
+        self["left_info"] = Label("")
+
         self["preview_icon"] = Pixmap()
         self["left_pkg_name"] = Label("")
-        self["left_info"] = Label("")
+        self["left_pkg_ver"] = Label("")
+        self["left_stat_lbl"] = Label("")
+        self["left_stat_val"] = Label("")
+        self["left_cat_lbl"] = Label("")
+        self["left_cat_val"] = Label("")
+        self["left_desc"] = Label("")
+
         self["page_info"] = Label("")
         self["section_heading"] = Label("انيجما 2")
-        self["right_bg"] = Label("")
         self["right_header"] = Label("الفئات")
-        self["right_line"] = Label("")
         self["side_page_lbl"] = Label("")
 
         self["key_red"] = Label("خروج")
@@ -179,9 +182,9 @@ class Online4TechStoreScreen(Screen):
         self["key_blue"] = Label("تحديث السيرفر")
         self["mode_badge"] = Label("حديث | متعدد     < > الفئات     0: بحث")
 
-        self["list"] = O4TCardList([], True)
-        self["side_list"] = O4TSideList([], True)
-        self["grid_list"] = O4TGridRows([], True)
+        self["list"] = O4TCardList([])
+        self["side_list"] = O4TSideList([])
+        self["grid_list"] = O4TGridRows([])
 
         self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "NumberActions"], {
             "ok": self.ok_pressed,
@@ -231,12 +234,12 @@ class Online4TechStoreScreen(Screen):
                         return txt[:22]
                 except Exception:
                     pass
-        return "Enigma2"
+        return "EGAMI-Team"
 
     def get_sys_info_text(self):
         lines = []
         try:
-            model = "Enigma2"
+            model = "Vu+ DUO4K"
             if os.path.exists("/proc/stb/info/vumodel"):
                 model = "Vu+ " + open("/proc/stb/info/vumodel").read().strip().upper()
             elif os.path.exists("/proc/stb/info/boxtype"):
@@ -250,10 +253,8 @@ class Online4TechStoreScreen(Screen):
                 ip = s.getsockname()[0]
                 s.close()
                 lines.append("IP: " + ip)
-                self["net_lbl"].setText("NET: ONLINE")
             except Exception:
                 lines.append("IP: Local")
-                self["net_lbl"].setText("NET: LOCAL")
             lines.append("Net: Online")
             st = os.statvfs("/")
             free_gb = (st.f_bavail * st.f_frsize) / (1024.0 ** 3)
@@ -280,6 +281,10 @@ class Online4TechStoreScreen(Screen):
         return None
 
     def startup(self):
+        bg_file = os.path.join(ICONS_PATH, "bg_main.png")
+        if os.path.exists(bg_file) and self["bg_main"].instance:
+            self["bg_main"].instance.setPixmapFromFile(bg_file)
+
         for attr, fname in [
             ("card_norm", "card_norm_fhd.png"),
             ("card_sel",  "card_sel_fhd.png"),
@@ -299,12 +304,14 @@ class Online4TechStoreScreen(Screen):
 
     def apply_view_visibility(self):
         is_grid = (self.view_style == "grid")
-        for w in ["left_bg", "left_title", "left_line", "left_info", "left_pkg_name", "preview_icon", "page_info", "section_heading", "list", "right_bg", "right_header", "right_line", "side_list", "side_page_lbl"]:
+        for w in ["left_title", "page_info", "section_heading", "list", "right_header", "side_list", "side_page_lbl"]:
             if is_grid:
                 self[w].hide()
             else:
                 self[w].show()
         if is_grid:
+            for w in ["left_info", "preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
+                self[w].hide()
             self["grid_list"].show()
             self["key_yellow"].setText("عرض القائمة")
             self["mode_badge"].setText("وضع الشبكة 4x3  |  أصفر للعودة للقائمة")
@@ -401,8 +408,8 @@ class Online4TechStoreScreen(Screen):
 
         t_col = 0x00f5d061 if is_selected else 0x00ffffff
         if subtitle:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 480, 12, 380, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 115, 12, 350, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 500, 12, 360, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 115, 12, 375, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
         else:
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 130, 12, 730, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
 
@@ -433,11 +440,11 @@ class Online4TechStoreScreen(Screen):
                     row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0, 6, 430, 235, bg_pix))
                 ic_pix = self.get_icon_pix(entry["icon"])
                 if ic_pix:
-                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 345, 22, 64, 64, ic_pix))
+                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 342, 24, 64, 64, ic_pix))
                 t_col = 0x00f5d061 if is_selected else 0x00ffffff
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 24, 310, 60, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(entry["title"]), t_col, t_col))
-                sub_txt = to_str(entry["subtitle"]) or "متجر أونلاين تكنولوجي"
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 100, 390, 80, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, sub_txt, 0x00cbd5e1, 0x00ffffff))
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 26, 305, 58, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(entry["title"]), t_col, t_col))
+                sub_txt = to_str(entry["subtitle"]) or "إدارة وتثبيت الحزمة مباشرة"
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 105, 385, 80, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, sub_txt, 0x00cbd5e1, 0x00ffffff))
                 if entry["installed"]:
                     if self.badge_inst:
                         row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 24, 190, 88, 32, self.badge_inst))
@@ -471,11 +478,17 @@ class Online4TechStoreScreen(Screen):
         if self.view_style == "grid":
             return
         if self.mode == "main":
-            self["preview_icon"].hide()
-            self["left_pkg_name"].setText("")
+            for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
+                self[w].hide()
             self["left_title"].setText("النظام")
             self["left_info"].setText(self.get_sys_info_text())
+            self["left_info"].show()
             return
+
+        # وضع معاينة الحزمة بدون أي تداخل مع left_info
+        self["left_info"].hide()
+        for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
+            self[w].show()
 
         self["left_title"].setText("معاينة الحزمة")
         if not self.current_items or self.grid_index < 0 or self.grid_index >= len(self.current_items):
@@ -483,22 +496,30 @@ class Online4TechStoreScreen(Screen):
         entry = self.current_items[self.grid_index]
         data = entry["data"]
         name = to_str(entry["title"])
-        ic_file = os.path.join(ICONS_PATH, "ic_%s.png" % entry["icon"])
-        if not os.path.exists(ic_file):
-            ic_file = os.path.join(ICONS_PATH, "ic_default.png")
-        if os.path.exists(ic_file) and self["preview_icon"].instance:
-            self["preview_icon"].instance.setPixmapFromFile(ic_file)
-            self["preview_icon"].show()
 
-        self["left_pkg_name"].setText(name[:34])
-        sub_list = self.get_sub_items(data)
+        # تحميل الأيقونة الكبيرة 150x150
+        ic_big = os.path.join(ICONS_PATH, "ic_%s_big.png" % entry["icon"])
+        if not os.path.exists(ic_big):
+            ic_big = os.path.join(ICONS_PATH, "ic_default_big.png")
+        if os.path.exists(ic_big) and self["preview_icon"].instance:
+            self["preview_icon"].instance.setPixmapFromFile(ic_big)
+
+        self["left_pkg_name"].setText(name[:28])
         sec_title = self["section_heading"].getText()
+        sub_list = self.get_sub_items(data)
+
+        self["left_stat_lbl"].setText("الحالة")
+        self["left_cat_lbl"].setText("الفئة")
+        self["left_cat_val"].setText(sec_title)
+
         if sub_list is not None:
-            details = "\n\n\n\n\nالنوع :  قسم فرعي\n\nالفئة :  %s\n\nالمحتوى :  %d ملف متاح\n\nاضغط OK لاستعراض الملفات" % (sec_title, len(sub_list))
+            self["left_pkg_ver"].setText("قسم فرعي (%d ملف)" % len(sub_list))
+            self["left_stat_val"].setText("متاح")
+            self["left_desc"].setText("يحتوي هذا القسم على %d ملف.\nاضغط زر OK لاستعراض الملفات." % len(sub_list))
         else:
-            inst = "مثبت على الجهاز" if entry["installed"] else "متاح للتثبيت"
-            details = "\n\n\n\n\nالحالة :  %s\n\nالفئة :  %s\n\nالمصدر :  Online4Tech Cloud\n\nاضغط OK أو الأخضر للتثبيت المباشر" % (inst, sec_title)
-        self["left_info"].setText(details)
+            self["left_pkg_ver"].setText("الإصدار الرسمي")
+            self["left_stat_val"].setText("مثبت" if entry["installed"] else "غير مثبت")
+            self["left_desc"].setText("%s\nاضغط OK أو الزر الأخضر للتثبيت المباشر على الرسيفر." % name)
 
     def show_main(self):
         self.mode = "main"
@@ -651,7 +672,7 @@ class Online4TechStoreScreen(Screen):
     def refresh_server(self):
         self["center_header"].setText("جاري مزامنة قاعدة بيانات Online4Tech...")
         self.load_database(force=True)
-        self["center_header"].setText("🔍  ابحث عن البلاجينات والإضافات وملفات القنوات (اضغط زر 0)")
+        self["center_header"].setText("ابحث عن البلاجينات والإضافات (اضغط زر 0)")
 
     def back_pressed(self):
         if self.nav_stack:
