@@ -30,6 +30,17 @@ def to_str(val):
         return val.encode("utf-8")
     return str(val)
 
+def split_name_desc(raw_name, fallback_desc=""):
+    s = to_str(raw_name).strip()
+    if "(" in s and ")" in s and s.find("(") < s.rfind(")"):
+        i1 = s.find("(")
+        i2 = s.rfind(")")
+        title_part = s[:i1].strip()
+        desc_part = s[i1 + 1:i2].strip()
+        if title_part:
+            return title_part, (desc_part if desc_part else to_str(fallback_desc))
+    return s, to_str(fallback_desc)
+
 CAT_INFO = [
     ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "default"),
     ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة", "default"),
@@ -67,8 +78,8 @@ def resolve_cat_meta(raw_name, sec_key, cnt):
     for key_sub, ar_title, ar_desc, ic in CAT_INFO:
         if key_sub in combined:
             return ar_title, ar_desc, ic
-    clean_title = to_str(raw_name).split("(")[0].strip() or to_str(sec_key)
-    return clean_title, "%d حزمة متاحة في هذا القسم" % cnt, "plugins"
+    clean_title, ext_desc = split_name_desc(raw_name, "%d حزمة متاحة في هذا القسم" % cnt)
+    return (clean_title or to_str(sec_key)), ext_desc, "plugins"
 
 def guess_icon(sec_name):
     _, _, ic = resolve_cat_meta(sec_name, sec_name, 0)
@@ -78,15 +89,15 @@ class O4TCardList(MenuList):
     def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
         self.l.setItemHeight(74)
-        self.l.setFont(0, gFont("Regular", 24))
+        self.l.setFont(0, gFont("Regular", 23))
         self.l.setFont(1, gFont("Regular", 19))
 
 class O4TGridRows(MenuList):
     def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
         self.l.setItemHeight(250)
-        self.l.setFont(0, gFont("Regular", 25))
-        self.l.setFont(1, gFont("Regular", 19))
+        self.l.setFont(0, gFont("Regular", 22))
+        self.l.setFont(1, gFont("Regular", 18))
 
 class O4TSideList(MenuList):
     def __init__(self, items):
@@ -97,27 +108,21 @@ class O4TSideList(MenuList):
 
 SKIN_FHD = """
 <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
-    <!-- الخلفية الجرافيكية الكاملة بالصناديق المنحنية -->
     <widget zPosition="1" name="bg_main" position="0,0" size="1920,1080" alphatest="blend" />
 
-    <!-- الساعة والتاريخ (أعلى اليسار) -->
     <widget zPosition="3" name="clock_lbl" position="55,12" size="260,48" font="Regular;40" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="center" />
     <widget zPosition="3" name="date_lbl" position="55,62" size="260,26" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
 
-    <!-- نص شريط البحث العلوي -->
     <widget zPosition="3" name="center_header" position="645,28" size="710,56" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#161a24" transparent="1" halign="right" valign="center" />
 
-    <!-- شعار البانل (أعلى اليمين) -->
     <eLabel zPosition="3" text="Online4TechPanel" position="1480,18" size="390,46" font="Regular;34" foregroundColor="#f5d061" backgroundColor="#0b0d12" transparent="1" halign="center" />
     <eLabel zPosition="3" text="Online4Tech | الإصدار 7.5" position="1480,66" size="390,28" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
 
-    <!-- العمود الأيسر: معلومات النظام أو بطاقة المعاينة المفصولة بدون أي تداخل -->
     <widget zPosition="3" name="left_title" position="55,192" size="350,34" font="Regular;22" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
     <widget zPosition="3" name="left_info" position="55,250" size="350,650" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
 
-    <!-- عناصر معاينة الحزمة المفصولة (تظهر عند الدخول للأقسام فقط) -->
     <widget zPosition="4" name="preview_icon" position="155,245" size="150,150" alphatest="blend" />
-    <widget zPosition="4" name="left_pkg_name" position="55,412" size="350,42" font="Regular;26" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="center" />
+    <widget zPosition="4" name="left_pkg_name" position="50,412" size="360,42" font="Regular;24" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="center" />
     <widget zPosition="4" name="left_pkg_ver" position="55,456" size="350,30" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
 
     <widget zPosition="4" name="left_stat_lbl" position="235,515" size="150,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
@@ -128,20 +133,19 @@ SKIN_FHD = """
 
     <widget zPosition="4" name="left_desc" position="55,620" size="350,220" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
 
-    <!-- العمود الأوسط: قائمة البطاقات -->
+    <!-- ارتفاع 740 بكسل يعرض 10 بطاقات كاملة بالضبط بدون قص البطاقة رقم 11 -->
     <widget zPosition="3" name="page_info" position="465,134" size="380,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
     <widget zPosition="3" name="section_heading" position="860,126" size="550,40" font="Regular;29" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
-    <widget zPosition="3" name="list" position="460,174" size="960,785" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
+    <widget zPosition="3" name="list" position="460,180" size="960,740" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
-    <!-- العمود الأيمن: الفئات -->
+    <!-- ارتفاع 700 بكسل يعرض 14 فئة كاملة بالضبط -->
     <widget zPosition="3" name="right_header" position="1480,162" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
     <widget zPosition="3" name="side_list" position="1468,210" size="404,700" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
     <widget zPosition="3" name="side_page_lbl" position="1480,918" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
 
-    <!-- وضع الشبكة 4x3 -->
-    <widget zPosition="4" name="grid_list" position="55,172" size="1810,780" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
+    <!-- ارتفاع 750 بكسل يعرض 3 صفوف شبكة كاملة (12 بطاقة) -->
+    <widget zPosition="4" name="grid_list" position="55,175" size="1810,750" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
-    <!-- نصوص الشريط السفلي -->
     <widget zPosition="3" name="key_red" position="1635,1003" size="180,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
     <widget zPosition="3" name="key_green" position="1325,1003" size="210,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
     <widget zPosition="3" name="key_yellow" position="945,1003" size="290,36" font="Regular;21" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="right" />
@@ -281,10 +285,6 @@ class Online4TechStoreScreen(Screen):
         return None
 
     def startup(self):
-        bg_file = os.path.join(ICONS_PATH, "bg_main.png")
-        if os.path.exists(bg_file) and self["bg_main"].instance:
-            self["bg_main"].instance.setPixmapFromFile(bg_file)
-
         for attr, fname in [
             ("card_norm", "card_norm_fhd.png"),
             ("card_sel",  "card_sel_fhd.png"),
@@ -304,6 +304,13 @@ class Online4TechStoreScreen(Screen):
 
     def apply_view_visibility(self):
         is_grid = (self.view_style == "grid")
+        bg_name = "bg_grid.png" if is_grid else "bg_main.png"
+        bg_file = os.path.join(ICONS_PATH, bg_name)
+        if not os.path.exists(bg_file):
+            bg_file = os.path.join(ICONS_PATH, "bg_main.png")
+        if os.path.exists(bg_file) and self["bg_main"].instance:
+            self["bg_main"].instance.setPixmapFromFile(bg_file)
+
         for w in ["left_title", "page_info", "section_heading", "list", "right_header", "side_list", "side_page_lbl"]:
             if is_grid:
                 self[w].hide()
@@ -408,8 +415,8 @@ class Online4TechStoreScreen(Screen):
 
         t_col = 0x00f5d061 if is_selected else 0x00ffffff
         if subtitle:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 500, 12, 360, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 115, 12, 375, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 485, 12, 375, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 118, 12, 355, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
         else:
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 130, 12, 730, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
 
@@ -440,11 +447,11 @@ class Online4TechStoreScreen(Screen):
                     row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0, 6, 430, 235, bg_pix))
                 ic_pix = self.get_icon_pix(entry["icon"])
                 if ic_pix:
-                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 342, 24, 64, 64, ic_pix))
+                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 344, 22, 64, 64, ic_pix))
                 t_col = 0x00f5d061 if is_selected else 0x00ffffff
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 26, 305, 58, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(entry["title"]), t_col, t_col))
-                sub_txt = to_str(entry["subtitle"]) or "إدارة وتثبيت الحزمة مباشرة"
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 105, 385, 80, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, sub_txt, 0x00cbd5e1, 0x00ffffff))
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 16, 24, 316, 60, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(entry["title"]), t_col, t_col))
+                sub_txt = to_str(entry["subtitle"]) or "متجر أونلاين تكنولوجي"
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 18, 102, 390, 78, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, sub_txt, 0x00cbd5e1, 0x00ffffff))
                 if entry["installed"]:
                     if self.badge_inst:
                         row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 24, 190, 88, 32, self.badge_inst))
@@ -485,7 +492,6 @@ class Online4TechStoreScreen(Screen):
             self["left_info"].show()
             return
 
-        # وضع معاينة الحزمة بدون أي تداخل مع left_info
         self["left_info"].hide()
         for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
             self[w].show()
@@ -496,8 +502,8 @@ class Online4TechStoreScreen(Screen):
         entry = self.current_items[self.grid_index]
         data = entry["data"]
         name = to_str(entry["title"])
+        sub_desc = to_str(entry["subtitle"])
 
-        # تحميل الأيقونة الكبيرة 150x150
         ic_big = os.path.join(ICONS_PATH, "ic_%s_big.png" % entry["icon"])
         if not os.path.exists(ic_big):
             ic_big = os.path.join(ICONS_PATH, "ic_default_big.png")
@@ -517,9 +523,10 @@ class Online4TechStoreScreen(Screen):
             self["left_stat_val"].setText("متاح")
             self["left_desc"].setText("يحتوي هذا القسم على %d ملف.\nاضغط زر OK لاستعراض الملفات." % len(sub_list))
         else:
-            self["left_pkg_ver"].setText("الإصدار الرسمي")
+            self["left_pkg_ver"].setText(sub_desc if sub_desc else "الإصدار الرسمي")
             self["left_stat_val"].setText("مثبت" if entry["installed"] else "غير مثبت")
-            self["left_desc"].setText("%s\nاضغط OK أو الزر الأخضر للتثبيت المباشر على الرسيفر." % name)
+            desc_line = sub_desc if sub_desc else name
+            self["left_desc"].setText("%s\nاضغط OK أو الزر الأخضر للتثبيت المباشر على الرسيفر." % desc_line)
 
     def show_main(self):
         self.mode = "main"
@@ -541,15 +548,16 @@ class Online4TechStoreScreen(Screen):
 
         self.current_items = []
         for item in items_list:
-            name = item.get("name", "") or item.get("title", "Package")
+            raw_name = item.get("name", "") or item.get("title", "Package")
+            clean_title, ext_desc = split_name_desc(raw_name, "")
             sub_list = self.get_sub_items(item)
             if sub_list is not None:
                 cnt = len(sub_list)
                 self.current_items.append({
-                    "title": name,
-                    "subtitle": "قسم فرعي (%d ملف)" % cnt,
+                    "title": clean_title,
+                    "subtitle": ext_desc or ("قسم فرعي (%d ملف)" % cnt),
                     "badge": "(%d)" % cnt,
-                    "icon": guess_icon(name + " " + icon_hint),
+                    "icon": guess_icon(raw_name + " " + icon_hint),
                     "installed": False,
                     "data": item
                 })
@@ -557,8 +565,8 @@ class Online4TechStoreScreen(Screen):
                 path = item.get("path", "")
                 inst = bool(path and os.path.exists(path))
                 self.current_items.append({
-                    "title": name,
-                    "subtitle": "",
+                    "title": clean_title,
+                    "subtitle": ext_desc,
                     "badge": "",
                     "icon": ic_key,
                     "installed": inst,
