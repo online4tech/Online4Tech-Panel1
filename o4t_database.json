@@ -4827,8 +4827,8 @@
                ],
     "online4tech_official":  [
                                  {
-                                     "name":  "Online4Tech Panel v7.0 (اللوحة الرسمية)",
-                                     "cmd":  "wget --no-check-certificate -qO /tmp/o4t.ipk https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.0_all.ipk \u0026\u0026 opkg install --force-overwrite /tmp/o4t.ipk \u0026\u0026 rm -f /tmp/o4t.ipk",
+                                     "name":  "Online4Tech Panel v7.5 (اللوحة الرسمية)",
+                                     "cmd":  "wget --no-check-certificate -qO /tmp/o4t.ipk https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk \u0026\u0026 opkg install --force-overwrite /tmp/o4t.ipk \u0026\u0026 rm -f /tmp/o4t.ipk",
                                      "path":  "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech",
                                      "remove_cmd":  "opkg remove enigma2-plugin-extensions-online4tech"
                                  },

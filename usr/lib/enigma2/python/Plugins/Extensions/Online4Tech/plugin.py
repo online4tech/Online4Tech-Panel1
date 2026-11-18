@@ -11,6 +11,7 @@ def Plugins(**kwargs):
             name="Online4Tech Panel & Store",
             description="Online4Tech All-in-One Store (350+ Plugins, Skins & Cams)",
             where=[PluginDescriptor.WHERE_PLUGINMENU, PluginDescriptor.WHERE_EXTENSIONSMENU],
+            icon="plugin.png",
             fnc=main
         )
     ]
