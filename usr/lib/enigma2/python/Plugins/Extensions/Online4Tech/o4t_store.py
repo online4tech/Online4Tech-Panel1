@@ -10,7 +10,7 @@ from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
+from enigma import eListboxPythonMultiContent, gFont, addFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
 from Tools.LoadPixmap import LoadPixmap
 
 PY3 = sys.version_info[0] >= 3
@@ -21,9 +21,25 @@ else:
 
 PLUGIN_PATH = "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
 ICONS_PATH = os.path.join(PLUGIN_PATH, "icons")
+FONTS_PATH = os.path.join(PLUGIN_PATH, "fonts")
 DB_URL = "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/o4t_database.json"
 CACHE_FILE = "/tmp/o4t_database.json"
 SETTINGS_FILE = "/etc/enigma2/o4t_settings.json"
+
+# تسجيل الخطوط المخصصة (Cairo و Amiri) إذا توفرت في مجلد fonts بالبلجن
+if not os.path.exists(FONTS_PATH):
+    try:
+        os.makedirs(FONTS_PATH)
+    except Exception:
+        pass
+
+for fname, fkey in [("Cairo-Regular.ttf", "Cairo"), ("Amiri-Regular.ttf", "Amiri")]:
+    fpath = os.path.join(FONTS_PATH, fname)
+    if os.path.exists(fpath):
+        try:
+            addFont(fpath, fkey, 100, 0)
+        except Exception:
+            pass
 
 def to_str(val):
     if val is None:
@@ -54,7 +70,6 @@ def save_settings(cfg):
     except Exception:
         pass
 
-# قاموس تصحيح الأخطاء الإملائية في الأسماء الإنجليزية
 SPELL_FIXES = {
     "Update Dependencic": "Update Dependencies",
     "update dependencic": "Update Dependencies",
@@ -86,7 +101,6 @@ def split_name_desc(raw_name, fallback_desc=""):
             return title_part, (desc_part if desc_part else to_str(fallback_desc))
     return s, to_str(fallback_desc)
 
-# نصوص الواجهة الكاملة بالعربية والإنجليزية بدون أي أخطاء إملائية
 UI_TEXT = {
     "ar": {
         "ver_title": "Online4Tech | الإصدار 7.5",
@@ -162,7 +176,6 @@ UI_TEXT = {
     }
 }
 
-# قاموس الأقسام الفرعية ثنائي اللغة (العربية + الإنجليزية الصحيحة إملائيا)
 CAT_INFO = [
     ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "Online4Tech Exclusives", "Official Online4Tech plugins & tools",      "default",   "exclusive"),
     ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة",     "My Favorites",           "Most popular & essential Enigma2 plugins",   "default",   "exclusive"),
@@ -191,7 +204,6 @@ CAT_INFO = [
     ("setting",     "الإعدادات",               "جرب قنوات وترددات وإعدادات جديدة",      "Tuner & Settings",       "Transponders, satellites.xml & configs",     "channels",  "system"),
 ]
 
-# الأقسام الستة الرئيسية ثنائية اللغة مرتبة من الأهم إلى الأقل أهمية
 MASTER_GROUPS = [
     ("exclusive", "أونلاين تكنولوجي", "الحصريات والمفضلة وأحدث ملفات القنوات",             "Online4Tech", "Exclusives, Favorites & Channel Lists",     "default"),
     ("enigma2",   "البلاجنز",         "الإضافات والبانلات والفيدات والميديا وسييف ونوفالر", "Plugins",     "Addons, Panels, Feeds, Media & Novaler",    "plugins"),
@@ -211,7 +223,6 @@ def resolve_cat_full(raw_name, sec_key, cnt, lang="ar"):
     clean_title, ext_desc = split_name_desc(raw_name, "")
     if lang == "en":
         fallback = "%d packages available" % cnt
-        # في الوضع الإنجليزي إذا كان الوصف بين القوسين عربيا نستبدله بوصف إنجليزي نظيف
         if any(ord(ch) > 127 for ch in ext_desc):
             ext_desc = fallback
     else:
@@ -412,20 +423,24 @@ class Online4TechStoreScreen(Screen):
         if self.lang == "ar":
             options = [
                 ("تغيير اللغة إلى: %s" % cur_lang_lbl, "toggle_lang"),
+                ("نوع الخط: الافتراضي (Regular)", "font_regular"),
+                ("نوع الخط: عريض (Bold)", "font_bold"),
+                ("نوع الخط: كايرو (Cairo)", "font_cairo"),
+                ("نوع الخط: أميري (Amiri)", "font_amiri"),
                 ("حجم الخط: صغير (Small)", "scale_small"),
                 ("حجم الخط: قياسي (Normal)", "scale_normal"),
                 ("حجم الخط: كبير (Large)", "scale_large"),
-                ("نوع الخط: قياسي (Regular)", "font_regular"),
-                ("نوع الخط: عريض / واضح (Bold)", "font_bold"),
             ]
         else:
             options = [
                 ("Switch Language to: %s" % cur_lang_lbl, "toggle_lang"),
+                ("Font Type: Regular (Default)", "font_regular"),
+                ("Font Type: Bold", "font_bold"),
+                ("Font Type: Cairo", "font_cairo"),
+                ("Font Type: Amiri", "font_amiri"),
                 ("Font Size: Small", "scale_small"),
-                ("Font Size: Normal (Default)", "scale_normal"),
+                ("Font Size: Normal", "scale_normal"),
                 ("Font Size: Large", "scale_large"),
-                ("Font Type: Regular", "font_regular"),
-                ("Font Type: Bold / Clear", "font_bold"),
             ]
         self.session.openWithCallback(self.settings_menu_cb, ChoiceBox, title=self.tr("menu_title"), list=options)
 
@@ -436,16 +451,20 @@ class Online4TechStoreScreen(Screen):
         if act == "toggle_lang":
             self.lang = "en" if self.lang == "ar" else "ar"
             self.cfg["lang"] = self.lang
+        elif act == "font_regular":
+            self.cfg["font_type"] = "Regular"
+        elif act == "font_bold":
+            self.cfg["font_type"] = "Bold"
+        elif act == "font_cairo":
+            self.cfg["font_type"] = "Cairo"
+        elif act == "font_amiri":
+            self.cfg["font_type"] = "Amiri"
         elif act == "scale_small":
             self.cfg["font_scale"] = "small"
         elif act == "scale_normal":
             self.cfg["font_scale"] = "normal"
         elif act == "scale_large":
             self.cfg["font_scale"] = "large"
-        elif act == "font_regular":
-            self.cfg["font_type"] = "Regular"
-        elif act == "font_bold":
-            self.cfg["font_type"] = "Bold"
 
         save_settings(self.cfg)
         self.apply_font_settings()
