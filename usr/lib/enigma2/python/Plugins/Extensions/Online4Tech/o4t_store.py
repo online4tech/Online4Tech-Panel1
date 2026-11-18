@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys, json, time, socket, traceback, urllib.request, ssl
+import os, sys, json, time, socket, urllib.request, ssl
 from Screens.Screen import Screen
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
@@ -84,7 +84,7 @@ def ar(text):
     return " ".join(res_tokens)
 
 AR_CAT_MAP = {
-    "Online4Tech Official": (u"باقة أونلاين تكنولوجي الرسمية", u"إضافات وملفات حصرية لمتجر Online4Tech", "default"),
+    "Online4Tech Official": (u"باقة أونلاين تكنولوجي", u"إضافات وملفات حصرية لمتجر Online4Tech", "default"),
     "My Favourites": (u"المفضلة", u"الإضافات والبلاجنات المختارة", "default"),
     "Update Dependencic": (u"تحديث المكتبات", u"تحديث مكتبات البايثون والنظام", "tools"),
     "Backup Images": (u"صور الباك اب", u"تحميل وتثبيت صور أجهزة انيجما 2", "display"),
@@ -109,9 +109,17 @@ class O4TCardList(MenuList):
         self.l.setFont(0, gFont("Regular", 22))
         self.l.setFont(1, gFont("Regular", 18))
 
+class O4TGridRows(MenuList):
+    def __init__(self, items):
+        MenuList.__init__(self, items, False, eListboxPythonMultiContent)
+        self.l.setItemHeight(255)
+        self.l.setFont(0, gFont("Regular", 24))
+        self.l.setFont(1, gFont("Regular", 18))
+
 class Online4TechStoreScreen(Screen):
     skin = """
     <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
+        <!-- الشريط العلوي -->
         <eLabel position="0,0" size="1920,115" backgroundColor="#0f1218" />
         <eLabel position="0,114" size="1920,2" backgroundColor="#1e222d" />
 
@@ -125,20 +133,25 @@ class Online4TechStoreScreen(Screen):
         <eLabel text="Online4TechPanel" position="1480,18" size="390,46" font="Regular;34" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="center" />
         <eLabel text="Online4Tech | v7.5 Gold" position="1480,68" size="390,28" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0f1218" transparent="1" halign="center" />
 
-        <eLabel position="40,145" size="380,820" backgroundColor="#11141c" />
+        <!-- عناصر وضع القائمة (3 أعمدة) -->
+        <widget name="left_bg" position="40,145" size="380,820" backgroundColor="#11141c" />
         <widget name="left_title" position="55,165" size="350,38" font="Regular;24" foregroundColor="#f5d061" backgroundColor="#11141c" transparent="1" halign="center" />
-        <eLabel position="65,212" size="330,1" backgroundColor="#262b38" />
+        <widget name="left_line" position="65,212" size="330,1" backgroundColor="#262b38" />
         <widget name="left_info" position="60,230" size="340,710" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#11141c" transparent="1" halign="center" />
 
         <widget name="page_info" position="460,128" size="320,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
         <widget name="section_heading" position="1080,124" size="340,38" font="Regular;28" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
         <widget name="list" position="460,170" size="960,795" backgroundColor="#0b0d12" backgroundColorSelected="#262012" scrollbarMode="showNever" enableWrapAround="1" />
 
-        <eLabel position="1460,145" size="420,820" backgroundColor="#11141c" />
+        <widget name="right_bg" position="1460,145" size="420,820" backgroundColor="#11141c" />
         <widget name="right_header" position="1480,165" size="380,36" font="Regular;22" foregroundColor="#94a3b8" backgroundColor="#11141c" transparent="1" halign="center" />
-        <eLabel position="1480,210" size="380,1" backgroundColor="#262b38" />
+        <widget name="right_line" position="1480,210" size="380,1" backgroundColor="#262b38" />
         <widget name="side_list" position="1475,225" size="390,720" font="Regular;23" itemHeight="54" foregroundColor="#cbd5e1" backgroundColor="#11141c" foregroundColorSelected="#f5d061" backgroundColorSelected="#262012" scrollbarMode="showNever" enableWrapAround="1" />
 
+        <!-- وضع الشبكة 4x3 (ملء الشاشة) -->
+        <widget name="grid_list" position="55,165" size="1810,780" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
+
+        <!-- الشريط السفلي لأزرار الريموت -->
         <eLabel position="0,990" size="1920,90" backgroundColor="#0f1218" />
         <eLabel position="0,990" size="1920,2" backgroundColor="#1e222d" />
 
@@ -149,12 +162,12 @@ class Online4TechStoreScreen(Screen):
         <widget name="key_green" position="1310,1016" size="200,36" font="Regular;22" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
 
         <eLabel position="1220,1022" size="24,24" backgroundColor="#eab308" />
-        <widget name="key_yellow" position="1000,1016" size="210,36" font="Regular;22" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
+        <widget name="key_yellow" position="940,1016" size="270,36" font="Regular;22" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="right" />
 
-        <eLabel position="910,1022" size="24,24" backgroundColor="#3b82f6" />
-        <widget name="key_blue" position="700,1016" size="200,36" font="Regular;22" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
+        <eLabel position="850,1022" size="24,24" backgroundColor="#3b82f6" />
+        <widget name="key_blue" position="640,1016" size="200,36" font="Regular;22" foregroundColor="#e2e8f0" backgroundColor="#0f1218" transparent="1" halign="right" />
 
-        <widget name="mode_badge" position="80,1016" size="300,36" font="Regular;22" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="left" />
+        <widget name="mode_badge" position="80,1016" size="380,36" font="Regular;22" foregroundColor="#f5d061" backgroundColor="#0f1218" transparent="1" halign="left" />
     </screen>
     """
 
@@ -163,34 +176,53 @@ class Online4TechStoreScreen(Screen):
         self["clock_lbl"] = Label("")
         self["date_lbl"] = Label("")
         self["center_header"] = Label(ar(u"متجر أونلاين تكنولوجي الشامل"))
+
+        self["left_bg"] = Label("")
         self["left_title"] = Label(ar(u"النظام"))
+        self["left_line"] = Label("")
         self["left_info"] = Label("")
+
         self["page_info"] = Label("")
         self["section_heading"] = Label(ar(u"الرئيسية"))
+
+        self["right_bg"] = Label("")
         self["right_header"] = Label(ar(u"الأقسام"))
+        self["right_line"] = Label("")
+
         self["key_red"] = Label(ar(u"خروج"))
         self["key_green"] = Label(ar(u"تثبيت / فتح"))
-        self["key_yellow"] = Label(ar(u"تحديث السيرفر"))
-        self["key_blue"] = Label(ar(u"حذف"))
-        self["mode_badge"] = Label(ar(u"حديث  |  متعدد"))
+        self["key_yellow"] = Label(ar(u"تبديل العرض (شبكة)"))
+        self["key_blue"] = Label(ar(u"تحديث السيرفر"))
+        self["mode_badge"] = Label(ar(u"عرض القائمة  |  أصفر للشبكة"))
 
         self["list"] = O4TCardList([])
         self["side_list"] = MenuList([])
+        self["grid_list"] = O4TGridRows([])
 
         self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions"], {
             "ok": self.ok_pressed,
             "cancel": self.back_pressed,
             "red": self.back_pressed,
             "green": self.ok_pressed,
-            "yellow": self.refresh_server,
-            "blue": self.uninstall_pressed,
+            "yellow": self.toggle_view_mode,
+            "blue": self.refresh_server,
             "up": self.move_up,
             "down": self.move_down,
+            "left": self.move_left,
+            "right": self.move_right,
         }, -1)
 
         self.db = {}
         self.mode = "main"
+        self.view_style = "list"
+        self.current_items = []
+        self.grid_index = 0
+        self.sec_icon_key = "default"
+
         self.card_norm = None
+        self.grid_norm = None
+        self.grid_sel = None
+
         self.timer = eTimer()
         self.timer.callback.append(self.update_clock)
         self.onLayoutFinish.append(self.startup)
@@ -234,15 +266,41 @@ class Online4TechStoreScreen(Screen):
 
     def startup(self):
         try:
-            c_file = os.path.join(ICONS_PATH, "card_normal.png")
-            if os.path.exists(c_file):
-                self.card_norm = LoadPixmap(c_file)
+            for attr, fname in [("card_norm", "card_normal.png"), ("grid_norm", "grid_norm.png"), ("grid_sel", "grid_sel.png")]:
+                p = os.path.join(ICONS_PATH, fname)
+                if os.path.exists(p):
+                    setattr(self, attr, LoadPixmap(p))
             self.update_clock()
             self.timer.start(10000)
-            self["left_info"].setText(self.get_sys_info_text())
+            self.apply_view_visibility()
             self.load_database(force=False)
         except Exception as e:
             self["center_header"].setText("Startup Error: " + str(e))
+
+    def apply_view_visibility(self):
+        is_grid = (self.view_style == "grid")
+        for w in ["left_bg", "left_title", "left_line", "left_info", "page_info", "section_heading", "list", "right_bg", "right_header", "right_line", "side_list"]:
+            if is_grid:
+                self[w].hide()
+            else:
+                self[w].show()
+        if is_grid:
+            self["grid_list"].show()
+            self["key_yellow"].setText(ar(u"تبديل العرض (قائمة)"))
+            self["mode_badge"].setText(ar(u"عرض الشبكة 4x3  |  أصفر للقائمة"))
+        else:
+            self["grid_list"].hide()
+            self["key_yellow"].setText(ar(u"تبديل العرض (شبكة)"))
+            self["mode_badge"].setText(ar(u"عرض القائمة  |  أصفر للشبكة"))
+
+    def toggle_view_mode(self):
+        if self.view_style == "list":
+            self.grid_index = self["list"].getSelectedIndex()
+            self.view_style = "grid"
+        else:
+            self.view_style = "list"
+        self.apply_view_visibility()
+        self.render_current_items()
 
     def load_database(self, force=False):
         try:
@@ -260,11 +318,14 @@ class Online4TechStoreScreen(Screen):
         except Exception as e:
             self["center_header"].setText("DB Error: " + str(e))
 
-    def make_card(self, title, subtitle, badge, icon_key, is_installed, data):
+    def get_icon_pix(self, icon_key):
         ic_file = os.path.join(ICONS_PATH, "ic_%s.png" % icon_key)
         if not os.path.exists(ic_file):
             ic_file = os.path.join(ICONS_PATH, "ic_default.png")
-        ic_pix = LoadPixmap(ic_file) if os.path.exists(ic_file) else None
+        return LoadPixmap(ic_file) if os.path.exists(ic_file) else None
+
+    def make_list_card(self, title, subtitle, badge, icon_key, is_installed, data):
+        ic_pix = self.get_icon_pix(icon_key)
         res = [data]
         if self.card_norm:
             res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 10, 3, 940, 68, self.card_norm))
@@ -278,60 +339,112 @@ class Online4TechStoreScreen(Screen):
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 25, 16, 105, 40, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, badge, 0x00f5d061, 0x00ffffff))
         return res
 
-    def show_main(self):
-        try:
-            self.mode = "main"
-            self["key_red"].setText(ar(u"خروج"))
-            self["section_heading"].setText(ar(u"الأقسام الرئيسية"))
-            self["left_title"].setText(ar(u"النظام"))
-            self["left_info"].setText(self.get_sys_info_text())
+    def build_grid_rows(self):
+        # 4 أعمدة في كل صف من اليمين إلى اليسار كما في الصورة الثالثة
+        cols = 4
+        col_x = [1365, 915, 465, 15]
+        rows = []
+        total = len(self.current_items)
+        for r_start in range(0, total, cols):
+            row_entries = [r_start]
+            for c in range(cols):
+                idx = r_start + c
+                if idx >= total:
+                    break
+                entry = self.current_items[idx]
+                x0 = col_x[c]
+                is_selected = (idx == self.grid_index)
+                bg_pix = self.grid_sel if is_selected else self.grid_norm
+                if bg_pix:
+                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0, 8, 430, 235, bg_pix))
+                ic_pix = self.get_icon_pix(entry["icon"])
+                if ic_pix:
+                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 350, 28, 52, 52, ic_pix))
+                t_col = 0x00f5d061 if is_selected else 0x00ffffff
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 28, 315, 52, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, ar(entry["title"]), t_col, t_col))
+                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 95, 390, 95, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, ar(entry["subtitle"]), 0x00cbd5e1, 0x00ffffff))
+                if entry["installed"]:
+                    row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 20, 192, 110, 32, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, ar(u"مثبت"), 0x00ff5555, 0x00ff5555))
+            rows.append(row_entries)
+        self["grid_list"].setList(rows)
+        if rows:
+            self["grid_list"].moveToIndex(self.grid_index // cols)
 
-            cats = self.db.get("main", [])
+    def render_current_items(self):
+        if self.view_style == "grid":
+            self.build_grid_rows()
+        else:
             cards = []
-            side_items = []
-            for item in cats:
-                en_name = item.get("name", "")
-                sec = item.get("section", "")
-                cnt = len(self.db.get(sec, []))
-                ar_title, ar_desc, ic_key = AR_CAT_MAP.get(en_name, (en_name, "%d Packages" % cnt, "default"))
-                cards.append(self.make_card(ar_title, ar_desc, "(%d)" % cnt, ic_key, False, item))
-                side_items.append((ar(ar_title) + "  (%d)" % cnt, item))
-
+            for entry in self.current_items:
+                cards.append(self.make_list_card(entry["title"], entry["subtitle"], entry["badge"], entry["icon"], entry["installed"], entry["data"]))
             self["list"].setList(cards)
-            self["side_list"].setList(side_items)
-            self["page_info"].setText(ar(u"%d عنصر" % len(cards)))
-        except Exception as e:
-            self["center_header"].setText("Main Error: " + str(e))
+            if cards and self.grid_index < len(cards):
+                self["list"].moveToIndex(self.grid_index)
+
+    def show_main(self):
+        self.mode = "main"
+        self.grid_index = 0
+        self["key_red"].setText(ar(u"خروج"))
+        self["section_heading"].setText(ar(u"الأقسام الرئيسية"))
+        self["left_title"].setText(ar(u"النظام"))
+        self["left_info"].setText(self.get_sys_info_text())
+
+        cats = self.db.get("main", [])
+        self.current_items = []
+        side_items = []
+        for item in cats:
+            en_name = item.get("name", "")
+            sec = item.get("section", "")
+            cnt = len(self.db.get(sec, []))
+            ar_title, ar_desc, ic_key = AR_CAT_MAP.get(en_name, (en_name, "%d Packages" % cnt, "default"))
+            self.current_items.append({
+                "title": ar_title,
+                "subtitle": ar_desc,
+                "badge": "(%d)" % cnt,
+                "icon": ic_key,
+                "installed": False,
+                "data": item
+            })
+            side_items.append((ar(ar_title) + "  (%d)" % cnt, item))
+
+        self["side_list"].setList(side_items)
+        self["page_info"].setText(ar(u"%d عنصر" % len(self.current_items)))
+        self.render_current_items()
 
     def show_section(self, sec_key, sec_name):
-        try:
-            self.mode = "section"
-            self["key_red"].setText(ar(u"رجوع"))
-            ar_title, _, ic_key = AR_CAT_MAP.get(sec_name, (sec_name, "", "default"))
-            self["section_heading"].setText(ar(ar_title))
-            self["left_title"].setText(ar(u"تفاصيل العنصر"))
+        self.mode = "section"
+        self.grid_index = 0
+        self["key_red"].setText(ar(u"رجوع"))
+        ar_title, _, ic_key = AR_CAT_MAP.get(sec_name, (sec_name, "", "default"))
+        self["section_heading"].setText(ar(ar_title))
+        self["left_title"].setText(ar(u"تفاصيل العنصر"))
 
-            items = self.db.get(sec_key, [])
-            cards = []
-            for item in items:
-                name = item.get("name", "Package")
-                path = item.get("path", "")
-                inst = bool(path and os.path.exists(path))
-                cards.append(self.make_card(name, "Online4Tech", "", ic_key, inst, item))
+        items = self.db.get(sec_key, [])
+        self.current_items = []
+        for item in items:
+            name = item.get("name", "Package")
+            path = item.get("path", "")
+            inst = bool(path and os.path.exists(path))
+            self.current_items.append({
+                "title": name,
+                "subtitle": "Online4Tech Official",
+                "badge": "",
+                "icon": ic_key,
+                "installed": inst,
+                "data": item
+            })
 
-            self["list"].setList(cards)
-            self["page_info"].setText(ar(u"%d حزمة" % len(cards)))
-            self.update_left_detail()
-        except Exception as e:
-            self["center_header"].setText("Sec Error: " + str(e))
+        self["page_info"].setText(ar(u"%d حزمة" % len(self.current_items)))
+        self.render_current_items()
+        self.update_left_detail()
 
     def update_left_detail(self):
-        if self.mode != "section":
+        if self.mode != "section" or not self.current_items:
             return
-        cur = self["list"].getCurrent()
-        if not cur:
+        idx = self.grid_index if self.view_style == "grid" else self["list"].getSelectedIndex()
+        if idx < 0 or idx >= len(self.current_items):
             return
-        data = cur[0]
+        data = self.current_items[idx]["data"]
         name = data.get("name", "")
         path = data.get("path", "")
         inst = ar(u"مثبت") if (path and os.path.exists(path)) else ar(u"غير مثبت")
@@ -341,43 +454,54 @@ class Online4TechStoreScreen(Screen):
         self["left_info"].setText(txt)
 
     def move_up(self):
-        self["list"].up()
-        if self.mode == "main":
-            self["side_list"].moveToIndex(self["list"].getSelectedIndex())
+        if self.view_style == "grid":
+            if self.grid_index >= 4:
+                self.grid_index -= 4
+                self.build_grid_rows()
         else:
-            self.update_left_detail()
+            self["list"].up()
+            self.grid_index = self["list"].getSelectedIndex()
+            if self.mode == "main":
+                self["side_list"].moveToIndex(self.grid_index)
+            else:
+                self.update_left_detail()
 
     def move_down(self):
-        self["list"].down()
-        if self.mode == "main":
-            self["side_list"].moveToIndex(self["list"].getSelectedIndex())
+        if self.view_style == "grid":
+            if self.grid_index + 4 < len(self.current_items):
+                self.grid_index += 4
+                self.build_grid_rows()
         else:
-            self.update_left_detail()
+            self["list"].down()
+            self.grid_index = self["list"].getSelectedIndex()
+            if self.mode == "main":
+                self["side_list"].moveToIndex(self.grid_index)
+            else:
+                self.update_left_detail()
+
+    def move_left(self):
+        if self.view_style == "grid" and self.grid_index + 1 < len(self.current_items):
+            self.grid_index += 1
+            self.build_grid_rows()
+
+    def move_right(self):
+        if self.view_style == "grid" and self.grid_index > 0:
+            self.grid_index -= 1
+            self.build_grid_rows()
 
     def ok_pressed(self):
-        cur = self["list"].getCurrent()
-        if not cur:
+        if not self.current_items:
             return
-        data = cur[0]
+        idx = self.grid_index if self.view_style == "grid" else self["list"].getSelectedIndex()
+        if idx < 0 or idx >= len(self.current_items):
+            return
+        data = self.current_items[idx]["data"]
         if self.mode == "main":
             self.show_section(data.get("section", ""), data.get("name", ""))
         else:
             cmd = data.get("cmd", "")
             if cmd:
                 self.session.open(Console, title="Online4Tech: " + data.get("name", ""), cmdlist=[cmd])
-
-    def uninstall_pressed(self):
-        if self.mode != "section":
-            return
-        cur = self["list"].getCurrent()
-        if not cur:
-            return
-        data = cur[0]
-        rcmd = data.get("remove_cmd", "")
-        if rcmd:
-            self.session.open(Console, title="Removing: " + data.get("name", ""), cmdlist=[rcmd])
-        else:
-            self.session.open(MessageBox, ar(u"لا يوجد أمر حذف تلقائي لهذا العنصر"), MessageBox.TYPE_INFO, timeout=3)
 
     def refresh_server(self):
         self["center_header"].setText(ar(u"جاري تحديث قاعدة البيانات..."))
