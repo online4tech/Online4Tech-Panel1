@@ -1,309 +1,195 @@
 #!/bin/sh
 # ==============================================================================
-#  ONLINE4TECH SUPER SCRIPT v2.0 - Categorized Enigma2 Manager
+#  ONLINE4TECH SUPER SCRIPT v3.0 - Full JSON Store Engine (350+ Items)
 #  By: Ahmed Nagi Romeh (Online4Tech)
 # ==============================================================================
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-RED='\033[0;31m'
-WHITE='\033[1;37m'
-MAGENTA='\033[0;35m'
-NC='\033[0m'
+DB_URL="https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/o4t_database.json"
+DB_FILE="/tmp/o4t_database.json"
+PY_RUNNER="/tmp/o4t_menu.py"
 
-REPO_BASE="https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main"
-DB_URL="$REPO_BASE/database.txt"
-DB_FILE="/tmp/o4t_db.txt"
+echo "Connecting to Online4Tech Store Server..."
+wget --no-check-certificate -qO "$DB_FILE" "$DB_URL"
 
-# تحميل قاعدة البيانات عند التشغيل
-fetch_db() {
-    wget --no-check-certificate -qO "$DB_FILE" "$DB_URL"
-    if [ ! -s "$DB_FILE" ]; then
-        echo -e "${RED}[ERROR] Failed to connect to Online4Tech Server!${NC}"
-        exit 1
-    fi
-    sed -i 's/\r$//' "$DB_FILE"
-}
+if [ ! -s "$DB_FILE" ]; then
+    echo "[ERROR] Failed to download database from GitHub!"
+    exit 1
+fi
 
-# دالة التثبيت الموحدة (IPK & DEB)
-install_pkg() {
-    TITLE="$1"
-    URL="$2"
-    echo -e "\n${CYAN}====================================================${NC}"
-    echo -e "${YELLOW}[Online4Tech] Downloading: ${WHITE}$TITLE${NC}"
-    echo -e "${CYAN}====================================================${NC}"
-    
-    if echo "$URL" | grep -qi "\.deb$"; then
-        TMP_FILE="/tmp/o4t_pkg.deb"
-        wget --no-check-certificate -q --show-progress -O "$TMP_FILE" "$URL" 2>/dev/null || wget --no-check-certificate -qO "$TMP_FILE" "$URL"
-        if [ -s "$TMP_FILE" ]; then
-            dpkg -i --force-overwrite "$TMP_FILE"
-            apt-get update && apt-get -f install -y
-            echo -e "\n${GREEN}[SUCCESS] $TITLE Installed Successfully!${NC}"
-        else
-            echo -e "\n${RED}[ERROR] File not found on server or download failed!${NC}"
-        fi
-        rm -f "$TMP_FILE"
-    else
-        TMP_FILE="/tmp/o4t_pkg.ipk"
-        wget --no-check-certificate -q --show-progress -O "$TMP_FILE" "$URL" 2>/dev/null || wget --no-check-certificate -qO "$TMP_FILE" "$URL"
-        if [ -s "$TMP_FILE" ]; then
-            opkg update >/dev/null 2>&1
-            opkg install --force-overwrite --force-depends "$TMP_FILE"
-            echo -e "\n${GREEN}[SUCCESS] $TITLE Installed Successfully!${NC}"
-        else
-            echo -e "\n${RED}[ERROR] File not found on server or download failed!${NC}"
-        fi
-        rm -f "$TMP_FILE"
-    fi
-    printf "\nPress Enter to continue..."
-    read -r _
-}
+if command -v python3 >/dev/null 2>&1; then
+    PY_BIN="python3"
+else
+    PY_BIN="python"
+fi
 
-# محرك عرض القوائم الديناميكي حسب التصنيف
-show_category_menu() {
-    CAT_CODE="$1"
-    CAT_TITLE="$2"
-    
-    while true; do
-        clear
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "${WHITE}   ONLINE4TECH - $CAT_TITLE${NC}"
-        echo -e "${CYAN}====================================================${NC}"
-        
-        # استخراج عناصر القسم وترقيمها تلقائيا
-        ITEMS=$(grep "^${CAT_CODE}|" "$DB_FILE")
-        if [ -z "$ITEMS" ]; then
-            echo -e " ${YELLOW}No items available in this section yet.${NC}"
-            echo -e "${CYAN}====================================================${NC}"
-            printf "Press Enter to go back..."
-            read -r _
+cat << 'EOF' > "$PY_RUNNER"
+import json, os, sys
+
+DB_PATH = "/tmp/o4t_database.json"
+
+C_CYAN   = "\033[0;36m"
+C_GREEN  = "\033[0;32m"
+C_YELLOW = "\033[1;33m"
+C_RED    = "\033[0;31m"
+C_WHITE  = "\033[1;37m"
+C_NC     = "\033[0m"
+
+def clear_screen():
+    os.system("clear")
+
+def get_input(prompt_text):
+    try:
+        if sys.version_info[0] >= 3:
+            return input(prompt_text).strip()
+        else:
+            return raw_input(prompt_text).strip()
+    except (EOFError, KeyboardInterrupt):
+        return "0"
+
+def load_db():
+    with open(DB_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def run_command(title, cmd, is_remove=False):
+    clear_screen()
+    action = "UNINSTALLING" if is_remove else "INSTALLING"
+    print(f"{C_CYAN}===================================================={C_NC}")
+    print(f"{C_YELLOW}[Online4Tech] {action}: {C_WHITE}{title}{C_NC}")
+    print(f"{C_CYAN}===================================================={C_NC}\n")
+    os.system(cmd)
+    print(f"\n{C_CYAN}===================================================={C_NC}")
+    print(f"{C_GREEN}[DONE] Operation Finished!{C_NC}")
+    get_input("Press Enter to continue...")
+
+def show_items_menu(data, section_key, section_title):
+    items = data.get(section_key, [])
+    if items and isinstance(items[0], dict) and "section" in items[0]:
+        while True:
+            clear_screen()
+            print(f"{C_CYAN}===================================================={C_NC}")
+            print(f"{C_WHITE}   ONLINE4TECH - {section_title.upper()}{C_NC}")
+            print(f"{C_CYAN}===================================================={C_NC}")
+            for idx, sub in enumerate(items, 1):
+                print(f"  {C_YELLOW}[{idx:2d}]{C_NC} {sub.get('title', sub.get('section'))}")
+            print(f"{C_CYAN}----------------------------------------------------{C_NC}")
+            print(f"  {C_RED}[ 0]{C_NC} Back")
+            print(f"{C_CYAN}===================================================={C_NC}")
+            choice = get_input("Select Sub-Category: ")
+            if choice == "0" or not choice:
+                break
+            if choice.isdigit() and 1 <= int(choice) <= len(items):
+                sub_item = items[int(choice) - 1]
+                show_items_menu(data, sub_item["section"], sub_item.get("title", sub_item["section"]))
+        return
+
+    page_size = 20
+    total = len(items)
+    page = 0
+
+    while True:
+        clear_screen()
+        start = page * page_size
+        end = min(start + page_size, total)
+        print(f"{C_CYAN}===================================================={C_NC}")
+        print(f"{C_WHITE}   {section_title} ({start+1}-{end} of {total}){C_NC}")
+        print(f"{C_CYAN}===================================================={C_NC}")
+
+        for i in range(start, end):
+            item = items[i]
+            raw_name = item.get("name", "Unknown")
+            clean_name = raw_name.split("(")[0].strip() if "(" in raw_name else raw_name
+            installed = "[*]" if item.get("path") and os.path.exists(item.get("path")) else "   "
+            print(f" {C_GREEN}{installed}{C_NC} {C_YELLOW}[{i+1:3d}]{C_NC} {clean_name}")
+
+        print(f"{C_CYAN}----------------------------------------------------{C_NC}")
+        nav = f"  {C_RED}[0]{C_NC} Back"
+        if end < total:
+            nav += f"  |  {C_GREEN}[N]{C_NC} Next Page"
+        if page > 0:
+            nav += f"  |  {C_GREEN}[P]{C_NC} Prev Page"
+        print(nav)
+        print(f"{C_CYAN}===================================================={C_NC}")
+        choice = get_input("Enter Number (or N/P/0): ").lower()
+
+        if choice == "0" or not choice:
             break
-        fi
+        elif choice == "n" and end < total:
+            page += 1
+        elif choice == "p" and page > 0:
+            page -= 1
+        elif choice.isdigit() and 1 <= int(choice) <= total:
+            sel = items[int(choice) - 1]
+            raw_name = sel.get("name", "Item")
+            clean_name = raw_name.split("(")[0].strip() if "(" in raw_name else raw_name
+            if sel.get("remove_cmd"):
+                print(f"\n  {C_GREEN}[1]{C_NC} Install: {clean_name}")
+                print(f"  {C_RED}[2]{C_NC} Remove / Uninstall: {clean_name}")
+                print(f"  {C_YELLOW}[0]{C_NC} Cancel")
+                act = get_input("Action [1/2/0]: ")
+                if act == "1":
+                    run_command(clean_name, sel["cmd"], False)
+                elif act == "2":
+                    run_command(clean_name, sel["remove_cmd"], True)
+            else:
+                run_command(clean_name, sel["cmd"], False)
 
-        IDX=0
-        echo "$ITEMS" | while IFS='|' read -r CAT NAME URL; do
-            IDX=$((IDX + 1))
-            printf "  ${YELLOW}[%2d]${NC} %s\n" "$IDX" "$NAME"
-        done
+def system_tools_menu():
+    while True:
+        clear_screen()
+        print(f"{C_CYAN}===================================================={C_NC}")
+        print(f"{C_YELLOW}    ONLINE4TECH - RECEIVER SYSTEM COMMANDS          {C_NC}")
+        print(f"{C_CYAN}===================================================={C_NC}")
+        print(f"  {C_YELLOW}[1]{C_NC} Receiver Info (CPU Arch, Python, RAM)")
+        print(f"  {C_YELLOW}[2]{C_NC} Clear RAM & Free Cache")
+        print(f"  {C_YELLOW}[3]{C_NC} Update Feeds (opkg update)")
+        print(f"  {C_YELLOW}[4]{C_NC} Clean /tmp Folder")
+        print(f"  {C_YELLOW}[5]{C_NC} Restart Enigma2 GUI")
+        print(f"  {C_YELLOW}[6]{C_NC} Full Receiver Reboot")
+        print(f"{C_CYAN}----------------------------------------------------{C_NC}")
+        print(f"  {C_RED}[0]{C_NC} Back to Main Menu")
+        print(f"{C_CYAN}===================================================={C_NC}")
+        c = get_input("Select Command: ")
+        if c == "0" or not c: break
+        elif c == "1": run_command("System Info", "uname -a && python3 --version 2>&1 && free -h 2>/dev/null || free && df -h")
+        elif c == "2": run_command("Clear RAM", "sync && echo 3 > /proc/sys/vm/drop_caches")
+        elif c == "3": run_command("Update Feeds", "opkg update")
+        elif c == "4": run_command("Clean /tmp", "rm -rf /tmp/*.ipk /tmp/*.deb /tmp/*.tar.gz /tmp/*.zip")
+        elif c == "5": os.system("killall -9 enigma2")
+        elif c == "6": os.system("reboot")
 
-        echo -e "${CYAN}----------------------------------------------------${NC}"
-        echo -e "  ${RED}[ 0]${NC} Back (رجوع)"
-        echo -e "${CYAN}====================================================${NC}"
-        printf "Enter Number: "
-        read -r CHOICE
+def main():
+    data = load_db()
+    sections = data.get("main", [])
+    while True:
+        clear_screen()
+        print(f"{C_CYAN}===================================================={C_NC}")
+        print(f"{C_WHITE}       ONLINE4TECH SUPER SCRIPT v3.0 (350+ Store)   {C_NC}")
+        print(f"{C_GREEN}    Vu+ & Dreambox Complete Management Center       {C_NC}")
+        print(f"{C_CYAN}===================================================={C_NC}")
+        for idx, sec in enumerate(sections, 1):
+            raw_t = sec.get("title", sec.get("section"))
+            clean_t = raw_t.split("(")[0].strip() if "(" in raw_t else raw_t
+            print(f"  {C_YELLOW}[{idx:2d}]{C_NC} {clean_t}")
+        print(f"  {C_YELLOW}[99]{C_NC} Receiver System Commands & Maintenance")
+        print(f"{C_CYAN}----------------------------------------------------{C_NC}")
+        print(f"  {C_RED}[ 0]{C_NC} Exit")
+        print(f"{C_CYAN}===================================================={C_NC}")
+        choice = get_input("Enter Section Number: ")
 
-        if [ "$CHOICE" = "0" ] || [ -z "$CHOICE" ]; then
+        if choice == "0" or not choice:
             break
-        fi
+        elif choice == "99":
+            system_tools_menu()
+        elif choice.isdigit() and 1 <= int(choice) <= len(sections):
+            sec = sections[int(choice) - 1]
+            raw_t = sec.get("title", sec.get("section"))
+            clean_t = raw_t.split("(")[0].strip() if "(" in raw_t else raw_t
+            show_items_menu(data, sec["section"], clean_t)
 
-        SELECTED=$(echo "$ITEMS" | sed -n "${CHOICE}p")
-        if [ -n "$SELECTED" ]; then
-            SEL_NAME=$(echo "$SELECTED" | cut -d'|' -f2)
-            SEL_URL=$(echo "$SELECTED" | cut -d'|' -f3)
-            install_pkg "$SEL_NAME" "$SEL_URL"
-        else
-            echo -e "${RED}Invalid selection!${NC}"
-            sleep 1
-        fi
-    done
-}
+if __name__ == "__main__":
+    main()
+EOF
 
-# 1. قائمة أقسام البلجنات
-menu_plugins_categories() {
-    while true; do
-        clear
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "${GREEN}      ONLINE4TECH - PLUGINS CATEGORIES (البلجنات)    ${NC}"
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "  ${YELLOW}[1]${NC} Panels & Feeds (لوحات التحكم والـ Feeds)"
-        echo -e "  ${YELLOW}[2]${NC} IPTV & Media Players (مشغلات IPTV والميديا)"
-        echo -e "  ${YELLOW}[3]${NC} Subtitles, EPG & Picons (الترجمة والبيكونات)"
-        echo -e "  ${YELLOW}[4]${NC} System, Backup & Tools (أدوات النظام والباك أب)"
-        echo -e "${CYAN}----------------------------------------------------${NC}"
-        echo -e "  ${RED}[0]${NC} Back to Main Menu (رجوع)"
-        echo -e "${CYAN}====================================================${NC}"
-        printf "Select Category [0-4]: "
-        read -r P_CAT
-        case "$P_CAT" in
-            1) show_category_menu "P_PANEL" "PANELS & FEEDS" ;;
-            2) show_category_menu "P_IPTV" "IPTV & MEDIA PLAYERS" ;;
-            3) show_category_menu "P_SUB_EPG" "SUBTITLES, EPG & PICONS" ;;
-            4) show_category_menu "P_SYS" "SYSTEM & BACKUP TOOLS" ;;
-            0) break ;;
-            *) echo -e "${RED}Invalid choice!${NC}"; sleep 1 ;;
-        esac
-    done
-}
-
-# 2. قائمة أقسام السكينات
-menu_skins_categories() {
-    while true; do
-        clear
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "${MAGENTA}       ONLINE4TECH - SKINS CATEGORIES (السكينات)     ${NC}"
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "  ${YELLOW}[1]${NC} OpenATV / OpenPLi / Egami Skins (.ipk)"
-        echo -e "  ${YELLOW}[2]${NC} DreamOS OE2.5 / OE2.6 Skins (.deb)"
-        echo -e "${CYAN}----------------------------------------------------${NC}"
-        echo -e "  ${RED}[0]${NC} Back to Main Menu (رجوع)"
-        echo -e "${CYAN}====================================================${NC}"
-        printf "Select Skin Type [0-2]: "
-        read -r S_CAT
-        case "$S_CAT" in
-            1) show_category_menu "S_OPEN" "OPEN IMAGES SKINS (IPK)" ;;
-            2) show_category_menu "S_DREAM" "DREAMOS SKINS (DEB)" ;;
-            0) break ;;
-            *) echo -e "${RED}Invalid choice!${NC}"; sleep 1 ;;
-        esac
-    done
-}
-
-# 3. قائمة الإيموهات وملفات القنوات
-menu_cams_channels() {
-    while true; do
-        clear
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "${GREEN}   ONLINE4TECH - SOFTCAMS, KEYS & CHANNEL LISTS     ${NC}"
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "  ${YELLOW}[1]${NC} Install Softcams (NCam / OSCam)"
-        echo -e "  ${YELLOW}[2]${NC} Update Latest SoftCam.Key (تحديث الشفرات)"
-        echo -e "  ${YELLOW}[3]${NC} Update Motor Channels (قنوات المتحرك)"
-        echo -e "  ${YELLOW}[4]${NC} Update Nilesat Channels (قنوات نايل سات)"
-        echo -e "${CYAN}----------------------------------------------------${NC}"
-        echo -e "  ${RED}[0]${NC} Back to Main Menu (رجوع)"
-        echo -e "${CYAN}====================================================${NC}"
-        printf "Select Option [0-4]: "
-        read -r C_OPT
-        case "$C_OPT" in
-            1) show_category_menu "CAM" "SOFTCAMS (NCAM / OSCAM)" ;;
-            2)
-               echo -e "\n${CYAN}Updating SoftCam.Key...${NC}"
-               mkdir -p /etc/tuxbox/config
-               wget --no-check-certificate -qO /etc/tuxbox/config/SoftCam.Key "https://raw.githubusercontent.com/online4tech/Chanal-List/main/SoftCam.Key"
-               echo -e "${GREEN}[SUCCESS] SoftCam.Key Updated!${NC}"; sleep 2 ;;
-            3)
-               echo -e "\n${CYAN}Downloading Motor Channels...${NC}"
-               wget --no-check-certificate -qO /tmp/motor.tar.gz "https://raw.githubusercontent.com/online4tech/Chanal-List/main/motor_channels.tar.gz"
-               if [ -s /tmp/motor.tar.gz ]; then
-                   tar -xzf /tmp/motor.tar.gz -C /
-                   wget -qO - "http://127.0.0.1/web/servicelistreload?mode=0" >/dev/null 2>&1
-                   rm -f /tmp/motor.tar.gz
-                   echo -e "${GREEN}[SUCCESS] Motor Channels Installed & Reloaded!${NC}"
-               else
-                   echo -e "${RED}[ERROR] Motor Channels archive not found!${NC}"
-               fi
-               sleep 2 ;;
-            4)
-               echo -e "\n${CYAN}Downloading Nilesat Channels...${NC}"
-               wget --no-check-certificate -qO /tmp/nilesat.tar.gz "https://raw.githubusercontent.com/online4tech/Chanal-List/main/nilesat_channels.tar.gz"
-               if [ -s /tmp/nilesat.tar.gz ]; then
-                   tar -xzf /tmp/nilesat.tar.gz -C /
-                   wget -qO - "http://127.0.0.1/web/servicelistreload?mode=0" >/dev/null 2>&1
-                   rm -f /tmp/nilesat.tar.gz
-                   echo -e "${GREEN}[SUCCESS] Nilesat Channels Installed & Reloaded!${NC}"
-               else
-                   echo -e "${RED}[ERROR] Nilesat Channels archive not found!${NC}"
-               fi
-               sleep 2 ;;
-            0) break ;;
-            *) echo -e "${RED}Invalid choice!${NC}"; sleep 1 ;;
-        esac
-    done
-}
-
-# 4. قائمة الأوامر المتقدمة وصيانة الرسيفر
-menu_commands() {
-    while true; do
-        clear
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "${YELLOW}    ONLINE4TECH - RECEIVER COMMANDS & MAINTENANCE   ${NC}"
-        echo -e "${CYAN}====================================================${NC}"
-        echo -e "  ${YELLOW}[1]${NC} Receiver Info (CPU Arch, Python, Image, RAM)"
-        echo -e "  ${YELLOW}[2]${NC} Clear RAM & Free Cache (تنظيف الرامات)"
-        echo -e "  ${YELLOW}[3]${NC} Check Flash & HDD/USB Space (فحص المساحة)"
-        echo -e "  ${YELLOW}[4]${NC} Update Image Feeds (opkg update)"
-        echo -e "  ${YELLOW}[5]${NC} Fix Broken Packages (إصلاح الحزم المعلقة)"
-        echo -e "  ${YELLOW}[6]${NC} Clean /tmp Folder (تنظيف الملفات المؤقتة)"
-        echo -e "  ${YELLOW}[7]${NC} Restart Enigma2 GUI (ريستارت الواجهة)"
-        echo -e "  ${YELLOW}[8]${NC} Full Receiver Reboot (إعادة تشغيل كاملة)"
-        echo -e "${CYAN}----------------------------------------------------${NC}"
-        echo -e "  ${RED}[0]${NC} Back to Main Menu (رجوع)"
-        echo -e "${CYAN}====================================================${NC}"
-        printf "Select Command [0-8]: "
-        read -r CMD_OPT
-        case "$CMD_OPT" in
-            1)
-               echo -e "\n${CYAN}--- System Information ---${NC}"
-               echo -e "${GREEN}Architecture:${NC} $(uname -m)"
-               echo -e "${GREEN}Kernel:${NC} $(uname -r)"
-               echo -e "${GREEN}Python:${NC} $(python3 --version 2>&1 || python --version 2>&1)"
-               echo -e "${GREEN}Memory:${NC}"
-               free -h 2>/dev/null || free
-               printf "\nPress Enter..."
-               read -r _ ;;
-            2)
-               sync; echo 3 > /proc/sys/vm/drop_caches
-               echo -e "\n${GREEN}[SUCCESS] RAM & Cache Cleared!${NC}"; sleep 2 ;;
-            3)
-               echo -e "\n${CYAN}--- Storage Status ---${NC}"
-               df -h | grep -E "Filesystem|/dev/root|/media/hdd|/media/usb"
-               printf "\nPress Enter..."
-               read -r _ ;;
-            4)
-               echo -e "\n${CYAN}Updating Feeds...${NC}"
-               opkg update
-               printf "\nPress Enter..."
-               read -r _ ;;
-            5)
-               echo -e "\n${CYAN}Fixing Broken Packages...${NC}"
-               opkg configure
-               echo -e "${GREEN}[DONE]${NC}"; sleep 2 ;;
-            6)
-               rm -rf /tmp/*.ipk /tmp/*.deb /tmp/*.tar.gz /tmp/*.zip
-               echo -e "\n${GREEN}[SUCCESS] /tmp Cleaned!${NC}"; sleep 2 ;;
-            7)
-               echo -e "\n${YELLOW}Restarting Enigma2 GUI...${NC}"
-               killall -9 enigma2 ;;
-            8)
-               echo -e "\n${RED}Rebooting Receiver Now...${NC}"
-               reboot ;;
-            0) break ;;
-            *) echo -e "${RED}Invalid choice!${NC}"; sleep 1 ;;
-        esac
-    done
-}
-
-# ------------------------------------------------------------------------------
-# تشغيل السكربت وجلب قاعدة البيانات
-# ------------------------------------------------------------------------------
-fetch_db
-
-while true; do
-    clear
-    echo -e "${CYAN}====================================================${NC}"
-    echo -e "${WHITE}         ONLINE4TECH SUPER SCRIPT (v2.0)            ${NC}"
-    echo -e "${GREEN}    All-in-One Control Center for Vu+ & Dreambox    ${NC}"
-    echo -e "${CYAN}====================================================${NC}"
-    echo -e "  ${YELLOW}[1]${NC} Plugins Categories (أقسام البلجنات)"
-    echo -e "  ${YELLOW}[2]${NC} Skins Categories   (أقسام السكينات)"
-    echo -e "  ${YELLOW}[3]${NC} Softcams & Channels (الإيموهات والقنوات)"
-    echo -e "  ${YELLOW}[4]${NC} System Commands    (أوامر الصيانة والتحكم)"
-    echo -e "  ${YELLOW}[5]${NC} Refresh Database   (تحديث قائمة السيرفر)"
-    echo -e "${CYAN}----------------------------------------------------${NC}"
-    echo -e "  ${RED}[0]${NC} Exit (خروج)"
-    echo -e "${CYAN}====================================================${NC}"
-    printf "Enter Choice [0-5]: "
-    read -r MAIN_OPT
-
-    case "$MAIN_OPT" in
-        1) menu_plugins_categories ;;
-        2) menu_skins_categories ;;
-        3) menu_cams_channels ;;
-        4) menu_commands ;;
-        5) fetch_db; echo -e "${GREEN}[OK] Database Refreshed!${NC}"; sleep 1 ;;
-        0) rm -f /tmp/o4t_super.sh "$DB_FILE"; echo -e "${GREEN}Goodbye from Online4Tech!${NC}"; exit 0 ;;
-        *) echo -e "${RED}Wrong choice!${NC}"; sleep 1 ;;
-    esac
-done
+"$PY_BIN" "$PY_RUNNER"
+rm -f "$DB_FILE" "$PY_RUNNER" /tmp/o4t_super.sh
+echo "Goodbye from Online4Tech!"
