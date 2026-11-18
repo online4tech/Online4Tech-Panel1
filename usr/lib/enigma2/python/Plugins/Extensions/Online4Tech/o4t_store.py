@@ -11,7 +11,6 @@ from Components.MenuList import MenuList
 from enigma import eListboxPythonMultiContent, gFont, getDesktop, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
 from Tools.LoadPixmap import LoadPixmap
 
-# توافق Python 2.7 و Python 3.x للاتصال بالإنترنت
 PY3 = sys.version_info[0] >= 3
 if PY3:
     import urllib.request as urlreq
@@ -33,7 +32,7 @@ def to_str(val):
 def guess_icon(sec_name):
     s = to_str(sec_name).lower()
     if "plugin" in s or "novaler" in s: return "plugins"
-    if "channel" in s or "sat" in s: return "channels"
+    if "channel" in s or "sat" in s or "ciefp" in s or "morph" in s or "vhannibal" in s or "vaninbal" in s: return "channels"
     if "cam" in s or "emu" in s or "oscam" in s: return "cams"
     if "feed" in s or "update" in s: return "feeds"
     if "picon" in s: return "picons"
@@ -84,7 +83,7 @@ SKIN_FHD = """
     <widget zPosition="3" name="left_info" position="60,230" size="340,710" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#11141c" transparent="1" halign="center" />
 
     <widget zPosition="3" name="page_info" position="460,128" size="320,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
-    <widget zPosition="3" name="section_heading" position="920,124" size="500,38" font="Regular;28" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
+    <widget zPosition="3" name="section_heading" position="820,124" size="600,38" font="Regular;28" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
     <widget zPosition="3" name="list" position="460,170" size="960,795" backgroundColor="#0b0d12" backgroundColorSelected="#262012" scrollbarMode="showNever" enableWrapAround="1" />
 
     <widget zPosition="1" name="right_bg" position="1460,145" size="420,820" backgroundColor="#11141c" />
@@ -134,7 +133,7 @@ SKIN_HD = """
     <widget zPosition="3" name="left_info" position="30,145" size="235,490" font="Regular;14" foregroundColor="#cbd5e1" backgroundColor="#11141c" transparent="1" halign="center" />
 
     <widget zPosition="3" name="page_info" position="295,84" size="220,24" font="Regular;15" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
-    <widget zPosition="3" name="section_heading" position="620,82" size="340,28" font="Regular;20" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
+    <widget zPosition="3" name="section_heading" position="560,82" size="400,28" font="Regular;20" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
     <widget zPosition="3" name="list" position="295,112" size="665,535" backgroundColor="#0b0d12" backgroundColorSelected="#262012" scrollbarMode="showNever" enableWrapAround="1" />
 
     <widget zPosition="1" name="right_bg" position="980,92" size="280,555" backgroundColor="#11141c" />
@@ -210,6 +209,7 @@ class Online4TechStoreScreen(Screen):
 
         self.db = {}
         self.mode = "main"
+        self.nav_stack = []
         self.view_style = "list"
         self.current_items = []
         self.grid_index = 0
@@ -266,6 +266,17 @@ class Online4TechStoreScreen(Screen):
             pass
         return "\n\n".join(lines)
 
+    def get_sub_items(self, item):
+        if not isinstance(item, dict):
+            return None
+        for k in ["items", "list", "sub", "packages", "data"]:
+            if isinstance(item.get(k), list):
+                return item.get(k)
+        sec = item.get("section", "") or item.get("sub_section", "") or item.get("target", "")
+        if sec and sec in self.db and isinstance(self.db[sec], list):
+            return self.db[sec]
+        return None
+
     def startup(self):
         self.update_clock()
         self.timer.start(10000)
@@ -312,6 +323,7 @@ class Online4TechStoreScreen(Screen):
                 with open(CACHE_FILE, "rb") as f:
                     raw = f.read().decode("utf-8")
             self.db = json.loads(raw)
+            self.nav_stack = []
             self.show_main()
         except Exception as e:
             self["center_header"].setText("Error: " + str(e))
@@ -401,6 +413,7 @@ class Online4TechStoreScreen(Screen):
 
     def show_main(self):
         self.mode = "main"
+        self.nav_stack = []
         self.grid_index = 0
         self["key_red"].setText("خروج")
         self["section_heading"].setText("الأقسام الرئيسية")
@@ -413,7 +426,8 @@ class Online4TechStoreScreen(Screen):
         for item in cats:
             sec = item.get("section", "")
             raw_title = item.get("name", "") or item.get("title", "") or sec
-            cnt = len(self.db.get(sec, []))
+            sub_list = self.get_sub_items(item) or []
+            cnt = len(sub_list)
             ic_key = guess_icon(sec + " " + raw_title)
             self.current_items.append({
                 "title": raw_title,
@@ -429,64 +443,65 @@ class Online4TechStoreScreen(Screen):
         self["page_info"].setText("%d قسم" % len(self.current_items))
         self.render_current_items()
 
-    def show_section(self, sec_key, sec_name):
+    def show_items_list(self, items_list, sec_name, icon_hint=""):
         self.mode = "section"
         self.grid_index = 0
         self["key_red"].setText("رجوع")
         self["section_heading"].setText(to_str(sec_name))
         self["left_title"].setText("تفاصيل العنصر")
-        ic_key = guess_icon(sec_key + " " + sec_name)
+        ic_key = guess_icon(icon_hint + " " + to_str(sec_name))
 
-        items = self.db.get(sec_key, [])
         self.current_items = []
-        for item in items:
+        for item in items_list:
             name = item.get("name", "") or item.get("title", "Package")
-            path = item.get("path", "")
-            inst = bool(path and os.path.exists(path))
-            self.current_items.append({
-                "title": name,
-                "subtitle": "Online4Tech Official",
-                "badge": "",
-                "icon": ic_key,
-                "installed": inst,
-                "data": item
-            })
+            sub_list = self.get_sub_items(item)
+            if sub_list is not None:
+                cnt = len(sub_list)
+                self.current_items.append({
+                    "title": name,
+                    "subtitle": "قسم فرعي (%d ملف)" % cnt,
+                    "badge": "(%d)" % cnt,
+                    "icon": guess_icon(name + " " + icon_hint),
+                    "installed": False,
+                    "data": item
+                })
+            else:
+                path = item.get("path", "")
+                inst = bool(path and os.path.exists(path))
+                self.current_items.append({
+                    "title": name,
+                    "subtitle": "Online4Tech Official",
+                    "badge": "",
+                    "icon": ic_key,
+                    "installed": inst,
+                    "data": item
+                })
 
-        self["page_info"].setText("%d حزمة" % len(self.current_items))
+        self["page_info"].setText("%d عنصر" % len(self.current_items))
         self.render_current_items()
         self.update_left_detail()
 
     def open_search(self):
-        self.session.openWithCallback(self.run_search, VirtualKeyBoard, title="ابحث عن بلجن أو باقة في Online4Tech:", text="")
+        self.session.openWithCallback(self.run_search, VirtualKeyBoard, title="ابحث عن بلجن أو ملف قنوات في Online4Tech:", text="")
 
     def run_search(self, keyword):
         if not keyword:
             return
         kw = to_str(keyword).lower().strip()
-        self.mode = "section"
-        self.grid_index = 0
-        self["key_red"].setText("رجوع")
-        self["section_heading"].setText("نتائج البحث: " + keyword)
-        self["left_title"].setText("تفاصيل العنصر")
-        self.current_items = []
-        for cat in self.db.get("main", []):
-            sec = cat.get("section", "")
-            for item in self.db.get(sec, []):
-                name = to_str(item.get("name", ""))
-                if kw in name.lower():
-                    path = item.get("path", "")
-                    inst = bool(path and os.path.exists(path))
-                    self.current_items.append({
-                        "title": name,
-                        "subtitle": sec,
-                        "badge": "",
-                        "icon": guess_icon(sec),
-                        "installed": inst,
-                        "data": item
-                    })
-        self["page_info"].setText("%d نتيجة" % len(self.current_items))
-        self.render_current_items()
-        self.update_left_detail()
+        results = []
+        seen = set()
+        for k, val in self.db.items():
+            if k == "main" or not isinstance(val, list):
+                continue
+            for item in val:
+                if not isinstance(item, dict):
+                    continue
+                name = to_str(item.get("name", "") or item.get("title", ""))
+                if kw in name.lower() and item.get("cmd") and name not in seen:
+                    seen.add(name)
+                    results.append(item)
+        self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.mode))
+        self.show_items_list(results, "نتائج البحث: " + to_str(keyword), "plugins")
 
     def update_left_detail(self):
         if self.mode != "section" or not self.current_items:
@@ -496,9 +511,13 @@ class Online4TechStoreScreen(Screen):
             return
         data = self.current_items[idx]["data"]
         name = to_str(data.get("name", "") or data.get("title", ""))
-        path = data.get("path", "")
-        inst = "مثبت" if (path and os.path.exists(path)) else "غير مثبت"
-        txt = "%s\n\nالحالة: %s\n\nالمصدر:\nOnline4Tech Official" % (name, inst)
+        sub_list = self.get_sub_items(data)
+        if sub_list is not None:
+            txt = "%s\n\nالنوع: قسم فرعي\nعدد الملفات: %d\n\nاضغط OK لفتح القسم واستعراض الملفات" % (name, len(sub_list))
+        else:
+            path = data.get("path", "")
+            inst = "مثبت" if (path and os.path.exists(path)) else "غير مثبت"
+            txt = "%s\n\nالحالة: %s\n\nالمصدر:\nOnline4Tech Official" % (name, inst)
         self["left_info"].setText(txt)
 
     def move_up(self):
@@ -544,14 +563,22 @@ class Online4TechStoreScreen(Screen):
         if idx < 0 or idx >= len(self.current_items):
             return
         data = self.current_items[idx]["data"]
-        if self.mode == "main":
-            sec = data.get("section", "")
-            title = data.get("name", "") or data.get("title", "") or sec
-            self.show_section(sec, title)
+        title = to_str(data.get("name", "") or data.get("title", "") or data.get("section", "Section"))
+        sub_list = self.get_sub_items(data)
+
+        if sub_list is not None:
+            if len(sub_list) == 0:
+                self.session.open(MessageBox, "هذا القسم الفرعي (%s) فارغ حاليا في قاعدة البيانات." % title, MessageBox.TYPE_INFO, timeout=4)
+                return
+            self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.mode))
+            self.show_items_list(sub_list, title, data.get("section", ""))
+            return
+
+        cmd = data.get("cmd", "")
+        if cmd:
+            self.session.open(Console, title="Online4Tech: " + title, cmdlist=[to_str(cmd)])
         else:
-            cmd = data.get("cmd", "")
-            if cmd:
-                self.session.open(Console, title="Online4Tech: " + to_str(data.get("name", "") or "Install"), cmdlist=[to_str(cmd)])
+            self.session.open(MessageBox, "لا يوجد أمر تثبيت أو ملفات مسجلة تحت (%s) في قاعدة البيانات." % title, MessageBox.TYPE_INFO, timeout=4)
 
     def refresh_server(self):
         self["center_header"].setText("جاري تحديث قاعدة البيانات...")
@@ -559,7 +586,19 @@ class Online4TechStoreScreen(Screen):
         self["center_header"].setText("متجر أونلاين تكنولوجي الشامل (اضغط 0 للبحث)")
 
     def back_pressed(self):
-        if self.mode == "section":
+        if self.nav_stack:
+            prev_items, prev_heading, prev_mode = self.nav_stack.pop()
+            if prev_mode == "main":
+                self.show_main()
+            else:
+                self.mode = "section"
+                self.current_items = prev_items
+                self.grid_index = 0
+                self["section_heading"].setText(prev_heading)
+                self["page_info"].setText("%d عنصر" % len(self.current_items))
+                self.render_current_items()
+                self.update_left_detail()
+        elif self.mode == "section":
             self.show_main()
         else:
             self.timer.stop()
