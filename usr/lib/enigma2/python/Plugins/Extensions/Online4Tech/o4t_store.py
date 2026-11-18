@@ -44,47 +44,56 @@ def split_name_desc(raw_name, fallback_desc=""):
     return s, to_str(fallback_desc)
 
 CAT_INFO = [
-    ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "default"),
-    ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة", "default"),
-    ("depend",      "تحديث المكتبات",          "تحديث مكتبات البايثون ومشغلات النظام", "feeds"),
-    ("ciefp",       "إضافات سييف",             "إدارة وتثبيت بلاجينات وملفات سييف", "ciefp"),
-    ("multiboot",   "ملتي بوت",                "تثبيت وإدارة بلاجينات الملتي بوت ومثبتات الصور", "multiboot"),
-    ("restore",     "الاستعادة والنسخ",        "استعادة الإعدادات والنسخ الاحتياطي للنظام", "tools"),
-    ("remove",      "حذف الإضافات",            "إزالة وحذف البلاجينات والحزم من الرسيفر", "remove"),
-    ("backup",      "صور الباك اب",            "تحميل وتثبيت صور انيجما 2 الجاهزة", "display"),
-    ("image",       "صور الأجهزة",             "تحميل وتثبيت صور انيجما 2 الخام والباك اب", "display"),
-    ("panel",       "البانلات",                "استكشف بانلات انيجما 2 مع روابط المطورين", "panels"),
-    ("novaler",     "نوفالر",                  "بلاجينات وأدوات لأجهزة نوفالر", "novaler"),
-    ("plugin",      "الإضافات",                "إدارة وتثبيت البلاجينات", "plugins"),
-    ("channel",     "ملفات القنوات",           "تحديث وتثبيت أحدث ملفات القنوات", "channels"),
-    ("feed",        "الفيدات",                 "تحديث وتثبيت الفيدات", "feeds"),
-    ("bootlogo",    "شعارات الإقلاع",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display"),
-    ("spinner",     "العرض والسبينر",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display"),
-    ("cam",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير", "cams"),
-    ("emu",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير", "cams"),
-    ("picon",       "البيكونات",               "تثبيت وإدارة شعارات القنوات", "picons"),
-    ("skin",        "السكينات",                "اختيار وتطبيق السكينات", "skins"),
-    ("media",       "الميديا و IPTV",          "مشغلات الميديا والصوتيات والآي بي تي في", "plugins"),
-    ("iptv",        "آي بي تي في",             "إضافات ومشغلات القنوات عبر الإنترنت", "plugins"),
-    ("sport",       "الرياضة",                 "جداول المباريات والقنوات الرياضية", "plugins"),
-    ("quran",       "القرآن الكريم",           "تطبيقات وإذاعات القرآن الكريم", "plugins"),
-    ("islamic",     "إسلاميات",                "تطبيقات القرآن الكريم ومواقيت الصلاة", "plugins"),
-    ("epg",         "دليل البرامج",            "مصادر وإضافات دليل البرامج الإلكتروني", "feeds"),
-    ("tool",        "الأدوات",                 "أدوات وإضافات مفيدة", "tools"),
-    ("system",      "خدمات النظام",            "إعدادات وأوامر صيانة الرسيفر", "tools"),
-    ("setting",     "الإعدادات",               "جرب قنوات وترددات وإعدادات جديدة", "channels"),
+    ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "default",   "exclusive"),
+    ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة",     "default",   "exclusive"),
+    ("channel",     "ملفات القنوات",           "تحديث وتثبيت أحدث ملفات القنوات",       "channels",  "exclusive"),
+    ("plugin",      "الإضافات",                "إدارة وتثبيت البلاجينات",               "plugins",   "enigma2"),
+    ("panel",       "البانلات",                "استكشف بانلات انيجما 2 مع روابط المطورين", "panels", "enigma2"),
+    ("feed",        "الفيدات",                 "تحديث وتثبيت الفيدات",                  "feeds",     "enigma2"),
+    ("ciefp",       "إضافات سييف",             "إدارة وتثبيت بلاجينات وملفات سييف",     "ciefp",     "enigma2"),
+    ("media",       "الميديا و IPTV",          "مشغلات الميديا والصوتيات والآي بي تي في", "plugins", "enigma2"),
+    ("iptv",        "آي بي تي في",             "إضافات ومشغلات القنوات عبر الإنترنت",   "plugins",   "enigma2"),
+    ("novaler",     "نوفالر",                  "بلاجينات وأدوات لأجهزة نوفالر",         "novaler",   "enigma2"),
+    ("cam",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير",    "cams",      "cams"),
+    ("emu",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير",    "cams",      "cams"),
+    ("skin",        "السكينات",                "اختيار وتطبيق السكينات",                "skins",     "display"),
+    ("picon",       "البيكونات",               "تثبيت وإدارة شعارات القنوات",           "picons",    "display"),
+    ("bootlogo",    "شعارات الإقلاع",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display",   "display"),
+    ("spinner",     "العرض والسبينر",          "تغيير شعارات الإقلاع وأيقونات التحميل", "display",   "display"),
+    ("multiboot",   "ملتي بوت",                "تثبيت وإدارة بلاجينات الملتي بوت",      "multiboot", "images"),
+    ("backup",      "صور الباك اب",            "تحميل وتثبيت صور انيجما 2 الجاهزة",     "display",   "images"),
+    ("image",       "صور الأجهزة",             "تحميل وتثبيت صور انيجما 2 الخام",       "display",   "images"),
+    ("system",      "خدمات النظام",            "إعدادات وأوامر صيانة الرسيفر",          "tools",     "system"),
+    ("tool",        "الأدوات",                 "أدوات وإضافات خدمية مفيدة",             "tools",     "system"),
+    ("depend",      "تحديث المكتبات",          "تحديث مكتبات البايثون ومشغلات النظام",  "feeds",     "system"),
+    ("restore",     "الاستعادة والنسخ",        "استعادة الإعدادات والنسخ الاحتياطي",    "tools",     "system"),
+    ("remove",      "حذف الإضافات",            "إزالة وحذف البلاجينات والحزم من الرسيفر", "remove",  "system"),
+    ("setting",     "الإعدادات",               "جرب قنوات وترددات وإعدادات جديدة",      "channels",  "system"),
 ]
 
-def resolve_cat_meta(raw_name, sec_key, cnt):
+MASTER_GROUPS = [
+    ("exclusive", "حصريات وقنوات",     "باقة أونلاين تكنولوجي والمفضلة وملفات القنوات", "channels"),
+    ("enigma2",   "انيجما 2",          "البلاجينات والبانلات والفيدات والميديا",        "plugins"),
+    ("cams",      "السوفتكامات",       "إدارة وتثبيت إيموهات التشفير",                  "cams"),
+    ("display",   "السكينات والمظهر",  "السكينات والبيكونات وشعارات الإقلاع والسبينر",  "skins"),
+    ("images",    "الصور والملتي بوت", "بلاجينات الملتي بوت وصور الأجهزة والباك اب",    "multiboot"),
+    ("system",    "خدمات النظام",      "الأدوات وتحديث المكتبات والاستعادة والحذف",     "tools"),
+]
+
+def resolve_cat_full(raw_name, sec_key, cnt):
     combined = (to_str(raw_name) + " " + to_str(sec_key)).lower()
-    for key_sub, ar_title, ar_desc, ic in CAT_INFO:
+    for key_sub, ar_title, ar_desc, ic, grp in CAT_INFO:
         if key_sub in combined:
-            return ar_title, ar_desc, ic
+            return ar_title, ar_desc, ic, grp
     clean_title, ext_desc = split_name_desc(raw_name, "%d حزمة متاحة في هذا القسم" % cnt)
-    return (clean_title or to_str(sec_key)), ext_desc, "plugins"
+    return (clean_title or to_str(sec_key)), ext_desc, "plugins", "enigma2"
+
+def resolve_cat_meta(raw_name, sec_key, cnt):
+    ar_title, ar_desc, ic, _ = resolve_cat_full(raw_name, sec_key, cnt)
+    return ar_title, ar_desc, ic
 
 def guess_icon(sec_name):
-    _, _, ic = resolve_cat_meta(sec_name, sec_name, 0)
+    _, _, ic, _ = resolve_cat_full(sec_name, sec_name, 0)
     return ic
 
 class O4TCardList(MenuList):
@@ -104,9 +113,9 @@ class O4TGridRows(MenuList):
 class O4TSideList(MenuList):
     def __init__(self, items):
         MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(50)
-        self.l.setFont(0, gFont("Regular", 21))
-        self.l.setFont(1, gFont("Regular", 17))
+        self.l.setItemHeight(64)
+        self.l.setFont(0, gFont("Regular", 23))
+        self.l.setFont(1, gFont("Regular", 18))
 
 SKIN_FHD = """
 <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
@@ -140,7 +149,7 @@ SKIN_FHD = """
     <widget zPosition="3" name="list" position="460,180" size="960,740" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
 
     <widget zPosition="3" name="right_header" position="1480,162" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
-    <widget zPosition="3" name="side_list" position="1468,210" size="404,700" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
+    <widget zPosition="3" name="side_list" position="1468,220" size="404,640" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
     <widget zPosition="3" name="side_page_lbl" position="1480,918" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
 
     <widget zPosition="4" name="grid_list" position="55,175" size="1810,750" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
@@ -176,14 +185,14 @@ class Online4TechStoreScreen(Screen):
 
         self["page_info"] = Label("")
         self["section_heading"] = Label("انيجما 2")
-        self["right_header"] = Label("الفئات")
+        self["right_header"] = Label("الأقسام")
         self["side_page_lbl"] = Label("")
 
         self["key_red"] = Label("خروج")
         self["key_green"] = Label("دخول للقسم")
         self["key_yellow"] = Label("عرض شبكة 4x3")
         self["key_blue"] = Label("تحديث السيرفر")
-        self["mode_badge"] = Label("الأقسام  |  OK أو < > للتحرك داخل القسم")
+        self["mode_badge"] = Label("الأقسام  |  OK أو الأسهم للتحرك داخل القسم")
 
         self["list"] = O4TCardList([])
         self["side_list"] = O4TSideList([])
@@ -331,11 +340,11 @@ class Online4TechStoreScreen(Screen):
         if self.focus_pane == "side":
             self["key_red"].setText("خروج")
             self["key_green"].setText("دخول للقسم")
-            self["mode_badge"].setText("الأقسام  |  OK أو < > للتحرك داخل القسم")
+            self["mode_badge"].setText("الأقسام الرئيسية  |  OK أو السهم للدخول")
         else:
             self["key_red"].setText("رجوع" if self.nav_stack else "رجوع للأقسام")
             self["key_green"].setText("تثبيت / فتح")
-            self["mode_badge"].setText("داخل القسم  |  < > للأقسام  |  0: بحث")
+            self["mode_badge"].setText("داخل القسم  |  السهم للأقسام  |  0: بحث")
 
     def apply_view_visibility(self):
         is_grid = (self.view_style == "grid")
@@ -395,21 +404,40 @@ class Online4TechStoreScreen(Screen):
             self["center_header"].setText("Error: " + str(e))
 
     def build_main_categories_meta(self):
-        self.main_cats_meta = []
+        grouped = {g[0]: [] for g in MASTER_GROUPS}
         for item in self.db.get("main", []):
             sec = item.get("section", "")
             raw_title = item.get("name", "") or item.get("title", "") or sec
             sub_list = self.get_sub_items(item) or []
             cnt = len(sub_list)
-            ar_title, ar_desc, ic_key = resolve_cat_meta(raw_title, sec, cnt)
-            self.main_cats_meta.append({
-                "title": ar_title,
-                "subtitle": ar_desc,
-                "count": cnt,
-                "badge": str(cnt),
+            ar_title, ar_desc, ic_key, grp_key = resolve_cat_full(raw_title, sec, cnt)
+            sub_cat_obj = {
+                "name": ar_title,
+                "desc": ar_desc,
                 "icon": ic_key,
+                "section": sec,
+                "items": sub_list
+            }
+            grouped.setdefault(grp_key, []).append(sub_cat_obj)
+
+        self.main_cats_meta = []
+        for grp_key, grp_title, grp_desc, grp_ic in MASTER_GROUPS:
+            subs = grouped.get(grp_key, [])
+            if not subs:
+                continue
+            # إذا كانت المجموعة تحتوي على قسم واحد فقط نعرض عناصره وإلا نعرض الأقسام الفرعية كبطاقات مرتبة
+            if len(subs) == 1:
+                target_items = subs[0]["items"]
+            else:
+                target_items = subs
+            self.main_cats_meta.append({
+                "title": grp_title,
+                "subtitle": grp_desc,
+                "count": len(target_items),
+                "badge": str(len(target_items)),
+                "icon": grp_ic,
                 "installed": False,
-                "data": item
+                "data": {"name": grp_title, "items": target_items}
             })
 
     def get_icon_pix(self, icon_key):
@@ -432,12 +460,12 @@ class Online4TechStoreScreen(Screen):
             txt_col = 0x00f5d061 if is_act else 0x00cbd5e1
             res = [meta["data"]]
             if pill:
-                res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 12, 10, 56, 30, pill))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 12, 10, 56, 30, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, str(meta["count"]), cnt_col, cnt_col))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 78, 6, 305, 38, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(meta["title"]), txt_col, 0x00f5d061))
+                res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 12, 17, 56, 30, pill))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 12, 17, 56, 30, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, str(meta["count"]), cnt_col, cnt_col))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 78, 12, 305, 40, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(meta["title"]), txt_col, 0x00f5d061))
             if is_act:
                 bar_col = 0x00f5d061 if self.focus_pane == "side" else 0x0094a3b8
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 388, 6, 12, 38, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "|", bar_col, bar_col))
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 388, 12, 12, 40, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "|", bar_col, bar_col))
             side_entries.append(res)
         self["side_list"].setList(side_entries)
         if side_entries and 0 <= self.active_cat_idx < total:
@@ -512,7 +540,7 @@ class Online4TechStoreScreen(Screen):
         per_page = 12 if self.view_style == "grid" else 10
         tot_pages = max(1, (total + per_page - 1) // per_page)
         cur_page = min(tot_pages, (self.grid_index // per_page) + 1)
-        self["page_info"].setText("%d حزمة   صفحة %d/%d" % (total, cur_page, tot_pages))
+        self["page_info"].setText("%d عنصر   صفحة %d/%d" % (total, cur_page, tot_pages))
 
     def render_current_items(self):
         self.update_page_counter()
@@ -566,9 +594,9 @@ class Online4TechStoreScreen(Screen):
         self["left_cat_val"].setText(sec_title)
 
         if sub_list is not None:
-            self["left_pkg_ver"].setText("قسم فرعي (%d ملف)" % len(sub_list))
+            self["left_pkg_ver"].setText("قسم (%d عنصر)" % len(sub_list))
             self["left_stat_val"].setText("متاح")
-            self["left_desc"].setText("يحتوي هذا القسم على %d ملف.\nاضغط زر OK لاستعراض الملفات." % len(sub_list))
+            self["left_desc"].setText("%s\nيحتوي على %d عنصر. اضغط OK للاستعراض." % (sub_desc, len(sub_list)))
         else:
             self["left_pkg_ver"].setText(sub_desc if sub_desc else "الإصدار الرسمي")
             self["left_stat_val"].setText("مثبت" if entry["installed"] else "غير مثبت")
@@ -577,13 +605,15 @@ class Online4TechStoreScreen(Screen):
 
     def populate_items(self, items_list, sec_name, icon_hint=""):
         self.grid_index = 0
-        ar_sec_title, _, ic_key = resolve_cat_meta(sec_name, icon_hint, len(items_list))
-        self["section_heading"].setText(to_str(ar_sec_title))
+        self["section_heading"].setText(to_str(sec_name))
+        _, _, default_ic = resolve_cat_meta(sec_name, icon_hint, len(items_list))
 
         self.current_items = []
         for item in items_list:
             raw_name = item.get("name", "") or item.get("title", "Package")
-            clean_title, ext_desc = split_name_desc(raw_name, "")
+            custom_desc = item.get("desc", "")
+            custom_ic = item.get("icon", "")
+            clean_title, ext_desc = split_name_desc(raw_name, custom_desc)
             sub_list = self.get_sub_items(item)
             if sub_list is not None:
                 cnt = len(sub_list)
@@ -591,7 +621,7 @@ class Online4TechStoreScreen(Screen):
                     "title": clean_title,
                     "subtitle": ext_desc or ("قسم فرعي (%d ملف)" % cnt),
                     "badge": "(%d)" % cnt,
-                    "icon": guess_icon(raw_name + " " + icon_hint),
+                    "icon": custom_ic or guess_icon(raw_name + " " + item.get("section", "") + " " + icon_hint),
                     "installed": False,
                     "data": item
                 })
@@ -602,7 +632,7 @@ class Online4TechStoreScreen(Screen):
                     "title": clean_title,
                     "subtitle": ext_desc,
                     "badge": "",
-                    "icon": ic_key,
+                    "icon": custom_ic or default_ic,
                     "installed": inst,
                     "data": item
                 })
@@ -619,7 +649,7 @@ class Online4TechStoreScreen(Screen):
         cat_meta = self.main_cats_meta[self.active_cat_idx]
         cat_data = cat_meta["data"]
         sub_list = self.get_sub_items(cat_data) or []
-        self.populate_items(sub_list, cat_meta["title"], cat_data.get("section", ""))
+        self.populate_items(sub_list, cat_meta["title"], cat_meta["icon"])
 
     def enter_center_pane(self):
         if not self.current_items:
@@ -751,7 +781,7 @@ class Online4TechStoreScreen(Screen):
                 self.session.open(MessageBox, "هذا القسم الفرعي (%s) فارغ حاليا." % title, MessageBox.TYPE_INFO, timeout=4)
                 return
             self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.grid_index))
-            self.populate_items(sub_list, title, data.get("section", ""))
+            self.populate_items(sub_list, title, entry["icon"])
             return
 
         cmd = data.get("cmd", "")
