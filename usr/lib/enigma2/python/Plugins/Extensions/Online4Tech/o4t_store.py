@@ -228,7 +228,7 @@ UI_STRINGS = {
         "Press OK or the GREEN button to open this category and browse its packages.",
     ),
     "desc_pkg_with_ar": (
-        "الوصف: %s\n\nاضغط زر موافق أو الزر الأخضر لبدء التحميل والتثبيت التلقائي على الجهاز.",
+        "الوصف:\n%s\n\nاضغط زر موافق أو الزر الأخضر لبدء التحميل والتثبيت التلقائي.",
         "Description: %s\n\nPress OK or the GREEN button to download and install automatically.",
     ),
     "desc_pkg_default": (
@@ -249,12 +249,12 @@ UI_STRINGS = {
     "key_blue": ("تحديث المصدر", "Refresh Feed"),
     "key_menu": ("MENU • الإعدادات", "MENU • Settings"),
     "hint_cats": (
-        "التركيز: الأقسام  |  يسار: العناصر  |  MENU: الخط واللغة",
-        "Focus: Categories  |  LEFT: Items  |  MENU: Font & Language",
+        "يسار: العناصر  |  OK: فتح القسم",
+        "LEFT: Items  |  OK: Open Category",
     ),
     "hint_items": (
-        "التركيز: العناصر  |  OK: تثبيت  |  يمين: الأقسام  |  MENU: الإعدادات",
-        "Focus: Items  |  OK: Install  |  RIGHT: Categories  |  MENU: Settings",
+        "يمين: الأقسام  |  OK: تثبيت الحزمة",
+        "RIGHT: Categories  |  OK: Install",
     ),
     "crumb_root": ("المتجر الرئيسي", "Main Store"),
     "crumb_short": ("المتجر", "Store"),
@@ -1086,7 +1086,7 @@ class Online4TechStoreScreen(Screen):
         <widget name="key_menu" position="56,1014" size="219,38" font="Regular;20" halign="center" valign="center" foregroundColor="#f3d778" backgroundColor="#241e12" transparent="1" zPosition="5" />
 
         <!-- Navigation Hint -->
-        <widget name="footer_hint" position="295,1014" size="445,38" font="Regular;19" halign="left" valign="center" foregroundColor="#94a3b8" backgroundColor="#101726" transparent="1" zPosition="5" />
+        <widget name="footer_hint" position="295,1014" size="445,38" font="Regular;19" halign="left" noWrap="1" valign="center" foregroundColor="#94a3b8" backgroundColor="#101726" transparent="1" zPosition="5" />
     </screen>
     """
 
@@ -1543,7 +1543,7 @@ class Online4TechStoreScreen(Screen):
             installed = bool(path and os.path.exists(path))
             has_remove = bool(item.get("remove_cmd"))
 
-            self["detail_title"].setText(truncate_text(clean_title, 34))
+            self["detail_title"].setText(truncate_text(clean_title, 44))
             self["detail_status"].setText(tr("status_installed" if installed else "status_avail", lg))
             self["meta_cat"].setText(tr("meta_cat_fmt", lg) % self.current_section_title)
             self["meta_type"].setText(tr("meta_type_fmt", lg) % pkg_type)
