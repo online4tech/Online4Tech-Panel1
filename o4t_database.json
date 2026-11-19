@@ -4827,17 +4827,25 @@
   ],
   "online4tech_official": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
+      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي)",
       "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
       "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
       "icon": "online4tech_official.png"
     },
     {
+      "name": "Online4Tech Web Panel (لوحة تحكم الويب والسوفت كام على بورت 2020)",
+      "cmd": "wget -q --no-check-certificate -O /tmp/install_o4t_emu.sh \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/install_o4t_emu.sh\" && chmod +x /tmp/install_o4t_emu.sh && /bin/sh /tmp/install_o4t_emu.sh",
+      "remove_cmd": "rm -rf /usr/lib/enigma2/python/Plugins/Extensions/Online4TechWeb /usr/bin/o4t_watchdog.sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4TechWeb/o4t_emu_panel.py",
+      "icon": "online4tech_official.png"
+    },
+    {
       "name": "Ahmed Romeh Channels (ملف قنوات أحمد رميح)",
       "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/channel-romeh_installer.sh -O - | /bin/sh",
       "path": "/etc/enigma2",
-      "remove_cmd": ""
+      "remove_cmd": "",
+      "icon": "online4tech_official.png"
     }
   ]
 }
