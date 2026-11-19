@@ -6,6 +6,7 @@ import os
 import re
 import socket
 import ssl
+import time
 import struct
 import sys
 import zlib
@@ -228,7 +229,7 @@ UI_STRINGS = {
         "Press OK or the GREEN button to open this category and browse its packages.",
     ),
     "desc_pkg_with_ar": (
-        "الوصف:\n%s\n\nاضغط زر موافق أو الزر الأخضر لبدء التحميل والتثبيت التلقائي.",
+        "الوصف:\n%s\n\nاضغط OK أو الأخضر للتثبيت التلقائي على الجهاز.",
         "Description: %s\n\nPress OK or the GREEN button to download and install automatically.",
     ),
     "desc_pkg_default": (
@@ -1333,7 +1334,8 @@ class Online4TechStoreScreen(Screen):
         try:
             if force or not os.path.exists(CACHE_DB) or os.path.getsize(CACHE_DB) == 0:
                 self["top_subtitle"].setText(tr("connecting_db", self.lang))
-                req = Request(DB_URL, headers={"User-Agent": "Online4Tech-Enigma2-v7.5"})
+                url_with_ts = "%s?t=%d" % (DB_URL, int(time.time())) if force else DB_URL
+                req = Request(url_with_ts, headers={"User-Agent": "Online4Tech-Enigma2-v7.5"})
                 ctx = ssl._create_unverified_context() if hasattr(ssl, "_create_unverified_context") else None
                 resp = urlopen(req, timeout=20, context=ctx) if ctx else urlopen(req, timeout=20)
                 raw = resp.read().decode("utf-8", errors="ignore")

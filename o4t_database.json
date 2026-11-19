@@ -142,13 +142,6 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BouquetMakerXtream' /etc/enigma2/bouquetmakerxtream"
     },
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "CrashLogoViewer_1.9 (تصفح الكراشات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/crashlogviewer/crashlogviewer_1.9.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/CrashlogViewer",
@@ -185,13 +178,6 @@
   ],
   "updated-dependencic": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Wget (أداة تحميل مهمة جداً)",
       "cmd": "opkg install wget",
       "path": "/usr/bin/wget"
@@ -203,13 +189,6 @@
     }
   ],
   "backupimages": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "OpenDroid (تحديث الحزم وتحميل إضافات مهمة)",
       "cmd": "wget https://github.com/emilnabil/backup-images/raw/refs/heads/main/backup-opendroid/backup-opendroid.sh -O - | /bin/sh",
@@ -228,13 +207,6 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/dreamosat-downloader/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/DreamOSatDownloader",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DreamOSatDownloader'"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "Epanel (لوحة تحميل الإضافات)",
@@ -285,13 +257,6 @@
       "cmd": "wget http://dreambox4u.com/emilnabil237/plugins/ArabicSavior/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ArabicSavior",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ArabicSavior'"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "Alajre (الأجر)",
@@ -492,15 +457,7 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Zoom'"
     }
   ],
-  "novaler": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "novaler": [],
   "channels": [
     {
       "title": "Other",
@@ -530,53 +487,15 @@
       "path": "/etc/enigma2/fifa"
     },
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Elsafty-Tv-Radio-Steaming",
       "cmd": "wget -q \"--no-check-certificate\" https://dreambox4u.com/emilnabil237/settings/elsafty/installer.sh -O - | /bin/sh",
       "path": "/etc/enigma2/safty"
     }
   ],
-  "ciefp_channels": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
-  "morph883_channels": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
-  "vaninbal_channels": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "ciefp_channels": [],
+  "morph883_channels": [],
+  "vaninbal_channels": [],
   "feeds": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "Openatv-Deval (فيد صورة openatv للمطورين)",
       "cmd": "wget -O - -q https://feeds2.mynonpublic.com/devel-feed | bash",
@@ -584,15 +503,7 @@
       "remove_cmd": "rm -f /etc/opkg/devel-feed.conf && opkg update"
     }
   ],
-  "ciefp": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "ciefp": [],
   "bootlogos": [
     {
       "name": "BootlogoSwapper Egami (بوت لوجو متعدد)",
@@ -679,15 +590,7 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BootLogoSwapper'"
     }
   ],
-  "spinners": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "spinners": [],
   "tools": [
     {
       "name": "Wget (أداة تحميل مهمة)",
@@ -698,13 +601,6 @@
       "name": "Curl (أداة تحميل مهمة)",
       "cmd": "opkg install curl",
       "path": "/usr/bin/curl"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "arabic-language_for-openbh-image (ملف تعريب للصورة)",
@@ -779,13 +675,6 @@
   ],
   "system": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "3gmodemmanager-ALL Python",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/3gmodemmanager/3gmodemmanager.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/3GModemManager",
@@ -817,13 +706,6 @@
     }
   ],
   "media": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "BouquetMakerXtream (تحويل iptv الي المفضلات)",
       "cmd": "wget http://dreambox4u.com/emilnabil237/plugins/BouquetMakerXtream/installer.sh -O - | /bin/sh",
@@ -947,13 +829,6 @@
   ],
   "multiboot": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Neoboot 9.65 VIP",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/neoboot-v9.65/iNB.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/NeoBoot"
@@ -989,13 +864,6 @@
       "name": "gosatplus-oscam",
       "cmd": "wget https://dreambox4u.com/emilnabil237/emu/installer-gosatplus-oscam.sh -O - | /bin/sh",
       "path": "/usr/bin/gooscam"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "Hold-flag-ncam",
@@ -1103,13 +971,6 @@
       "name": "Backup-my-Channels",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/Create-My-backup-shannels.sh -O - | /bin/sh",
       "path": "/media/hdd/backup/backup"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "Backup-hotkey",
@@ -1308,13 +1169,6 @@
   ],
   "openatv_skins": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Barby-Black-py3-FHD",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/SKIN-Barby-Black-py3-fhd.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Barby-Black",
@@ -1393,23 +1247,8 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/Premium-FHD-Blue'"
     }
   ],
-  "teamnitro_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "teamnitro_skins": [],
   "openbh_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "MX_BlackSea",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/obh/skins-MX_BlackSea.sh -O - | /bin/sh",
@@ -1443,13 +1282,6 @@
   ],
   "egami_skins": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Premium-Magenta-Fhd",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium-fhd-py3.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Premium-FHD-Magenta",
@@ -1470,13 +1302,6 @@
   ],
   "openpli_py3_skins": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "BLACKNEON-XP_Mod_M-Nasr",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/pli9x/Skin-BLACKNEON-XP_mod_mnasr-pli9x.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/BLACKNEON-XP-FHD",
@@ -1489,23 +1314,8 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/oZeta-FHD'"
     }
   ],
-  "openspa_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "openspa_skins": [],
   "openvix_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "E2-darkos-FHD",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/openvix/skins-e2-darkos.sh -O - | /bin/sh",
@@ -1527,13 +1337,6 @@
   ],
   "pure2_skins": [
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Premium-Magenta-Fhd",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium-fhd-py3.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Premium-FHD-Magenta",
@@ -1553,13 +1356,6 @@
     }
   ],
   "openpli_py2_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
     {
       "name": "CH.LEAGUE-FHD",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/SKIN-PLI-CH.LEAGUE-FHD.sh -O - | /bin/sh",
@@ -1597,15 +1393,7 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/WAR-S-FHD'"
     }
   ],
-  "display_skins": [
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    }
-  ],
+  "display_skins": [],
   "plugin-xtreamity_skins": [
     {
       "name": "Abstract",
@@ -2070,13 +1858,6 @@
       "path": "/usr/share/enigma2/picons/picons"
     },
     {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
-    },
-    {
       "name": "Chocholousek Picons",
       "cmd": "wget https://github.com/s3n0/e2plugins/raw/master/ChocholousekPicons/online-setup -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ChocholousekPicons"
@@ -2097,13 +1878,6 @@
       "name": "Remove BouquetMakerXtream",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/remove-bouquetmakerxtream.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/BouquetMakerXtream/playlists/playlists"
-    },
-    {
-      "name": "Online4Tech Panel & Store v7.5 Gold (متجر ولوحة تحكم أونلاين تكنولوجي - الواجهة الزجاجية)",
-      "cmd": "if command -v dpkg >/dev/null 2>&1; then wget -q --no-check-certificate -O /tmp/o4t.deb \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.deb\" && dpkg -i /tmp/o4t.deb && rm -f /tmp/o4t.deb; else opkg install --force-reinstall \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk\"; fi",
-      "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-      "icon": "online4tech_official.png"
     },
     {
       "name": "Remove all Neoboot",
@@ -2224,11 +1998,6 @@
       "name": "Remove-Plugin-Subssupport",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/DEL-subssupport.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport/playlists/playlists"
-    },
-    {
-      "name": "Remove-Plugin-Tvpanel",
-      "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/DEL-tvpanel.sh -O - | /bin/sh",
-      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TvPanel/playlists/playlists"
     },
     {
       "name": "Remove-Tuner-Settings",
