@@ -37,6 +37,7 @@ from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixm
 from Screens.Screen import Screen
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
+from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Components.ActionMap import ActionMap
 from Components.MenuList import MenuList
 from Components.Label import Label
@@ -241,8 +242,8 @@ UI_STRINGS = {
     "cta_reinstall": ("إعادة التثبيت / التحديث  •  OK", "Reinstall / Update  •  OK"),
     "cta_install": ("تثبيت الآن  •  OK", "Install Now  •  OK"),
     "cta_sub_pkg": (
-        "الأخضر: تثبيت  |  الأصفر: إزالة  |  MENU: الإعدادات",
-        "GREEN: Install  |  YELLOW: Remove  |  MENU: Settings",
+        "الأخضر: تثبيت  |  الأصفر: إزالة  |  MENU: الإعدادات | 0: بحث",
+        "GREEN: Install  |  YELLOW: Remove  |  MENU: Settings | 0: Search",
     ),
     "key_red": ("رجوع / إغلاق", "Back / Exit"),
     "key_green": ("تثبيت / فتح", "Install / Open"),
