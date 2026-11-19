@@ -1308,6 +1308,15 @@ class Online4TechStoreScreen(Screen):
             return ar_sub
         return title_clean
 
+    def _get_sec_list(self, key):
+        if key in self.db_data and isinstance(self.db_data[key], list):
+            return self.db_data[key]
+        kl = key.lower()
+        for k, v in self.db_data.items():
+            if k.lower() == kl and isinstance(v, list):
+                return v
+        return []
+
     def build_master_groups(self):
         known_sections = set()
         groups = []
@@ -1366,7 +1375,7 @@ class Online4TechStoreScreen(Screen):
         for grp in self.master_groups:
             total_cnt = 0
             for sk in grp["sections"]:
-                items = self.db_data.get(sk, [])
+                items = self._get_sec_list(sk)
                 if isinstance(items, list):
                     total_cnt += len(items)
             entries.append(build_category_entry(grp["title"], total_cnt, grp["icon"], lang=self.lang))
@@ -1401,7 +1410,7 @@ class Online4TechStoreScreen(Screen):
 
         virtual_items = []
         for sk in secs:
-            sub_list = self.db_data.get(sk, [])
+            sub_list = self._get_sec_list(sk)
             if isinstance(sub_list, list):
                 virtual_items.append({
                     "section": sk,
@@ -1417,7 +1426,7 @@ class Online4TechStoreScreen(Screen):
         list_entries = []
         for it in virtual_items:
             sub_key = it["section"]
-            sub_count = len(self.db_data.get(sub_key, []))
+            sub_count = len(self._get_sec_list(sub_key))
             list_entries.append(
                 build_item_entry(
                     it["title"],
@@ -1460,7 +1469,7 @@ class Online4TechStoreScreen(Screen):
         self.current_section_key = section_key
         self.current_section_title = title
         self.current_section_icon = sec_icon
-        raw_items = self.db_data.get(section_key, [])
+        raw_items = self._get_sec_list(section_key)
         self.current_items = raw_items if isinstance(raw_items, list) else []
 
         self["top_title"].setText(title or "Online4Tech Store")
@@ -1475,7 +1484,7 @@ class Online4TechStoreScreen(Screen):
             if "section" in it:
                 sub_key = it.get("section", "")
                 sub_title = self.get_section_title(sub_key, it.get("title", ""))
-                sub_count = len(self.db_data.get(sub_key, []))
+                sub_count = len(self._get_sec_list(sub_key))
                 sub_icon = it.get("icon") or (sub_key + ".png") or sec_icon
                 list_entries.append(
                     build_item_entry(
@@ -1528,7 +1537,7 @@ class Online4TechStoreScreen(Screen):
         if "section" in item:
             sub_key = item.get("section", "")
             title = self.get_section_title(sub_key, item.get("title", ""))
-            cnt = len(self.db_data.get(sub_key, []))
+            cnt = len(self._get_sec_list(sub_key))
             self["detail_title"].setText(truncate_text(title, 34))
             self["detail_status"].setText(tr("sub_avail_fmt", lg) % cnt)
             self["meta_cat"].setText(tr("meta_parent_fmt", lg) % self.current_section_title)
@@ -1674,7 +1683,7 @@ class Online4TechStoreScreen(Screen):
                 if "section" in it:
                     sk = it.get("section", "")
                     sub_t = self.get_section_title(sk, it.get("title", ""))
-                    cnt = len(self.db_data.get(sk, []))
+                    cnt = len(self._get_sec_list(sk))
                     sub_ic = it.get("icon") or (sk + ".png") or prev_icon
                     entries.append(
                         build_item_entry(

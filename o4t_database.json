@@ -142,6 +142,12 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BouquetMakerXtream' /etc/enigma2/bouquetmakerxtream"
     },
     {
+      "name": "Cccaminfo_All-Python (بيانات الـ CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/cccaminfo_cccaminfo_all-py.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo'"
+    },
+    {
       "name": "CrashLogoViewer_1.9 (تصفح الكراشات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/crashlogviewer/crashlogviewer_1.9.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/CrashlogViewer",
@@ -154,16 +160,46 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGGrabber'"
     },
     {
+      "name": "FuryBissPro (جالب الفيدات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FuryBiss",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FuryBiss'"
+    },
+    {
+      "name": "KeyAdder (مفاتيح الشفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'"
+    },
+    {
       "name": "RaedQuickSignal (بيان إشارة للقنوات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/RaedQuickSignal/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/RaedQuickSignal",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RaedQuickSignal'"
     },
     {
+      "name": "SetPicon - Online4Tech (مدير البيكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/setpicon_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SetPicon",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SetPicon'"
+    },
+    {
+      "name": "SubsSupportPro-By-Mohammed-Nasr (ترجمة الأفلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'"
+    },
+    {
       "name": "Xstreamity (مشغل iptv)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/xtreamity/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity'"
+    },
+    {
+      "name": "xtraevent_By-M-Nasr (لوجو البرامج)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_xtraevent-install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent'"
     },
     {
       "name": "Cccam",
@@ -174,9 +210,19 @@
       "name": "Ncam_v15.7",
       "cmd": "wget https://dreambox4u.com/emilnabil237/emu/installer-ncam_v15.7.sh -O - | /bin/sh",
       "path": "/usr/bin/ncamm"
+    },
+    {
+      "name": "Oscam By Levi45",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/bin/oscamm"
     }
   ],
   "updated-dependencic": [
+    {
+      "name": "Updated-All-Dependencic (تحميل الحزم المهمة)",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_update-all-python.sh -O - | /bin/sh",
+      "path": "/usr/bin/wgett"
+    },
     {
       "name": "Wget (أداة تحميل مهمة جداً)",
       "cmd": "opkg install wget",
@@ -186,12 +232,72 @@
       "name": "Curl (أداة تحميل مهمة جداً)",
       "cmd": "opkg install curl",
       "path": "/usr/bin/curl"
+    },
+    {
+      "name": "Opkg Tools_1.4 (حزمة مهمة للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_opkg.sh -O - | /bin/sh",
+      "path": "/usr/bin/opkg"
+    },
+    {
+      "name": "Opkg Tools_1.5 (حزمة مهمة للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_opkg-tools_1.5.sh -O - | /bin/sh",
+      "path": "/usr/bin/opkg"
+    },
+    {
+      "name": "Update-Astra-sm Plugin (حزمة مهمة للبث المتعدد)",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/astra-sm_astra-sm.sh -O - | /bin/sh",
+      "path": "/usr/bin/astra-sm"
+    },
+    {
+      "name": "Update-Astra-sm-Config (حزمة مهمة للبث المتعدد)",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/astra-sm_update-abertis-astra.config.sh -O - | /bin/sh",
+      "path": "/etc/astra/script"
     }
   ],
   "backupimages": [
     {
+      "name": "EGAMI (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-egami_backup-egami.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenATV (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-openatv_backup-openatv_7.6.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenBH (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-openbh_backup-openbh.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenPli Py3 (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-openpli_backup-openpli.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenVix (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-openvix_backup-openvix.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
       "name": "OpenDroid (تحديث الحزم وتحميل إضافات مهمة)",
       "cmd": "wget https://github.com/emilnabil/backup-images/raw/refs/heads/main/backup-opendroid/backup-opendroid.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenSpa (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Backup-OpenSpa_backup-openspa.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "Pure2 (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backup-pure_backup-pure.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
+    },
+    {
+      "name": "OpenPli Py2 (تحديث الحزم وتحميل إضافات مهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Backup-openpli-py2_backup-openpli-py2.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensionss/AutomaticFullBackup"
     }
   ],
@@ -209,10 +315,34 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DreamOSatDownloader'"
     },
     {
+      "name": "EmilPanelPro (لوحة تحميل الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/EmilPanelPro_emilpanelpro.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EmilStore",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EmilStore'"
+    },
+    {
+      "name": "EnigmaPlay (متجر اضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EnigmaPlay",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EnigmaPlay'"
+    },
+    {
       "name": "Epanel (لوحة تحميل الإضافات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/epanel/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/epanel",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/epanel'"
+    },
+    {
+      "name": "linuxsat-panel (لوحة تحميل الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/LinuxsatPanel",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/LinuxsatPanel'"
+    },
+    {
+      "name": "levi45emulator (لوحة تحكم السوفت كام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/levi45emulator_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Levi45Emulator",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Levi45Emulator'"
     },
     {
       "name": "levi45-AddonsManager (لوحة تحميل الإضافات)",
@@ -231,6 +361,24 @@
       "cmd": "wget https://raw.githubusercontent.com/wwwgoper77-wq/MohamedStore/main/install.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/MohamedStore",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MohamedStore'"
+    },
+    {
+      "name": "Novaler-Store (لوحة تحميل الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novalerstor_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovalerStore",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovalerStore'"
+    },
+    {
+      "name": "Panelaio (لوحة تحميل أضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/PanelAIO",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/PanelAIO'"
+    },
+    {
+      "name": "S4a Updater (لوحة تحميل الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/h -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SatVenusPanel",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SatVenusPanel'"
     },
     {
       "name": "SatVenusPanel (لوحة تحميل الإضافات)",
@@ -259,10 +407,88 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ArabicSavior'"
     },
     {
+      "name": "Abertis-Auto-Switcher (تشغيل باقة ابيرنس المالتي ستريم علي الهسباسات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher'"
+    },
+    {
+      "name": "AdenChManager (مدير القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AdenChManager_AdenChManager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AdenChManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AdenChManager'"
+    },
+    {
+      "name": "AiSubtitles (خاص بالترجمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AISubtitles_AISubtitles.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AISubtitles",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AISubtitles'"
+    },
+    {
+      "name": "Acherone (تصفح السكريبتات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/acherone_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Acherone",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Acherone'"
+    },
+    {
+      "name": "AdvancedBootLogoSwapper-By-M-Nasr (صانع بوت لوجو)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AdvancedBootLogoSwapper",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AdvancedBootLogoSwapper'"
+    },
+    {
+      "name": "Advanced-Screen-Shot (أخذ لقطة للشاشة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/advancedscreenshot_advancedscreenshot.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AdvancedScreenshot",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AdvancedScreenshot'"
+    },
+    {
       "name": "Alajre (الأجر)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/alajre/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ALAJRE",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ALAJRE'"
+    },
+    {
+      "name": "AlternativeSoftcamManager (ادارة الايميوهات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AlternativeSoftcamManager_AlternativeSoftcamManager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AlternativeSoftCamManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AlternativeSoftCamManager'"
+    },
+    {
+      "name": "AlternativeSoftCamManager_iet5 (ادارة الايميوهات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_alternativesoftcammanager_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AlternativeSoftCamManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AlternativeSoftCamManager'"
+    },
+    {
+      "name": "AlMoaddin Online4Tech (المؤذن)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AlMuaddhin_almoaddhin.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AlMuaddhin",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AlMuaddhin'"
+    },
+    {
+      "name": "Ansite (أنصت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Ansite",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Ansite'"
+    },
+    {
+      "name": "Apod (معلومات عن كوكب الأرض)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/apod_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/apod",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/apod'"
+    },
+    {
+      "name": "Apsattv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Apsattv",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Apsattv'"
+    },
+    {
+      "name": "Astronomy (حركة الكواكب)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/astronomy_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Astronomy",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Astronomy'"
     },
     {
       "name": "Athan Times (مواقيت الصلاة)",
@@ -277,10 +503,34 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AtileHD'"
     },
     {
+      "name": "AutoBiss (جلب شفرات بيس اوتوماتيك)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AutoBiss_AutoBiss.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AutoBiss",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AutoBiss'"
+    },
+    {
+      "name": "AutoSub (مترجم البث المباشر للقنوات)",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AutoSub_AutoSub.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AutoSub",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AutoSub'"
+    },
+    {
+      "name": "AutoZap Recovery (تصحيح بث القنوات)",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AutoZap_AhmadAlamri",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AutoZap_AhmadAlamri'"
+    },
+    {
       "name": "automatic-fullbackup (نسخ احتياطي للصورة)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/automatic-fullbackup/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/FullBackup",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FullBackup'"
+    },
+    {
+      "name": "Auto-DCW-Key-Add (مفاتيح الشفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/auto-dcw-key-add_auto-dcw-key-add.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/DCWKeyAdd",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DCWKeyAdd'"
     },
     {
       "name": "Azkar Almuslim (أذكار المسلم)",
@@ -289,10 +539,100 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Azkar_AlMuslim'"
     },
     {
+      "name": "BackupAndFlash-mod-Emil (نسخ احتياطي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backupflash_backupflash.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/backupflashe",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/backupflashe'"
+    },
+    {
+      "name": "BackupSuite (نسخ احتياطي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/backupsuite_backupsuite.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/BackupSuite",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BackupSuite'"
+    },
+    {
+      "name": "BissFeedAutoKey (مفاتيح بيس)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/BissFeedAutoKey",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BissFeedAutoKey'"
+    },
+    {
+      "name": "Bitrate (معدل البث)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/bitrate_bitrate.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Bitrate",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Bitrate'"
+    },
+    {
+      "name": "Bitrate-mod-ariad (معدل البث)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/bitrate_bitrate-mod-ariad.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Bitrate",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Bitrate'"
+    },
+    {
+      "name": "Bundesliga-Permanent-Clock (ساعة رقمية)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/bundesliga-permanent-clock_bundesliga-permanent-clock.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/BundesligaPermanentClock",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BundesligaPermanentClock'"
+    },
+    {
+      "name": "CacheFlush (مسح الكاش)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/cacheflush_cacheflush.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CacheFlush",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CacheFlush'"
+    },
+    {
+      "name": "Calculator-E2 (الآلة الحاسبة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/calculator-e2_calculator-e2.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/calculatorE2",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/calculatorE2'"
+    },
+    {
+      "name": "Calendar (التقويم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Calendar",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Calendar'"
+    },
+    {
+      "name": "Cccaminfo-py2 (بيانات الـ CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/cccaminfo_cccaminfo_py2.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo'"
+    },
+    {
+      "name": "Cccaminfo-py3 (بيانات الـ CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/cccaminfo_cccaminfo_py3.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CCcamInfo'"
+    },
+    {
+      "name": "Ciplushelper (تشغيل الكامات الرسمية)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Ciplushelper",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Ciplushelper'"
+    },
+    {
+      "name": "CommandCenter",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CommandCenter",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CommandCenter'"
+    },
+    {
+      "name": "CrondManager (تحديد وقت للسكريبت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/crondmanager_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CrondManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CrondManager'"
+    },
+    {
       "name": "CFG_ZOOM_FINAL (سيرفرات مجانية)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/cfg_Zoom_Final_FIX7x/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/OpenPanel",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/OpenPanel'"
+    },
+    {
+      "name": "chocholousek-picons (تحميل البيكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_chocholousek-picons.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ChocholousekPicons",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ChocholousekPicons'"
     },
     {
       "name": "CHLogoChanger (تخصيص الشعار)",
@@ -319,10 +659,82 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CrashlogViewer'"
     },
     {
+      "name": "Custom Channel Selection-By-M-Nasr (قائمة للقنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CustomChannelSelection",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CustomChannelSelection'"
+    },
+    {
+      "name": "CutsClear (حذف الأفلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/cutsclear_cutsclear.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CutsClear",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CutsClear'"
+    },
+    {
+      "name": "Disk_And_CPU_Temperature (حرارة القرص الصلب)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_disk_and_cpu_temperature.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/DiskCpuTemp",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/DiskCpuTemp'"
+    },
+    {
+      "name": "DreamExplorer (تصفح الملفات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dreamexplorer_dreamexplorer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/DreamExplorer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DreamExplorer'"
+    },
+    {
+      "name": "DreamOSatCamManager (تحميل الايميوهات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/DreamOSatcamManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DreamOSatcamManager'"
+    },
+    {
+      "name": "Easy-Cccam (إدخال CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/easy-cccam_easy-cccam.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ECCcam",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ECCcam'"
+    },
+    {
+      "name": "E2BissKeysEditor (تعديل الشفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/E2BissKeysEditor_E2BissKeysEditor.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/E2BissKeyEditor",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/E2BissKeyEditor'"
+    },
+    {
+      "name": "E2-Duplicate-Channels-Manager (مدير القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_duplicatechannelsmanager_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/E2DuplicateChannelsManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/E2DuplicateChannelsManager'"
+    },
+    {
+      "name": "Emil BootLogos (بوت لوجو)",
+      "cmd": "wget --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/emilbootlogos_emilbootlogos.sh | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EmilBootLogos",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EmilBootLogos'"
+    },
+    {
+      "name": "Emil Channels (تحميل ملفات القنوات)",
+      "cmd": "wget --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/EmilChannels_emilchannels.sh | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EmilChannels",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EmilChannels'"
+    },
+    {
+      "name": "EmilRemovePackage (حذف الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/EmilRemovePackage_EmilRemovePackage.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EmilRemovePackage",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EmilRemovePackage'"
+    },
+    {
       "name": "EnigmaPrayer (مواقيت الصلاة بدون انترنت)",
       "cmd": "wget --no-check-certificate -O - https://dreambox4u.com/emilnabil237/plugins/EnigmaPrayer/EnigmaPrayer.sh | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/EnigmaPrayer",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EnigmaPrayer'"
+    },
+    {
+      "name": "enigma2readeradder (إدخال CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/enigma2readeradder_enigma2readeradder.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Enigma2ReaderAdder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Enigma2ReaderAdder'"
     },
     {
       "name": "Enigma2uninstaller (حذف البلجنات)",
@@ -337,6 +749,30 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGGrabber'"
     },
     {
+      "name": "EPGImport (دليل القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_epgimport.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGImport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'"
+    },
+    {
+      "name": "EPGImport-auto - iet5 (دليل القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_epgimportiet5_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGImport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'"
+    },
+    {
+      "name": "EPGImport-99 (دليل القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGImport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'"
+    },
+    {
+      "name": "EPGTranslator (مترجم دليل القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_epgtranslator.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGTranslator",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGTranslator'"
+    },
+    {
       "name": "EvgQuickSignal (بيان إشارة الترددات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/EvgQuickSignal/EvgQuickSignal.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/EvgQuickSignal",
@@ -349,10 +785,58 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FeedsFinder'"
     },
     {
+      "name": "Filmon",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Filmon",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Filmon'"
+    },
+    {
+      "name": "Foreca1",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Foreca1",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Foreca1'"
+    },
+    {
+      "name": "Footonsat (مواعيد مباريات الكرة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Download_install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FootOnSat",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FootOnSat'"
+    },
+    {
+      "name": "FreeCCcamServer (CCCam مجاني)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/freecccamserver_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FreeServer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FreeServer'"
+    },
+    {
+      "name": "FuryBissPro (جالب الفيدات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FuryBiss",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FuryBiss'"
+    },
+    {
+      "name": "GeminiPatcher",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/GeminiPatcher_geminipatcher.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/GeminiPatcher",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/GeminiPatcher'"
+    },
+    {
+      "name": "gioppygio",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/gioppygio_gioppygio.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/GioppyGio",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/GioppyGio'"
+    },
+    {
       "name": "hardwareinfo (معلومات الهاردوير)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/hardwareinfo/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/hardware_info",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/hardware_info'"
+    },
+    {
+      "name": "HisnMuslim (حصن المسلم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/hisnmuslim_hisnmuslim.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/HisnMuslim",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/HisnMuslim'"
     },
     {
       "name": "HistoryZapSelector (تصفح آخر القنوات)",
@@ -361,10 +845,94 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/HistoryZapSelector'"
     },
     {
+      "name": "horoscope (الأبراج)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_horoscope.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/horoscope",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/horoscope'"
+    },
+    {
+      "name": "HolidayCountdown (خاص بالأعياد)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/HolidayCountdown_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/HolidayCountdown",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/HolidayCountdown'"
+    },
+    {
+      "name": "ImagesDownloader - Mod Emil Nabil (تحميل الصور)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ImagesDownloader_ImagesDownloader.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ImagesDownloader",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ImagesDownloader'"
+    },
+    {
+      "name": "Internet-SpeedTest (اختبار الإنترنت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_internet-speedtest.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/InternetSpeedTest",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/InternetSpeedTest'"
+    },
+    {
+      "name": "Infobar Weather (انفوبار ثاني به الطقس)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/InfoBarWeather_InfobarWeather.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/InfoBarWeather",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/InfoBarWeather'"
+    },
+    {
+      "name": "IP_Checker (معلومات IP الإنترنت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_IP_Checker.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IP_Checker",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IP_Checker'"
+    },
+    {
+      "name": "KeyAdder (مفاتيح الشفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'"
+    },
+    {
+      "name": "LiveFeed",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/enigma2_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/LiveFeed",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/LiveFeed'"
+    },
+    {
+      "name": "levi45-freeserver (CCCam مجاني)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/levi45-freeserver_levi45-freeserver.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Levi45FreeServer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Levi45FreeServer'"
+    },
+    {
+      "name": "levi45-free-iptv (IPTV مجاني)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/levi45-free-iptv_levi45-freeiptv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Levi45FreeIPTV",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Levi45FreeIPTV'"
+    },
+    {
+      "name": "LiveMatch (عرض نتائج الرياضة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/livematch_livematch.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Levi45Setting",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Levi45Setting'"
+    },
+    {
       "name": "levi45-settings (ملف القنوات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/levi45-settings/levi45-settings.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Levi45Setting",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Levi45Setting'"
+    },
+    {
+      "name": "Mawaqit (مواقيت الصلاة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Mawaqit_Mawaqit.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Mawaqit",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Mawaqit'"
+    },
+    {
+      "name": "MenuSort (ترتيب القائمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_menusort.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MenuSort",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MenuSort'"
+    },
+    {
+      "name": "MmPicons (تحميل البيكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/mmPicons",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/mmPicons'"
     },
     {
       "name": "MyCam-Plugin (إدخال سيرفر CCCam)",
@@ -373,10 +941,76 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/mycam7'"
     },
     {
+      "name": "MultiCamAdder_By-Online4Tech (كتابة سيرفر CCCam)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/MultiCamAdder_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MultiCamAdder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MultiCamAdder'"
+    },
+    {
+      "name": "Multi-Iptv-Adder_By-Online4Tech (إدخال IPTV)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/MultiIptvAdder_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MultiIptvAdder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MultiIptvAdder'"
+    },
+    {
+      "name": "my translator_By Ismail elkhooly (مترجم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_mytranslator.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MyTranslator",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MyTranslator'"
+    },
+    {
+      "name": "Net Usage Pro (معلومات الإنترنت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/netusagepro_netusagepro.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NetUsagePro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NetUsagePro'"
+    },
+    {
       "name": "NewVirtualkeyBoard (كيبورد متقدم)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/NewVirtualKeyBoard/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/NewVirtualKeyBoard",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/NewVirtualKeyBoard'"
+    },
+    {
+      "name": "NumberZapExt (أرقام للقنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/NumberZapExt_NumberZapExt.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NumberZapExt",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NumberZapExt'"
+    },
+    {
+      "name": "ONEupdater",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ONEupdater",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ONEupdater'"
+    },
+    {
+      "name": "Oaweather (معلومات الطقس)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/OAWeather",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/OAWeather'"
+    },
+    {
+      "name": "Ozeta-Skins-Setup (إعدادات الثيم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_PLUGIN_Skin-ozeta.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/oZsetup",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/oZsetup'"
+    },
+    {
+      "name": "PiconsRename (تحويل البيكونات بالاسم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/PiconsRename_PiconsRename.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/PiconsRename",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/PiconsRename'"
+    },
+    {
+      "name": "PluginBrowser-Grid-V2_All-Py3 (OpenBH-Vix-Pli)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/PluginBrowser-Grid_pluginbrowser-grid-v2.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/PluginBrowser",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/PluginBrowser'"
+    },
+    {
+      "name": "PluginBrowser-Grid-Pli_8.3",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/PluginBrowser-Grid_pluginbrowser-grid-pli_8.3.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/PluginBrowser",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/PluginBrowser'"
     },
     {
       "name": "PluginMover (نقل الإضافات للخارجي)",
@@ -391,10 +1025,34 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/PluginSkinMover'"
     },
     {
+      "name": "QuadPip (متابعة أكثر من قناة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/QuadPip_QuadPip.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/QuadPip",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/QuadPip'"
+    },
+    {
       "name": "Quran-karem (القرآن الكريم)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/quran/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Quran",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Quran'"
+    },
+    {
+      "name": "Quran-karem_v2.2 (القرآن الكريم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Quran",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Quran'"
+    },
+    {
+      "name": "Quran Kareem-By-M-Nasr (القرآن الكريم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/qurankareem",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/qurankareem'"
+    },
+    {
+      "name": "QuickSignal - iet5 (بيان إشارة للقنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_quicksignaliet5_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/QuickSignalIet5",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/QuickSignalIet5'"
     },
     {
       "name": "RaedQuickSignal (بيان إشارة للقنوات)",
@@ -403,10 +1061,58 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RaedQuickSignal'"
     },
     {
+      "name": "ReaderManager (مدير السيرفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ReaderManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ReaderManager'"
+    },
+    {
+      "name": "SatelliWebLiveFeeds_py3.12 (فيدات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/satelliweblivefeeds_satelliweblivefeeds-py3.12.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Fatima",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Fatima'"
+    },
+    {
+      "name": "SatelliWebLiveFeeds_py3.13 (فيدات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/satelliweblivefeeds_satelliweblivefeeds-py3.13.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Fatima",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Fatima'"
+    },
+    {
+      "name": "ScreenNames (اسم الشاشة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/screennames_screennames.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ScreenNames",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ScreenNames'"
+    },
+    {
+      "name": "Screen-Recorder-By-Online4Tech (تسجيل الشاشة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/screenrecorder_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ScreenRecorder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ScreenRecorder'"
+    },
+    {
+      "name": "ServerColoring (تلوين القنوات المشفرة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ServerColoring",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ServerColoring'"
+    },
+    {
       "name": "ServiceScanUpdates (معلومات بحث القنوات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/servicescanupdates/servicescanupdates.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ServiceScanUpdates",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ServiceScanUpdates'"
+    },
+    {
+      "name": "ServiceScanUpdates - iet5 (معلومات بحث القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_servicescanupdatesiet5_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ServiceScanUpdates",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ServiceScanUpdates'"
+    },
+    {
+      "name": "SetPicon - Online4Tech (مدير البيكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/setpicon_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SetPicon",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SetPicon'"
     },
     {
       "name": "scriptexecuter (تشغيل السكريبت)",
@@ -415,14 +1121,74 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ScriptExecuter'"
     },
     {
+      "name": "ShiaVoice (اصوات قرأن وادعية)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Shiavoice",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Shiavoice'"
+    },
+    {
+      "name": "showclock (ساعة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/showclock_showclock.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ShowClock",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ShowClock'"
+    },
+    {
+      "name": "Sherlockmod (أضافة انفوبار 2 به معلومات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Sherlockmod",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Sherlockmod'"
+    },
+    {
+      "name": "SilentRunner (تشغيل سكريبتات صامت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/SilentRunner_SilentRunner.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SilentRunner",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SilentRunner'"
+    },
+    {
+      "name": "SimplySports (معلومات رياضة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/SimplySports_SimplySports.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SimplySports",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SimplySports'"
+    },
+    {
+      "name": "SLwebcams",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SLwebcams",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SLwebcams'"
+    },
+    {
+      "name": "SuperBackupImages_by Emil Nabil (تحميل الإضافات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/SuperBackupImages_SuperBackupImages.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SuperBackupImages",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SuperBackupImages'"
+    },
+    {
       "name": "Simple-Zoom-Panel (سيرفرات مجانية)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/simple-zoom-panel/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/SimpleZOOMPanel",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SimpleZOOMPanel'"
     },
     {
+      "name": "Spinner-Selector-All-Python (تحميل الدوار)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/SpinnerSelector_spinner-selector.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SpinnerSelector",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SpinnerSelector'"
+    },
+    {
+      "name": "SubExtractorLite (ترجمة الأفلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubExtractorLite",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubExtractorLite'"
+    },
+    {
       "name": "SubsSupport_1.5.8-r9 (ترجمة الأفلام)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/SubsSupport/installer1.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'"
+    },
+    {
+      "name": "SubsSupport_by-m.nasr (ترجمة الأفلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_subssupport-install.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'"
     },
@@ -433,10 +1199,52 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'"
     },
     {
+      "name": "SubsSupportPro-By-Mohammed-Nasr (ترجمة الأفلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'"
+    },
+    {
+      "name": "TMBD (خاص بالترجمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TMBD",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TMBD'"
+    },
+    {
+      "name": "Tmdb (خاص بالترجمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_tmdb.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/tmdb",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/tmdb'"
+    },
+    {
+      "name": "TheWeather-iet5 (الطقس)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_theweatheriet5_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TheWeatherIet5",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TheWeatherIet5'"
+    },
+    {
+      "name": "TvManager (مدير القنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/tvManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/tvManager'"
+    },
+    {
       "name": "uninstaller-Plugins (حذف الإضافات)",
       "cmd": "wget http://dreambox4u.com/emilnabil237/plugins/unstaller-plugins/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Uninstaller",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Uninstaller'"
+    },
+    {
+      "name": "Wireguard-Vpn",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/python-3.13_WireGuard.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Wireguard",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Wireguard'"
+    },
+    {
+      "name": "Wifi-Manager (مدير الواي فاي)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/wifimanager_wifimanager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/WiFiManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/WiFiManager'"
     },
     {
       "name": "WeatherMsn (الطقس)",
@@ -451,13 +1259,128 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/WeatherPlugin'"
     },
     {
+      "name": "WorldCam (كاميرات حول العالم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/WorldCam",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/WorldCam'"
+    },
+    {
+      "name": "XmlUpdate by iet5 (تحديث الترددات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_xmlupdatebyiet5_auto.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/XMLupdatebyiet5",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XMLupdatebyiet5'"
+    },
+    {
+      "name": "Xtraevent_4.6 (لوجو البرامج)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_Xtraevent-v4.6.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent'"
+    },
+    {
+      "name": "xtraevent_6.890_All-Python (لوجو البرامج)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_xtraevent-6.890.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent'"
+    },
+    {
+      "name": "xtraevent_By-M-Nasr (لوجو البرامج)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_xtraevent-install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/xtraEvent'"
+    },
+    {
+      "name": "YoureWatching (معلومات الفيلم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/YoureWatching_YoureWatching.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/YoureWatching",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/YoureWatching'"
+    },
+    {
+      "name": "Zip2Pkg-Converter (عمل باكاج للإضافة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Zip2Pkg_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Zip2Pkg",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Zip2Pkg'"
+    },
+    {
       "name": "Zoom_1.1.2-Py3 (سيرفرات مجانية)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/zoom/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Zoom",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Zoom'"
     }
   ],
-  "novaler": [],
+  "novaler": [
+    {
+      "name": "novalerStore",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_novalerStore.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovalerStore",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovalerStore'"
+    },
+    {
+      "name": "Airnet-Fn",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_airnet-fn.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AirnetFn",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AirnetFn'"
+    },
+    {
+      "name": "Beengo",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_beengo.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Beengo",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Beengo'"
+    },
+    {
+      "name": "ipaudioplus",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_ipaudioplus.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPlus",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPlus'"
+    },
+    {
+      "name": "ipsat",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_ipsat.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPSAT",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPSAT'"
+    },
+    {
+      "name": "Novaler Downloader",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovalerDownloader",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovalerDownloader'"
+    },
+    {
+      "name": "NovaCamPro",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_novacampro.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovacamPro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovacamPro'"
+    },
+    {
+      "name": "NovalerTv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_novalertv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovalerTV",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovalerTV'"
+    },
+    {
+      "name": "NovaTv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_novatv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NovaTV",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/NovaTV'"
+    },
+    {
+      "name": "SupTv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_suptv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/suptv",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/suptv'"
+    },
+    {
+      "name": "Total90",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_total90.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Total90",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Total90'"
+    },
+    {
+      "name": "Ultracam",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/novaler_ultracam.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/UltraCam",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/UltraCam'"
+    }
+  ],
   "channels": [
     {
       "title": "Other",
@@ -487,23 +1410,747 @@
       "path": "/etc/enigma2/fifa"
     },
     {
+      "name": "Online4Tech Edition",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/emil"
+    },
+    {
+      "name": "Ahmed-Mosaad Modded",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/emil"
+    },
+    {
+      "name": "Ahmed Romeh",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ahmed"
+    },
+    {
+      "name": "Hazem-Wahba",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/hazem"
+    },
+    {
+      "name": "Khaled Ali",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/Khalid"
+    },
+    {
+      "name": "Mohamed Goda",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/goda"
+    },
+    {
+      "name": "Mohamed-Nasr",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/nasr"
+    },
+    {
+      "name": "Sayed Refaey",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_sayed-refaey.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/sayed"
+    },
+    {
+      "name": "Tarek Ashry",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/tarek"
+    },
+    {
       "name": "Elsafty-Tv-Radio-Steaming",
       "cmd": "wget -q \"--no-check-certificate\" https://dreambox4u.com/emilnabil237/settings/elsafty/installer.sh -O - | /bin/sh",
       "path": "/etc/enigma2/safty"
+    },
+    {
+      "name": "Tuner_Backup_By-Online4Tech-Nabil",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_restore-tuner-emil.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/tuner"
+    },
+    {
+      "name": "Tuner_Backup_By-M-Goda",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_restore-tuner-goda.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/tuner"
     }
   ],
-  "ciefp_channels": [],
-  "morph883_channels": [],
-  "vaninbal_channels": [],
+  "ciefp_channels": [
+    {
+      "name": "ciefp-channels-e2-75e-34w",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-channels-e2-75e-34w.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "1sat-19E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-1sat-19E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "2satA-19E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-2satA-19E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "2satB-19E-16E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-2satB-19E-16E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "3satA-9E-10E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-3satA-9E-10E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "3satB-19E-16E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-3satB-19E-16E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "4satA-28E-19E-13E-30W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-4satA-28E-19E-13E-30W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "4satB-19E-16E-13E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-4satB-19E-16E-13E-0.8W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "5sat-19E-16E-13E-1.9E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-5sat-19E-16E-13E-1.9E-0.8W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "6sat-23E-19E-16E-13E-1.9E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-6sat-23E-19E-16E-13E-1.9E-0.8W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "7sat-23E-19E-16E-13E-4.8E-1.9E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-7sat-23E-19E-16E-13E-4.8E-1.9E-0.8W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "8sat-28E-23E-19E-16E-13E-4.8E-1.9E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-8sat-28E-23E-19E-16E-13E-4.8E-1.9E-0.8W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "9sat-28E-23E-19E-16E-13E-9E-1.9E-0.8W-5W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-9sat-28E-23E-19E-16E-13E-9E-1.9E-0.8W-5W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "10sat-39E-28E-23E-19E-16E-13E-9E-4.8E-1.9E-0.8W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-10sat.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "13sat-42E-39E-28E-23E-19E-16E-13E-9E-7E-4.8E-1.9E-0.8w-5w",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-13sat.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "16sat-42E-39E-28E-26E-23E-19E-16E-13E-10E-9E-7E-4.8E-1.9E-0.8w-4W-5w",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-16sat.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "18sat-42E-39E-36E-33E-28E-26E-23E-19E-16E-13E-10E-9E-7E-4.8E-1.9E-0.8w-4w-5w",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-E2-18sat.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    }
+  ],
+  "morph883_channels": [
+    {
+      "name": "Morph883_0.8W-4.8E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_0.8W-4.8E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_0.8W-13E-19.2E-28.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_0.8W-13E-19.2E-28.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_0.8W-13E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_0.8W-13E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_0.8W-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_0.8W-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_4.8E-13E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_4.8E-13E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_4.8E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_4.8E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_9E-13E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_9E-13E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_9E-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_9E-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-16E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-16E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-16E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-16E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-19.2E-23.5E-28.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-19.2E-23.5E-28.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-19.2E-23.5E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-19.2E-23.5E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-19.2E-28.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-19.2E-28.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-19.2E-42E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-19.2E-42E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-23.5E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-23.5E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-28.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-28.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E-42E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E-42E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_30W-13E-19.2E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_30W-13E-19.2E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_30W-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_30W-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_Motor",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_Motor.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Morph883_Settings",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/morpheus883-channels_E2_Morph883_Settings.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    }
+  ],
+  "vaninbal_channels": [
+    {
+      "name": "Vhaninbal-Dual-13-19E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-13-19E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Dual-DTT-Campania",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-DTT-Campania.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Dual-DTT-Italia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-DTT-Italia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Dual-DTT-Lazio",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-DTT-Lazio.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Dual-DTT-Lombardia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-DTT-Lombardia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Dual-DTT-Piemonte",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Dual-DTT-Piemonte.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-13E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-13E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-DTT-Campania",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-DTT-Campania.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-DTT-Italia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-DTT-Italia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-DTT-Lazio",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-DTT-Lazio.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-DTT-Lombardia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-DTT-Lombardia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-HotBird-DTT-Piemonte",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-HotBird-DTT-Piemonte.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-70E-45W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-70E-45W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Campania",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Campania.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Italia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Italia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Lazio",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Lazio.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Lombardia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Lombardia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Piemonte",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Piemonte.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Romagna",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Romagna.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Sardegna",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Sardegna.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Motor-DTT-Sicilia",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Motor-DTT-Sicilia.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Quadri-9-13-16-19-23E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Quadri-9-13-16-19-23E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Quadri-13-19-5E-1W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Quadri-13-19-5E-1W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Quadri-13-19-9E-5W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Quadri-13-19-9E-5W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Quadri-13-19-23-28E",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Quadri-13-19-23-28E.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Trial-13-19E-5W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Trial-13-19E-5W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    },
+    {
+      "name": "Vhaninbal-Trial-13-19E-30W",
+      "cmd": "wget -q \"--no-check-certificate\" https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/vanenbal-channels_Vhannibal-Trial-13-19E-30W.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/ciefp"
+    }
+  ],
   "feeds": [
+    {
+      "name": "Eliesat (فيد اضافي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/feed_eliesat-feed.sh -O - | /bin/sh",
+      "path": "/etc/opkg/eliesat-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/eliesat-feed.conf && opkg update"
+    },
+    {
+      "name": "Emil (فيد أضافي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-emil-feed.sh -O - | /bin/sh",
+      "path": "/etc/opkg/emil-dream-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/emil-dream-feed.conf && opkg update"
+    },
+    {
+      "name": "Jungle (فيد أضافي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-jungle-feed.sh -O - | /bin/sh",
+      "path": "/etc/opkg/jungle-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/jungle-feed.conf && opkg update"
+    },
+    {
+      "name": "Libraries_3.12.4",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-libraries-3.12.4.sh -O - | /bin/sh",
+      "path": "/etc/opkg/library-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/library-feed.conf && opkg update"
+    },
+    {
+      "name": "Libraries_3.12.6",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-libraries-3.12.sh -O - | /bin/sh",
+      "path": "/etc/opkg/library-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/library-feed.conf && opkg update"
+    },
+    {
+      "name": "Oe-alliance-Picons (فيد به بايكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-oe-picons.sh -O - | /bin/sh",
+      "path": "/etc/opkg/oe-alliance-picon-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/oe-alliance-picon-feed.conf && opkg update"
+    },
+    {
+      "name": "Oe-alliance-Settings (فيد به ملفات قنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-oe-settings.sh -O - | /bin/sh",
+      "path": "/etc/opkg/oe-alliance-settings-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/oe-alliance-settings-feed.conf && opkg update"
+    },
     {
       "name": "Openatv-Deval (فيد صورة openatv للمطورين)",
       "cmd": "wget -O - -q https://feeds2.mynonpublic.com/devel-feed | bash",
       "path": "/etc/opkg/devel-feed",
       "remove_cmd": "rm -f /etc/opkg/devel-feed.conf && opkg update"
+    },
+    {
+      "name": "OpenPicons (فيد بايكونات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-openpicons.sh -O - | /bin/sh",
+      "path": "/etc/opkg/snp-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/snp-feed.conf && opkg update"
+    },
+    {
+      "name": "Softcams-Feed-Openatv (اضافة سوفتكام لفيد الصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-OpenAtv-softcam-ALL-Python.sh -O - | /bin/sh",
+      "path": "/etc/opkg/softcam",
+      "remove_cmd": "rm -f /etc/opkg/softcam*.conf && opkg update"
+    },
+    {
+      "name": "OpenDroid-softcam (اضافة سوفتكام لفيد الصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-OpenDroid-softcam.sh -O - | /bin/sh",
+      "path": "/etc/opkg/softcam",
+      "remove_cmd": "rm -f /etc/opkg/softcam*.conf && opkg update"
+    },
+    {
+      "name": "OpenEight-softcam (اضافة سوفتكام لفيد الصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-OpenEight-softcam.sh -O - | /bin/sh",
+      "path": "/etc/opkg/team",
+      "remove_cmd": "rm -f /etc/opkg/team*.conf && opkg update"
+    },
+    {
+      "name": "TeamBlue-softcam (اضافة سوتكام لفيد الصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-TeamBlue-softcam.sh -O - | /bin/sh",
+      "path": "/etc/opkg/softcam",
+      "remove_cmd": "rm -f /etc/opkg/softcam*.conf && opkg update"
+    },
+    {
+      "name": "Softcams-Feed-Pure2 (اضافة سوفتكام لفيد الصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-pure2-softcam.sh -O - | /bin/sh",
+      "path": "/etc/opkg/softcam",
+      "remove_cmd": "rm -f /etc/opkg/softcam*.conf && opkg update"
+    },
+    {
+      "name": "Tarek-Hanfy (فيد اضافي للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_FEED-Tarek.sh -O - | /bin/sh",
+      "path": "/etc/opkg/tarek-feed.conf",
+      "remove_cmd": "rm -f /etc/opkg/tarek-feed.conf && opkg update"
     }
   ],
-  "ciefp": [],
+  "ciefp": [
+    {
+      "name": "CiefpBootlogo",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpBootlogo",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpBootlogo'"
+    },
+    {
+      "name": "CiefpBouquetUpdater",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpBouquetUpdater",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpBouquetUpdater'"
+    },
+    {
+      "name": "CiefpChannelManager",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpChannelManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpChannelManager'"
+    },
+    {
+      "name": "CiefpE2Converter",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpE2Converter",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpE2Converter'"
+    },
+    {
+      "name": "CiefpE2editor",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpE2editor",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpE2editor'"
+    },
+    {
+      "name": "CiefpEasySetup",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpEasySetup",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpEasySetup'"
+    },
+    {
+      "name": "CiefpEPGshare",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpEPGshare",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpEPGshare'"
+    },
+    {
+      "name": "CiefpIPTVBouquets",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpIPTVBouquets",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpIPTVBouquets'"
+    },
+    {
+      "name": "CiefpKingSat",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpKingSat",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpKingSat'"
+    },
+    {
+      "name": "CiefpMojTvEPG",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpMojTvEPG",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpMojTvEPG'"
+    },
+    {
+      "name": "CiefpOpenDirectories",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpOpenDirectories",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpOpenDirectories'"
+    },
+    {
+      "name": "CiefpOpenSubtitles",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpOpenSubtitles",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpOpenSubtitles'"
+    },
+    {
+      "name": "CiefpOscamEditor",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpOscamEditor",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpOscamEditor'"
+    },
+    {
+      "name": "CiefpParabolaCZ",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpParabolaCZ",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpParabolaCZ'"
+    },
+    {
+      "name": "CiefpPiconManager",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpPiconManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpPiconManager'"
+    },
+    {
+      "name": "CiefpPicturePlayer",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpPicturePlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpPicturePlayer'"
+    },
+    {
+      "name": "CiefpPlugins",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpPlugins",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpPlugins'"
+    },
+    {
+      "name": "CiefpRottenTomatoes",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpRottenTomatoes",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpRottenTomatoes'"
+    },
+    {
+      "name": "CiefpSatelliteAnalyzer",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSatelliteAnalyzer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSatelliteAnalyzer'"
+    },
+    {
+      "name": "CiefpSatellitesXmlEditor",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSatelliteXmlEditor",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSatelliteXmlEditor'"
+    },
+    {
+      "name": "CiefpScreenGrab",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpScreenGrab",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpScreenGrab'"
+    },
+    {
+      "name": "CiefpSelectSatellite",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSelectSatellite",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSelectSatellite'"
+    },
+    {
+      "name": "CiefpSettingsDownloader",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsDownloader",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsDownloader'"
+    },
+    {
+      "name": "CiefpSettingsPanel",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpsettingsPanel",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpsettingsPanel'"
+    },
+    {
+      "name": "CiefpSettingsStreamrelay PY2",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsStreamrelayPY2",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsStreamrelayPY2'"
+    },
+    {
+      "name": "CiefpSettingsStreamrelay PY3",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsStreamrelay",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsStreamrelay'"
+    },
+    {
+      "name": "CiefpSettingsT2miAbertis",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsT2miAbertis",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsT2miAbertis'"
+    },
+    {
+      "name": "CiefpSettingsT2miAbertisOpenPLi",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsT2miAbertisOpenPLi",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpSettingsT2miAbertisOpenPLi'"
+    },
+    {
+      "name": "CiefpsettingsMotor",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpsettingsMotor",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpsettingsMotor'"
+    },
+    {
+      "name": "CiefpTMDBSearch",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTMDBSearch",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTMDBSearch'"
+    },
+    {
+      "name": "CiefpTvProgram",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgram",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgram'"
+    },
+    {
+      "name": "CiefpTvProgramA1HR",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramA1HR",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramA1HR'"
+    },
+    {
+      "name": "CiefpTvProgramSBB",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramSBB",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramSBB'"
+    },
+    {
+      "name": "CiefpTvProgramSK",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramSK",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvProgramSK'"
+    },
+    {
+      "name": "CiefpTvTodayDE",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvTodayDE",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpTvTodayDE'"
+    },
+    {
+      "name": "CiefpVibes",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpVibes",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpVibes'"
+    },
+    {
+      "name": "CiefpVideoPlayer",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpVideoPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpVideoPlayer'"
+    },
+    {
+      "name": "CiefpWhitelistStreamrelay",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpWhitelistStreamrelay",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpWhitelistStreamrelay'"
+    },
+    {
+      "name": "CiefpYouTube",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/CiefpYouTube",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/CiefpYouTube'"
+    },
+    {
+      "name": "TitloviBrowser",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TitloviBrowser",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TitloviBrowser'"
+    },
+    {
+      "name": "WebCamE2PrenjSF",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/WebCamE2PrenjSF",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/WebCamE2PrenjSF'"
+    }
+  ],
   "bootlogos": [
     {
       "name": "BootlogoSwapper Egami (بوت لوجو متعدد)",
@@ -590,7 +2237,188 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/BootLogoSwapper'"
     }
   ],
-  "spinners": [],
+  "spinners": [
+    {
+      "name": "Spinner-Circle",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-circle.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Barcelona",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-barcelona.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Bayern-Munich",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-bayern-munich.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Chelsea",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-chelsea.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Liverpool",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-liverpool.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-MadMax",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-MadMax.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Pigeon",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-pigeon.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Pingu",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Pingu.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-TS",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-ts.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Revolution",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Revolution.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Circle-Brown",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-circle-brown.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Collar",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-collar.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Colored-Rings",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-colored-Rings.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Fan",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-fan.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-kare-dugmeler",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-kare-dugmeler.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Kum-saati-kare",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Kum-saati-kare.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-kupler",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Kupler.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Number-Counter",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Number-Counter.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Xdreamy",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Xdreamy.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Renkli-donen-cemberler",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Renkli-donen-cemberler.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Wheel",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-wheel.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-3d",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-3D.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Aglare",
+      "cmd": "wget -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-aglare.sh | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Dance",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-dance.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Dart",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-dart.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Echse",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Echse.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Girls",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-girls.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Girls-Dance",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-girls-dance.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Jack-Sparrow",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Jack-Sparrow.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Nasht",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-nasht.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-PapaSchlumpf",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-PapaSchlumpf.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-presupaci-hodiny",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-presupaci-hodiny.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Simba",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-Simba.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-SylvesterTweety",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-SylvesterTweety.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Vu+",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-vu_.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    },
+    {
+      "name": "Spinner-Window",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/spinners_spinner-window.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma/spinnerr"
+    }
+  ],
   "tools": [
     {
       "name": "Wget (أداة تحميل مهمة)",
@@ -601,6 +2429,41 @@
       "name": "Curl (أداة تحميل مهمة)",
       "cmd": "opkg install curl",
       "path": "/usr/bin/curl"
+    },
+    {
+      "name": "Update Enigma2 All Python (تحميل الحزم المهمة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_update-all-python.sh -O - | /bin/sh",
+      "path": "/usr/bin/python3"
+    },
+    {
+      "name": "Opkg Tools_1.4 (حزمة مهمة للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_opkg.sh -O - | /bin/sh",
+      "path": "/usr/bin/opkg"
+    },
+    {
+      "name": "Opkg Tools_1.5 (حزمة مهمة للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_opkg-tools_1.5.sh -O - | /bin/sh",
+      "path": "/usr/bin/opkg"
+    },
+    {
+      "name": "EPG-khaled (دليل للقنوات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_EPG-khaled.sh -O - | /bin/sh",
+      "path": "/etc/epgimport/khaled.epg.sources.xml"
+    },
+    {
+      "name": "Free Server Cccam (سيرفرات cccam مجانية)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_Free_Server.sh -O - | /bin/sh",
+      "path": "/etc/free/CCcam.cfg"
+    },
+    {
+      "name": "arabic-language_for-egami-image (ملف تعريب للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/arabic-language_images_arabic-language_for-egami-image.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/po/ar/ar"
+    },
+    {
+      "name": "arabic-language_for-openatv-image (ملف تعريب للصورة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/arabic-language_images_arabic-language_for-openatv-image.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/po/ar/ar"
     },
     {
       "name": "arabic-language_for-openbh-image (ملف تعريب للصورة)",
@@ -628,14 +2491,39 @@
       "path": "/tmp/ipk"
     },
     {
+      "name": "Script package (تحميل حزمة السكريبتات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_script.sh -O - | /bin/sh",
+      "path": "/usr/script/EMU-ncam.sh"
+    },
+    {
       "name": "Super Script (تحديث الصورة وتحميل بلجنات مهمة)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/Super_Script.sh -O - | /bin/sh",
       "path": "/usr/script/script/scrip"
     },
     {
+      "name": "Delete-password",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/scripts-servise_delete-password.sh -O - | /bin/sh",
+      "path": "/etc/passwd/pass"
+    },
+    {
+      "name": "Change-Password-To-root",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/scripts-servise_change-password-to-root.sh -O - | /bin/sh",
+      "path": "/etc/passwd/pass"
+    },
+    {
       "name": "CAM-abertis-astra-sm",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/CAM-abertis-astra.sh -O - | /bin/sh",
       "path": "/etc/astra/astra.conf"
+    },
+    {
+      "name": "FORMAT_HDD_TO-Ext4",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_format-hdd.sh -O - | /bin/sh",
+      "path": "/media/hdd/hdd/hd"
+    },
+    {
+      "name": "Repair-Inodes-From-Hdd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_repair-hdd.sh -O - | /bin/sh",
+      "path": "/media/hdd/hdd/hd"
     },
     {
       "name": "Fix-Time-Shift-Openatv",
@@ -648,9 +2536,24 @@
       "path": "/usr/bin/opkg/fix"
     },
     {
+      "name": "Fix-Xtraevent-Download",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_fix-xtraevent-download.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/XtraEvent/fix"
+    },
+    {
       "name": "Fix Softcam Atv",
       "cmd": "wget http://updates.mynonpublic.com/oea/feed -O - | /bin/sh",
       "path": "/etc/opkg/fix"
+    },
+    {
+      "name": "Fix Softcam OpenPli",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_softcam-support-pli.sh -O - | /bin/sh",
+      "path": "/etc/opkg/fix"
+    },
+    {
+      "name": "Picons-Convert2Snp",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_picons-convert2snp.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/picons/picon"
     },
     {
       "name": "Feed OpenPicons",
@@ -668,6 +2571,61 @@
       "path": "/etc/timezone/times"
     },
     {
+      "name": "UpdateSatellitesOealliance",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_Satellites-Oealliance.sh -O - | /bin/sh",
+      "path": "/etc/tuxbox/satellites/satellites"
+    },
+    {
+      "name": "UpdateSatellitesOpenPli",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_satellites-openpli.sh -O - | /bin/sh",
+      "path": "/etc/tuxbox/satellites/satellites"
+    },
+    {
+      "name": "DNS Google",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-google.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Control",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-control.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Cloudflare",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-cloudflare.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS CleanBrowsing",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-cleanbrowsing.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Quad9",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-quad9.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Open-Home",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-openhome.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Comodo",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-comodo.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS Alternate",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-alternate.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
+      "name": "DNS AdGuard",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/dns_dns-adguard.sh -O - | /bin/sh",
+      "path": "/etc/resolv/resolv.conf"
+    },
+    {
       "name": "Zip2ipk",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/zip2ipk.sh -O - | /bin/sh",
       "path": "/usr/script/zip"
@@ -675,10 +2633,28 @@
   ],
   "system": [
     {
+      "name": "AutomaticVolumeAdjustment-ALL Python",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/AutomaticVolumeAdjustment_AutomaticVolumeAdjustment.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/AutomaticVolumeAdjustment",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/AutomaticVolumeAdjustment'"
+    },
+    {
       "name": "3gmodemmanager-ALL Python",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/3gmodemmanager/3gmodemmanager.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/3GModemManager",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/3GModemManager'"
+    },
+    {
+      "name": "Disk_and_CPU_Temperature",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_disk_and_cpu_temperature.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/DiskAndCpuTemp",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/DiskAndCpuTemp' '/usr/lib/enigma2/python/Plugins/SystemPlugins/DiskCpuTemp'"
+    },
+    {
+      "name": "devicemanager-All Python",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_devicemanager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/DeviceManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/DeviceManager'"
     },
     {
       "name": "extnumberzap",
@@ -691,6 +2667,24 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/muntmanger/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/MountManager",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/MountManager'"
+    },
+    {
+      "name": "Setpasswd-ALL Python",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_setpasswd.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/SetPasswd",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/SetPasswd'"
+    },
+    {
+      "name": "Signalfinder-ALL Python",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/signalfinder_signalfinder.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/SignalFinder",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/SignalFinder'"
+    },
+    {
+      "name": "SoftwareManager-ALL Python",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/softwaremanager_softwaremanager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/SystemPlugins/SoftwareManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/SystemPlugins/SoftwareManager'"
     },
     {
       "name": "Ts-SatEditor-ALL Python",
@@ -706,6 +2700,36 @@
     }
   ],
   "media": [
+    {
+      "name": "ArabicPlayer (تشغيل ال iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/ArabicPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/ArabicPlayer'"
+    },
+    {
+      "name": "Alkuds-IpAudio (أضافة صوتيات علي قنوات السات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Alkuds",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XKlass' '/usr/lib/enigma2/python/Plugins/Extensions/Alkuds'"
+    },
+    {
+      "name": "AudioMerge (دمح صوتيات قناتين)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/audiomerge_audiomerge.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AudioMerge",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AudioMerge'"
+    },
+    {
+      "name": "AudioShift (أضافة صوتيات علي قنوات السات)",
+      "cmd": "wget --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/audioshift_installer.sh | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AudioShift",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AudioShift'"
+    },
+    {
+      "name": "AudioSelectionPatcher-By-M-Nasr (صوتيات فوكس مع تايم شفت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/AudioSelectionPatcher",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AudioSelectionPatcher'"
+    },
     {
       "name": "BouquetMakerXtream (تحويل iptv الي المفضلات)",
       "cmd": "wget http://dreambox4u.com/emilnabil237/plugins/BouquetMakerXtream/installer.sh -O - | /bin/sh",
@@ -731,6 +2755,60 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/E2m3u2bouquet'"
     },
     {
+      "name": "E2Player-Angel_Heart (برنامج مشاهدة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install-e2iplayer-update-hosts.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer'"
+    },
+    {
+      "name": "E2IplayerUpdater-Angel_Heart (تحديث السبرفرات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/E2IplayerUpdater_E2IplayerUpdater.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/E2iPlayerUpdater",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/E2iPlayerUpdater'"
+    },
+    {
+      "name": "E2Player-Biko (برنامج مشاهدة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer_E2.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer'"
+    },
+    {
+      "name": "E2Player-MAXBAMBY (برنامج مشاهدة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/master_install-e2iplayer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer'"
+    },
+    {
+      "name": "E2Player-ZADMARIO (برنامج مشاهدة)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/master_install-e2iplayer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer'"
+    },
+    {
+      "name": "Estalker (مشغل بورتلات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/EStalker_EStalker.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EStalker",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EStalker'"
+    },
+    {
+      "name": "EstalkerWebControl (التحكم في اضافة بورتلات والحذف)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/EstalkerWebControl_estalkerwebcontrol.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EStalkerWebControl",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EStalkerWebControl'"
+    },
+    {
+      "name": "Filmxy",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/filmxy_filmxy.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/filmxy",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/filmxy'"
+    },
+    {
+      "name": "Freearhey",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/freearhey_freearhey.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/freearhey",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/freearhey'"
+    },
+    {
       "name": "GT IPTV Player Pro (مشغل اكستريم iptv و بورتلات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/GT-IPTV-PlayerPro/GT-IPTV-PlayerPro.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/GTIPTVPlayerPro",
@@ -741,6 +2819,12 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/HasBahCa/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/HasBahCa",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/HasBahCa'"
+    },
+    {
+      "name": "Ip2sat-By-Mosaad (مشاهدة iptv علي قنوات السات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ip2sat_ip2sat.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IP2SAT",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IP2SAT'"
     },
     {
       "name": "IpAudio 6.7 (py2) (مشغل صوتيات)",
@@ -755,6 +2839,30 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPAudio'"
     },
     {
+      "name": "IpAudio 8.02 By-M-Nasr (All python) ( مشغل صوتيات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_ipaudio_8.0.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPAudio",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPAudio'"
+    },
+    {
+      "name": "IpAudio By-M-Nasr (Py3) (مشغل صوتيات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer-ipaudio.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPAudio",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPAudio'"
+    },
+    {
+      "name": "IpAudioPro_1.5 (مشغل صوتيات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_ipaudiopro.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPro'"
+    },
+    {
+      "name": "IpAudioPro Latest Version (مشغل صوتيات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPaudioPro'"
+    },
+    {
       "name": "IpStreamer By-M-Nasr (Py3) (مشغل صوتيات)",
       "cmd": "wget https://raw.githubusercontent.com/popking159/ipstreamer/main/installer-ipstreamer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPStreamer",
@@ -765,6 +2873,30 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/iptosat/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPtoSAT",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPtoSAT'"
+    },
+    {
+      "name": "Iptosat_v1.9-Modded-By-Online4Tech (مشاهدة iptv علي قنوات السات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/iptosat_iptosat_1.9.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPtoSAT",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPtoSAT'"
+    },
+    {
+      "name": "Iptv-Org-Playlists",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/iptv-org-playlists_iptv-org-playlists.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/iptv-org-playlists",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/iptv-org-playlists'"
+    },
+    {
+      "name": "iptvdream (مشغل m3u)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/iptvdream_iptvdream.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/iptvdream",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/iptvdream'"
+    },
+    {
+      "name": "IptvPlayer (مشغل ،iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_iptvinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/IPTVPlayer'"
     },
     {
       "name": "JediEpgExtream (نقل الدليل الي ال iptv)",
@@ -779,10 +2911,58 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/JediMakerXtream' /etc/enigma2/jedimakerxtream"
     },
     {
+      "name": "m3uconverter (تحويل m3u الي مفضلات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/M3UConverter",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/M3UConverter'"
+    },
+    {
+      "name": "Moviebrowser",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MovieBrowser",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MovieBrowser'"
+    },
+    {
+      "name": "MoviesManager (مدير افلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Transmission_e2_MoviesManager.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MoviesManager",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MoviesManager'"
+    },
+    {
+      "name": "MultiStalkerPro (مشغل بورتلات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MultiStalkerPro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MultiStalkerPro'"
+    },
+    {
       "name": "multistalker (مشغل بورتلات)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/multistalker/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/MultiStalker",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MultiStalker'"
+    },
+    {
+      "name": "MyStreamer (برنامج مشاهدة اونلاين)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MyStreamer",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MyStreamer'"
+    },
+    {
+      "name": "MyHits-By-M-Nasr (مشغل اغاني)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_myinstaller.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MyHits",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/MyHits'"
+    },
+    {
+      "name": "OrangeAudioPlugin-By-M-Nasr (اضافة صوتيات اورانج و فاميلي)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/OrangeAudio",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/OrangeAudio'"
+    },
+    {
+      "name": "Plutotv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/plutotv_plutotv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/PlutoTV",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/PlutoTV'"
     },
     {
       "name": "Quarter pounder (تنشيط قنوات ال iptv)",
@@ -791,10 +2971,34 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/QuarterPounder'"
     },
     {
+      "name": "Radio-80-s (راديو)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/RadioM",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RadioM'"
+    },
+    {
+      "name": "Radio-Stream-Relay (راديو و استريم)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/radiorelay",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/radiorelay'"
+    },
+    {
       "name": "RadioGit (ستريم محطات راديو)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/radiogit/radiogit.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/RadioGit",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RadioGit'"
+    },
+    {
+      "name": "Radiom (ستريم محطات راديو)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/radiom_radiom.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/RadioM",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RadioM'"
+    },
+    {
+      "name": "Rakutentv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/rakutentv_rakutentv.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/RakutenTV",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RakutenTV'"
     },
     {
       "name": "SamsungTvPlus (iptv مجاني)",
@@ -803,10 +3007,63 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/SamsungTVPlus'"
     },
     {
+      "name": "ScSearch (مشاهدة الافلام)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/scsearch",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/scsearch'"
+    },
+    {
+      "name": "StalkerPortalConverter (تحويل بورتلات لمفضلات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/StalkerPortalConverter",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/StalkerPortalConverter'"
+    },
+    {
+      "name": "Suptv",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/suptv",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/suptv'"
+    },
+    {
+      "name": "Timeshift Delay (تايم شفت)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/scripts_timeshift-delay.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/time"
+    },
+    {
+      "name": "TiviMateE2 (مشغل اشتراكات iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TiviMateE2",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TiviMateE2'"
+    },
+    {
       "name": "Transmission_E2 (iptv مجاني)",
       "cmd": "wget http://dreambox4u.com/emilnabil237/plugins/Transmission/Transmission_e2.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Transmission",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Transmission'"
+    },
+    {
+      "name": "TvDream",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/tvDream",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/tvDream'"
+    },
+    {
+      "name": "TvGarden (iptv مجاني)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TVGarden",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TVGarden'"
+    },
+    {
+      "name": "TvParsa",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/parsatv",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/parsatv'"
+    },
+    {
+      "name": "TvRaiPreview",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/RaiPlay",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/RaiPlay'"
     },
     {
       "name": "vavoo",
@@ -815,22 +3072,67 @@
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/vavoo'"
     },
     {
+      "name": "Xc_Plugin_Forever (مشغل iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/XCplugin",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XCplugin'"
+    },
+    {
       "name": "Xklass-iptv (مشغل iptv)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/xklass/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/XKlass",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XKlass'"
     },
     {
+      "name": "XPortal (مشغل iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install_xportal.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/XPortal",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XPortal'"
+    },
+    {
       "name": "Xstreamity (مشغل iptv)",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/xtreamity/installer.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity'"
+    },
+    {
+      "name": "XtreamNew (مشغل اكستريم iptv و بورتلات)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_install_xtreamnew.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/XtreamNew",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/XtreamNew'"
+    },
+    {
+      "name": "Xtream2Audio-By-Online4Tech (أضافة صوتيات من iptv)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Xtream2Audio_Xtream2Audio.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Xtream2Audio",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/Xtream2Audio'"
+    },
+    {
+      "name": "Youtube (مشاهدة اليوتيوب)",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/master_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/YouTube",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/YouTube'"
     }
   ],
   "multiboot": [
     {
+      "name": "EgamiBoot 10.5",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EgamiBoot"
+    },
+    {
+      "name": "EgamiBoot 10.6",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_egamiboot-10.6.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/EgamiBoot"
+    },
+    {
       "name": "Neoboot 9.65 VIP",
       "cmd": "wget https://dreambox4u.com/emilnabil237/plugins/neoboot-v9.65/iNB.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NeoBoot"
+    },
+    {
+      "name": "Neoboot 9.65 Mod-ElSafty VIP",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_iNB_9.65_mod-elsafty.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/NeoBoot"
     },
     {
@@ -844,9 +3146,24 @@
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/NeoBoot"
     },
     {
+      "name": "Neoboot 9.54 VIP",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/NeoBoot"
+    },
+    {
+      "name": "OpenMultiboot 1.3",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/OpenMultiboot"
+    },
+    {
       "name": "OpenMultiboot-E2turk",
       "cmd": "wget https://raw.githubusercontent.com/e2TURK/omb-enhanced/main/install.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/OpenMultiboot"
+    },
+    {
+      "name": "Multiboot-FlashOnline",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_multiboot-flashonline.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/MultibootFlashOnline"
     }
   ],
   "softcams": [
@@ -864,6 +3181,21 @@
       "name": "gosatplus-oscam",
       "cmd": "wget https://dreambox4u.com/emilnabil237/emu/installer-gosatplus-oscam.sh -O - | /bin/sh",
       "path": "/usr/bin/gooscam"
+    },
+    {
+      "name": "gosatplus_v3_arm",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/V3_arm-openpli-installer_py3_v3.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Gosatplus"
+    },
+    {
+      "name": "gosatplus_v3_mips",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/V3_mips-openpli-installer_py3_v3.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Gosatplus"
+    },
+    {
+      "name": "gosatplus_v3_Fix",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/V3_GosatPlusPluginFixPy.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/Gosatplus"
     },
     {
       "name": "Hold-flag-ncam",
@@ -893,6 +3225,11 @@
     {
       "name": "Oscam-11.726-By-lenuxsat",
       "cmd": "wget https://dreambox4u.com/emilnabil237/emu/oscam-by-lenuxsat/installer.sh -O - | /bin/sh",
+      "path": "/usr/bin/oscamm"
+    },
+    {
+      "name": "Oscam By Levi45",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
       "path": "/usr/bin/oscamm"
     },
     {
@@ -970,6 +3307,11 @@
     {
       "name": "Backup-my-Channels",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/Create-My-backup-shannels.sh -O - | /bin/sh",
+      "path": "/media/hdd/backup/backup"
+    },
+    {
+      "name": "Full-Backup-Image",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_fullbackup-vu4k-encrypt.sh -O - | /bin/sh",
       "path": "/media/hdd/backup/backup"
     },
     {
@@ -1169,6 +3511,18 @@
   ],
   "openatv_skins": [
     {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD'"
+    },
+    {
+      "name": "Areadeltasat_fhd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ATV_skins_areadeltasat_fhd_dragon_1_9_Poster_Backdrop.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/AreaDeltasSat_FHD_Full",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/AreaDeltasSat_FHD_Full'"
+    },
+    {
       "name": "Barby-Black-py3-FHD",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/SKIN-Barby-Black-py3-fhd.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Barby-Black",
@@ -1193,16 +3547,70 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/Barby'"
     },
     {
+      "name": "BLACKNEON-XP-FHD-V2_ArabicDiscription",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skin-BLACKNEON-XP-FHD-v2_arabicdiscription.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BLACKNEON-XP-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BLACKNEON-XP-FHD'"
+    },
+    {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
+    },
+    {
+      "name": "Gradient-fhd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-gradient-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/GradientFHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/GradientFHD'"
+    },
+    {
+      "name": "Maxy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/maxyatv_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Maxy-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Maxy-FHD'"
+    },
+    {
+      "name": "Mohammed Skin",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MohammedSkin",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MohammedSkin'"
+    },
+    {
       "name": "Full HD Glass17",
       "cmd": "wget http://dreambox4u.com/emilnabil237/skins/skin-fullhdglass17/installer.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/hd_glass17",
       "remove_cmd": "rm -rf '/usr/share/enigma2/hd_glass17'"
     },
     {
+      "name": "MyMetrixLiteBackup",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MyMetrixLiteBackup.sh -O - | /bin/sh",
+      "path": "/etc/enigma2/MyMetrixLiteBackup.dat",
+      "remove_cmd": "rm -rf '/etc/enigma2/MyMetrixLiteBackup.dat'"
+    },
+    {
       "name": "MetrixFHD-Extraevent-PosterXD",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/openatv/SKIN-MetrixFHD-OpenATV-Extraevent-PosterX.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/MetrixHD/border",
       "remove_cmd": "rm -rf '/usr/share/enigma2/MetrixHD/border'"
+    },
+    {
+      "name": "MetrixPoster-By_MNASR",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/MetrixPoster-By_MNASR_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MetrixHD/border",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MetrixHD/border'"
+    },
+    {
+      "name": "malek-fhd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ATV_skins-malek-fhd_2.2_py3.11.2-py3.12.1.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Malek-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Malek-FHD'"
     },
     {
       "name": "Nacht_1.7.3",
@@ -1245,10 +3653,95 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium--blue-fhd-py3.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Premium-FHD-Blue",
       "remove_cmd": "rm -rf '/usr/share/enigma2/Premium-FHD-Blue'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
     }
   ],
-  "teamnitro_skins": [],
+  "teamnitro_skins": [
+    {
+      "name": "TeamNitro Control",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_SKIN-teamnitro.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TeamNitro",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/TeamNitro'"
+    },
+    {
+      "name": "AlAyam-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/script_installerAL.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/AL_AYAM_FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/AL_AYAM_FHD'"
+    },
+    {
+      "name": "Desert-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer-skin-desert.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/DesertFHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/DesertFHD'"
+    },
+    {
+      "name": "BoHLALA-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BoHLALA_FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BoHLALA_FHD'"
+    },
+    {
+      "name": "Dragon-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/script_installerD.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BLACK_DRAGON_FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BLACK_DRAGON_FHD'"
+    },
+    {
+      "name": "NitroAdvance-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/script_installerN.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/NitroAdvanceFHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/NitroAdvanceFHD'"
+    },
+    {
+      "name": "Klll-Pro-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Klll-Pro",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Klll-Pro'"
+    }
+  ],
   "openbh_skins": [
+    {
+      "name": "Aglare-fhd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd-pli.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD-PLI",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD-PLI'"
+    },
+    {
+      "name": "BlackShadow_X2P_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_BlackShadow_X2P_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BlackShadow_X2P",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BlackShadow_X2P'"
+    },
+    {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
+    {
+      "name": "EclipseFHD_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_EclipseFHD_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/EclipseFHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/EclipseFHD'"
+    },
+    {
+      "name": "EclipseFire_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_EclipseFire_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/EclipseFire",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/EclipseFire'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
+    },
     {
       "name": "MX_BlackSea",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/obh/skins-MX_BlackSea.sh -O - | /bin/sh",
@@ -1262,10 +3755,46 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/MX_Sline-BlackRedGradient'"
     },
     {
+      "name": "MX_GrayDots_X2B_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MX_GrayDots_X2B_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_GrayDots_X2B",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_GrayDots_X2B'"
+    },
+    {
+      "name": "MX_GreenDots_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MX_GreenDots_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_GreenDots",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_GreenDots'"
+    },
+    {
+      "name": "MX_HQ7_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MX_HQ7_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_HQ7",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_HQ7'"
+    },
+    {
+      "name": "MX_Maestra_Black_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MX_Maestra_Black_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_Maestra_Black",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_Maestra_Black'"
+    },
+    {
+      "name": "MX_Maestra2b_weather",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_MX_Maestra2b_weather_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_Maestra2b_weather",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_Maestra2b_weather'"
+    },
+    {
       "name": "MX_Sline-Blue",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/obh/MX_Sline-Blue_OBH_5.4_py3.12_py3.12.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/MX_Sline-Blue",
       "remove_cmd": "rm -rf '/usr/share/enigma2/MX_Sline-Blue'"
+    },
+    {
+      "name": "Mx-Sline-Glass-Gradient",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-mx-sline-glass-gradient.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/MX_Sline-GlassGradient",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/MX_Sline-GlassGradient'"
     },
     {
       "name": "MX_Sline-Red_X2",
@@ -1278,9 +3807,51 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/obh/skin_OpenBhGreenFHD.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/OpenBhGreenFHD",
       "remove_cmd": "rm -rf '/usr/share/enigma2/OpenBhGreenFHD'"
+    },
+    {
+      "name": "Waves4_Fire_weather_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_Waves4_Fire_weather_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Waves4_Fire_weather",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Waves4_Fire_weather'"
+    },
+    {
+      "name": "Waves4_weather_OBH",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_Waves4_weather_OBH_5.0.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Waves4_weather",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Waves4_weather'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
+    },
+    {
+      "name": "Youchie-OBH-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skin-Youchie-OBH-FHD.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Youchie-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Youchie-FHD'"
     }
   ],
   "egami_skins": [
+    {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD'"
+    },
+    {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
+    },
     {
       "name": "Premium-Magenta-Fhd",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium-fhd-py3.sh -O - | /bin/sh",
@@ -1298,9 +3869,27 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium--blue-fhd-py3.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Premium-FHD-Blue",
       "remove_cmd": "rm -rf '/usr/share/enigma2/Premium-FHD-Blue'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
     }
   ],
   "openpli_py3_skins": [
+    {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd-pli.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD-PLI",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD-PLI'"
+    },
+    {
+      "name": "BARDO-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_Skin-bardo-fhd_3.7.2.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Bardo FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Bardo FHD'"
+    },
     {
       "name": "BLACKNEON-XP_Mod_M-Nasr",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/pli9x/Skin-BLACKNEON-XP_mod_mnasr-pli9x.sh -O - | /bin/sh",
@@ -1308,19 +3897,86 @@
       "remove_cmd": "rm -rf '/usr/share/enigma2/BLACKNEON-XP-FHD'"
     },
     {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
+    {
+      "name": "malek-fhd",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_Skin-malek-fhd_1.2.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Malek-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Malek-FHD'"
+    },
+    {
       "name": "Ozeta-Xtra",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/SKIN-PLI-ozeta-xtra.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/oZeta-FHD",
       "remove_cmd": "rm -rf '/usr/share/enigma2/oZeta-FHD'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
+    },
+    {
+      "name": "Youchie-PLI-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skin-Youchie-PLI-FHD.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Youchie-PLI-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Youchie-PLI-FHD'"
     }
   ],
-  "openspa_skins": [],
+  "openspa_skins": [
+    {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
+    },
+    {
+      "name": "estuary-1080-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Spa_Skin-estuary-1080.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/estuaryHD_openspa",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/estuaryHD_openspa'"
+    },
+    {
+      "name": "Skyline",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skin-Skyline.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Skyline",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Skyline'"
+    }
+  ],
   "openvix_skins": [
+    {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd-pli.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD-PLI",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD-PLI'"
+    },
+    {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
     {
       "name": "E2-darkos-FHD",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/openvix/skins-e2-darkos.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/E2-E2-DarkOS",
       "remove_cmd": "rm -rf '/usr/share/enigma2/E2-DarkOS'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
     },
     {
       "name": "Magic-FHD",
@@ -1333,9 +3989,39 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/openvix/skins-openvix-vixbmc-1080-confluence.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/ViXBMC_1080_Confluence",
       "remove_cmd": "rm -rf '/usr/share/enigma2/ViXBMC_1080_Confluence'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
+    },
+    {
+      "name": "Youchie-OpenVix-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skin-Youchie-OBH-FHD.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Youchie-PLI-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Youchie-PLI-FHD'"
     }
   ],
   "pure2_skins": [
+    {
+      "name": "Aglare-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_skins-aglare-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Aglare-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Aglare-FHD'"
+    },
+    {
+      "name": "CineView-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/skin-cineview_CineView.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/CineView_FHD_MLA",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/CineView_FHD_MLA'"
+    },
+    {
+      "name": "Fury-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/fury_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/Fury-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/Fury-FHD'"
+    },
     {
       "name": "Premium-Magenta-Fhd",
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium-fhd-py3.sh -O - | /bin/sh",
@@ -1353,9 +4039,21 @@
       "cmd": "wget https://dreambox4u.com/emilnabil237/skins/script/SKIN-egami-premium--blue-fhd-py3.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/Premium-FHD-Blue",
       "remove_cmd": "rm -rf '/usr/share/enigma2/Premium-FHD-Blue'"
+    },
+    {
+      "name": "XDreamy-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/xDreamy_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/xDreamy",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/xDreamy'"
     }
   ],
   "openpli_py2_skins": [
+    {
+      "name": "Bluemetal-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_Skin-bluemetal-fhd.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BlueMetalFHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BlueMetalFHD'"
+    },
     {
       "name": "CH.LEAGUE-FHD",
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/SKIN-PLI-CH.LEAGUE-FHD.sh -O - | /bin/sh",
@@ -1391,9 +4089,106 @@
       "cmd": "wget http://dreambox4u.com/emilnabil237/script/SKIN-PLI-WAR-S-FHD.sh -O - | /bin/sh",
       "path": "/usr/share/enigma2/WAR-S-FHD",
       "remove_cmd": "rm -rf '/usr/share/enigma2/WAR-S-FHD'"
+    },
+    {
+      "name": "BLACKSKY-S-HD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_SKIN-BLACKSKY-S-HD-MOD-By-Muaath.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BLACKSKY-S-HD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BLACKSKY-S-HD'"
+    },
+    {
+      "name": "BATMAN-MP-HD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_SKIN-BATMAN-MP-HD-By-Muaath.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/BATMAN-MP-HD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/BATMAN-MP-HD'"
+    },
+    {
+      "name": "TOKYO2020-FHD",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/pli_SKIN-TOKYO2020-FHD-By-Muaath.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/TOKYO2020-FHD",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/TOKYO2020-FHD'"
     }
   ],
-  "display_skins": [],
+  "display_skins": [
+    {
+      "name": "display-oe-a-lcdskin-1",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-1.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_1",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_1'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-2",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-2.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_2",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_2'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-3",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-3.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_3",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_3'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-4",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-4.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_4",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_4'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-5",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-5.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_5",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_5'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-6",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-6.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_6",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_6'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-7",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-7.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_7",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_7'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-8",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-8.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_8",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_8'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-9",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-9.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_9",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_9'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-10",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-10.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_10",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_10'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-11",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-11.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_11",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_11'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-12",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-12.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_12",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_12'"
+    },
+    {
+      "name": "display-oe-a-lcdskin-13",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/Display-Skin_display-oe-a-lcdskin-13.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/display/OE-A_LCDSkin_13",
+      "remove_cmd": "rm -rf '/usr/share/enigma2/display/OE-A_LCDSkin_13'"
+    }
+  ],
   "plugin-xtreamity_skins": [
     {
       "name": "Abstract",
@@ -1858,6 +4653,11 @@
       "path": "/usr/share/enigma2/picons/picons"
     },
     {
+      "name": "Picons Other",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
+      "path": "/usr/share/enigma2/picons/picons"
+    },
+    {
       "name": "Chocholousek Picons",
       "cmd": "wget https://github.com/s3n0/e2plugins/raw/master/ChocholousekPicons/online-setup -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/ChocholousekPicons"
@@ -1878,6 +4678,16 @@
       "name": "Remove BouquetMakerXtream",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/remove-bouquetmakerxtream.sh -O - | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/BouquetMakerXtream/playlists/playlists"
+    },
+    {
+      "name": "Remove Feed-Dreamarapia",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_remove-dreamarapia.sh -O - | /bin/sh",
+      "path": "/etc/opkg/playlists/playlists"
+    },
+    {
+      "name": "Remove Feed-geminilocale",
+      "cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_remove-geminilocale.sh -O - | /bin/sh",
+      "path": "/etc/opkg/playlists/playlists"
     },
     {
       "name": "Remove all Neoboot",
@@ -2000,6 +4810,11 @@
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport/playlists/playlists"
     },
     {
+      "name": "Remove-Plugin-Tvpanel",
+      "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/DEL-tvpanel.sh -O - | /bin/sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/TvPanel/playlists/playlists"
+    },
+    {
       "name": "Remove-Tuner-Settings",
       "cmd": "wget https://dreambox4u.com/emilnabil237/script/remove/del-Tuner-Settings.sh -O - | /bin/sh",
       "path": "/etc/enigma2/settings/playlists"
@@ -2017,6 +4832,12 @@
       "remove_cmd": "if command -v dpkg >/dev/null 2>&1; then dpkg -r enigma2-plugin-extensions-online4tech; else opkg remove enigma2-plugin-extensions-online4tech; fi",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
       "icon": "online4tech_official.png"
+    },
+    {
+      "name": "Ahmed Romeh Channels (ملف قنوات أحمد رميح)",
+      "cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/channel-romeh_installer.sh -O - | /bin/sh",
+      "path": "/etc/enigma2",
+      "remove_cmd": ""
     }
   ]
 }
