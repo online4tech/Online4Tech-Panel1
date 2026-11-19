@@ -1,0 +1,527 @@
+# -*- coding: utf-8 -*-
+import io
+import json
+import os
+import re
+import socket
+import sys
+from datetime import datetime
+
+try:
+    from urllib.request import urlopen, Request
+except ImportError:
+    from urllib2 import urlopen, Request
+
+from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_RIGHT, RT_HALIGN_LEFT, RT_VALIGN_CENTER, addFont
+from Screens.Screen import Screen
+from Screens.Console import Console
+from Screens.MessageBox import MessageBox
+from Components.ActionMap import ActionMap
+from Components.MenuList import MenuList
+from Components.Label import Label
+from Components.Pixmap import Pixmap
+from Tools.LoadPixmap import LoadPixmap
+
+PLUGIN_DIR = "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
+FONTS_DIR = os.path.join(PLUGIN_DIR, "fonts")
+ICONS_DIR = os.path.join(PLUGIN_DIR, "icons")
+DB_URL = "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/o4t_database.json"
+CACHE_DB = "/tmp/o4t_database.json"
+
+STORE_URL = "https://sllr.co/online4tech"
+SUPPORT_PHONE = "01006699169"
+
+
+def ensure_fonts_loaded():
+    loaded = set()
+    candidates = [
+        ("O4TArabic", ["Cairo-Bold.ttf", "Cairo-Regular.ttf", "Amiri-Bold.ttf", "Amiri-Regular.ttf"]),
+        ("O4TRegular", ["Cairo-Regular.ttf", "Amiri-Regular.ttf", "Cairo-Bold.ttf"]),
+    ]
+    if not os.path.isdir(FONTS_DIR):
+        return loaded
+    for alias, files in candidates:
+        for fname in files:
+            fpath = os.path.join(FONTS_DIR, fname)
+            if os.path.isfile(fpath) and os.path.getsize(fpath) > 0:
+                try:
+                    addFont(fpath, alias, 100, False)
+                    loaded.add(alias)
+                    break
+                except Exception:
+                    pass
+    return loaded
+
+
+def clean_text(txt):
+    if not txt:
+        return ""
+    if not isinstance(txt, type(u"")):
+        try:
+            txt = txt.decode("utf-8", "ignore")
+        except Exception:
+            txt = str(txt)
+    txt = re.sub(r'\(\s*\)', '', txt)
+    txt = re.sub(r'\s+', ' ', txt).strip()
+    return txt
+
+
+def get_device_info():
+    py_ver = "%d.%d" % (sys.version_info[0], sys.version_info[1])
+    ip = "Offline"
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(1.5)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        pass
+
+    image_name = "Enigma2"
+    for p in ["/etc/issue", "/etc/version"]:
+        if os.path.isfile(p):
+            try:
+                with io.open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    line = f.read().strip().splitlines()
+                    if line:
+                        image_name = line[0].strip()[:24]
+                        break
+            except Exception:
+                pass
+
+    now = datetime.now()
+    clock_str = now.strftime("%I:%M %p").lstrip("0")
+    date_str = now.strftime("%Y-%m-%d")
+    return image_name, py_ver, ip, clock_str, date_str
+
+
+def find_icon(icon_name):
+    if not icon_name:
+        return None
+    candidates = [
+        os.path.join(ICONS_DIR, icon_name),
+        os.path.join(PLUGIN_DIR, icon_name),
+        os.path.join(PLUGIN_DIR, "logo.png"),
+        os.path.join(PLUGIN_DIR, "plugin.png"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path) and os.path.getsize(path) > 0:
+            return path
+    return None
+
+
+class Online4TechMenuList(MenuList):
+    def __init__(self, list_items, font_name="Regular", font_size=24):
+        MenuList.__init__(self, list_items, enableWrapAround=True, content=eListboxPythonMultiContent)
+        self.l.setFont(0, gFont(font_name, font_size))
+        self.l.setFont(1, gFont(font_name, max(18, font_size - 4)))
+        self.l.setItemHeight(64)
+
+
+def build_category_entry(title, count_text="", installed=False, font_name="Regular", font_size=24):
+    res = [(title, count_text, installed)]
+    res.append((eListboxPythonMultiContent.TYPE_TEXT, 18, 8, 360, 32, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title))
+    if count_text:
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 18, 38, 360, 22, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, count_text))
+    if installed:
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 385, 16, 45, 32, 0, RT_HALIGN_LEFT | RT_VALIGN_CENTER, "✓"))
+    return res
+
+
+def build_item_entry(name, sub_info="", installed=False, font_name="Regular", font_size=24):
+    res = [(name, sub_info, installed)]
+    status_badge = "✓ مثبت" if installed else ""
+    if status_badge:
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 16, 10, 120, 44, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, status_badge))
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 145, 6, 560, 32, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, name))
+    else:
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 16, 6, 689, 32, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, name))
+    if sub_info:
+        res.append((eListboxPythonMultiContent.TYPE_TEXT, 16, 36, 689, 22, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, sub_info))
+    return res
+
+
+class Online4TechStoreScreen(Screen):
+    skin = """
+    <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Store v7.5 Gold" backgroundColor="#0b0d14" flags="wfNoBorder">
+        <!-- Top Header Bar -->
+        <eLabel position="30,22" size="1860,115" backgroundColor="#131722" zPosition="-10" />
+        <eLabel position="30,135" size="1860,3" backgroundColor="#d4af37" zPosition="-5" />
+
+        <!-- Right Header: Brand & Support -->
+        <widget name="brand_logo" position="1790,36" size="82,82" alphatest="blend" zPosition="5" />
+        <eLabel text="ONLINE4TECH STORE" position="1380,34" size="395,42" font="Regular;32" halign="right" foregroundColor="#f3d778" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <widget name="brand_sub" position="1320,78" size="455,40" font="Regular;21" halign="right" foregroundColor="#cbd5e1" backgroundColor="#131722" transparent="1" zPosition="5" />
+
+        <!-- Center Header: Current Section / Status -->
+        <widget name="top_title" position="610,36" size="690,42" font="Regular;30" halign="center" foregroundColor="#f3d778" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <widget name="top_subtitle" position="610,80" size="690,36" font="Regular;21" halign="center" foregroundColor="#94a3b8" backgroundColor="#131722" transparent="1" zPosition="5" />
+
+        <!-- Left Header: Device & Time Info -->
+        <widget name="dev_info_top" position="50,34" size="540,42" font="Regular;24" halign="left" foregroundColor="#f8fafc" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <widget name="dev_info_bot" position="50,78" size="540,38" font="Regular;20" halign="left" foregroundColor="#d4af37" backgroundColor="#131722" transparent="1" zPosition="5" />
+
+        <!-- Column 1 (Right): Categories Sidebar (x: 1435..1890) -->
+        <eLabel position="1435,155" size="455,825" backgroundColor="#131722" zPosition="-10" />
+        <eLabel position="1435,155" size="455,3" backgroundColor="#d4af37" zPosition="-5" />
+        <widget name="cats_header" position="1455,170" size="415,44" font="Regular;28" halign="right" foregroundColor="#f3d778" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <eLabel position="1455,222" size="415,2" backgroundColor="#2a2f3d" zPosition="-5" />
+        <widget name="cat_list" position="1450,235" size="425,725" scrollbarMode="showOnDemand" backgroundColor="#131722" backgroundColorSelected="#252216" foregroundColorSelected="#f3d778" transparent="1" zPosition="5" />
+
+        <!-- Column 2 (Center): Items & Packages List (x: 685..1415) -->
+        <eLabel position="685,155" size="730,825" backgroundColor="#131722" zPosition="-10" />
+        <eLabel position="685,155" size="730,3" backgroundColor="#d4af37" zPosition="-5" />
+        <widget name="items_header" position="705,170" size="470,44" font="Regular;28" halign="right" foregroundColor="#f8fafc" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <widget name="page_info" position="1185,174" size="210,36" font="Regular;22" halign="left" foregroundColor="#d4af37" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <eLabel position="705,222" size="690,2" backgroundColor="#2a2f3d" zPosition="-5" />
+        <widget name="item_list" position="700,235" size="700,725" scrollbarMode="showOnDemand" backgroundColor="#131722" backgroundColorSelected="#252216" foregroundColorSelected="#f3d778" transparent="1" zPosition="5" />
+
+        <!-- Column 3 (Left): Preview & Details Panel (x: 30..665) -->
+        <eLabel position="30,155" size="635,825" backgroundColor="#131722" zPosition="-10" />
+        <eLabel position="30,155" size="635,3" backgroundColor="#d4af37" zPosition="-5" />
+
+        <eLabel position="252,185" size="190,190" backgroundColor="#0b0d14" zPosition="-8" />
+        <widget name="preview_icon" position="267,200" size="160,160" alphatest="blend" zPosition="5" />
+
+        <widget name="detail_title" position="50,395" size="595,46" font="Regular;30" halign="center" foregroundColor="#f3d778" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <widget name="detail_status" position="50,446" size="595,38" font="Regular;23" halign="center" foregroundColor="#22c55e" backgroundColor="#131722" transparent="1" zPosition="5" />
+        <eLabel position="60,496" size="575,2" backgroundColor="#2a2f3d" zPosition="-5" />
+
+        <widget name="detail_desc" position="55,512" size="585,295" font="Regular;24" halign="right" foregroundColor="#e2e8f0" backgroundColor="#131722" transparent="1" zPosition="5" />
+
+        <!-- Action Banner inside Preview Column -->
+        <eLabel position="65,830" size="565,115" backgroundColor="#d4af37" zPosition="-8" />
+        <widget name="action_cta" position="80,845" size="535,44" font="Regular;28" halign="center" foregroundColor="#0b0d14" backgroundColor="#d4af37" transparent="1" zPosition="5" />
+        <widget name="action_sub" position="80,892" size="535,36" font="Regular;21" halign="center" foregroundColor="#1e1b10" backgroundColor="#d4af37" transparent="1" zPosition="5" />
+
+        <!-- Bottom Color Buttons Bar (Preserving Existing Button Order) -->
+        <eLabel position="30,998" size="1860,62" backgroundColor="#131722" zPosition="-10" />
+        <eLabel position="30,998" size="1860,2" backgroundColor="#2a2f3d" zPosition="-5" />
+
+        <!-- Red: Back / Exit -->
+        <eLabel position="1585,1010" size="285,38" backgroundColor="#991b1b" zPosition="-6" />
+        <widget name="key_red" position="1590,1012" size="275,34" font="Regular;22" halign="center" valign="center" foregroundColor="#ffffff" backgroundColor="#991b1b" transparent="1" zPosition="5" />
+
+        <!-- Green: Install / Open -->
+        <eLabel position="1280,1010" size="285,38" backgroundColor="#166534" zPosition="-6" />
+        <widget name="key_green" position="1285,1012" size="275,34" font="Regular;22" halign="center" valign="center" foregroundColor="#ffffff" backgroundColor="#166534" transparent="1" zPosition="5" />
+
+        <!-- Yellow: Uninstall -->
+        <eLabel position="975,1010" size="285,38" backgroundColor="#a16207" zPosition="-6" />
+        <widget name="key_yellow" position="980,1012" size="275,34" font="Regular;22" halign="center" valign="center" foregroundColor="#ffffff" backgroundColor="#a16207" transparent="1" zPosition="5" />
+
+        <!-- Blue: Refresh Server -->
+        <eLabel position="670,1010" size="285,38" backgroundColor="#1e40af" zPosition="-6" />
+        <widget name="key_blue" position="675,1012" size="275,34" font="Regular;22" halign="center" valign="center" foregroundColor="#ffffff" backgroundColor="#1e40af" transparent="1" zPosition="5" />
+
+        <!-- Left Hint -->
+        <widget name="footer_hint" position="50,1010" size="600,38" font="Regular;20" halign="left" valign="center" foregroundColor="#94a3b8" backgroundColor="#131722" transparent="1" zPosition="5" />
+    </screen>
+    """
+
+    def __init__(self, session):
+        Screen.__init__(self, session)
+        self.session = session
+        loaded_fonts = ensure_fonts_loaded()
+        self.ui_font = "O4TArabic" if "O4TArabic" in loaded_fonts else ("O4TRegular" if "O4TRegular" in loaded_fonts else "Regular")
+
+        self.db_data = {}
+        self.main_sections = []
+        self.current_cat_idx = 0
+        self.current_section_key = ""
+        self.current_section_title = ""
+        self.current_items = []
+        self.focus_pane = "items"  # "cats" or "items"
+        self.nav_stack = []
+
+        img_name, py_ver, ip, clock_str, date_str = get_device_info()
+
+        self["brand_logo"] = Pixmap()
+        self["brand_sub"] = Label("متجر Online4Tech • دعم: %s" % SUPPORT_PHONE)
+        self["top_title"] = Label("متجر Online4Tech الرسمي")
+        self["top_subtitle"] = Label("جاري تحميل قاعدة البيانات...")
+        self["dev_info_top"] = Label("%s  |  Py %s  |  IP: %s" % (img_name, py_ver, ip))
+        self["dev_info_bot"] = Label("%s  •  %s  •  %s" % (clock_str, date_str, STORE_URL))
+
+        self["cats_header"] = Label("أقسام المتجر")
+        self["cat_list"] = Online4TechMenuList([], font_name=self.ui_font, font_size=24)
+
+        self["items_header"] = Label("العناصر والحزم")
+        self["page_info"] = Label("0 عنصر")
+        self["item_list"] = Online4TechMenuList([], font_name=self.ui_font, font_size=24)
+
+        self["preview_icon"] = Pixmap()
+        self["detail_title"] = Label("Online4Tech v7.5 Gold")
+        self["detail_status"] = Label("جاهز للاستعراض")
+        self["detail_desc"] = Label("اختر قسماً أو حزمة من القائمة لعرض التفاصيل الكاملة وتنفيذ التثبيت أو الحذف.")
+        self["action_cta"] = Label("تثبيت / فتح  •  OK")
+        self["action_sub"] = Label("الأخضر: تنفيذ  |  الأصفر: حذف  |  الأزرق: تحديث")
+
+        self["key_red"] = Label("رجوع / إغلاق")
+        self["key_green"] = Label("تثبيت / فتح")
+        self["key_yellow"] = Label("حذف / إزالة")
+        self["key_blue"] = Label("تحديث المصدر")
+        self["footer_hint"] = Label("يمين/يسار: تبديل العمود  |  OK: اختيار  |  EXIT: رجوع")
+
+        self["actions"] = ActionMap(
+            ["OkCancelActions", "ColorActions", "DirectionActions"],
+            {
+                "ok": self.ok_pressed,
+                "cancel": self.back_pressed,
+                "red": self.back_pressed,
+                "green": self.ok_pressed,
+                "yellow": self.remove_pressed,
+                "blue": self.refresh_db,
+                "up": self.move_up,
+                "down": self.move_down,
+                "left": self.focus_items_pane,
+                "right": self.focus_cats_pane,
+            },
+            -1,
+        )
+
+        self.onLayoutFinish.append(self.init_screen)
+
+    def init_screen(self):
+        brand_img = find_icon("logo.png") or find_icon("plugin.png")
+        if brand_img and self["brand_logo"].instance:
+            self["brand_logo"].instance.setPixmapFromFile(brand_img)
+        self.load_database(force=False)
+
+    def load_database(self, force=False):
+        try:
+            if force or not os.path.exists(CACHE_DB) or os.path.getsize(CACHE_DB) == 0:
+                self["top_subtitle"].setText("جاري الاتصال بسيرفر Online4Tech...")
+                req = Request(DB_URL, headers={"User-Agent": "Online4Tech-Enigma2-v7.5"})
+                resp = urlopen(req, timeout=20)
+                raw = resp.read().decode("utf-8", errors="ignore")
+                with io.open(CACHE_DB, "w", encoding="utf-8") as f:
+                    f.write(raw)
+
+            with io.open(CACHE_DB, "r", encoding="utf-8", errors="ignore") as f:
+                self.db_data = json.load(f)
+
+            self.main_sections = self.db_data.get("main", [])
+            self.nav_stack = []
+            self.populate_categories()
+            if self.main_sections:
+                first_sec = self.main_sections[0]
+                self.open_section(
+                    first_sec.get("section", ""),
+                    clean_text(first_sec.get("title", first_sec.get("section", ""))),
+                    icon_name=first_sec.get("icon", ""),
+                    push_history=False,
+                )
+            self["top_subtitle"].setText("تم تحميل %d قسم رئيسي بنجاح" % len(self.main_sections))
+        except Exception as e:
+            self["top_subtitle"].setText("تعذر الاتصال بالسيرفر أو قراءة قاعدة البيانات")
+            self["detail_desc"].setText("تفاصيل الخطأ:\n%s" % clean_text(str(e)))
+
+    def refresh_db(self):
+        self.load_database(force=True)
+
+    def populate_categories(self):
+        entries = []
+        for sec in self.main_sections:
+            sec_key = sec.get("section", "")
+            title = clean_text(sec.get("title", sec_key))
+            sec_items = self.db_data.get(sec_key, [])
+            count_str = "%d عنصر" % len(sec_items) if isinstance(sec_items, list) else ""
+            entries.append(build_category_entry(title, count_str, False, self.ui_font, 24))
+        self["cat_list"].setList(entries)
+        if entries:
+            self["cat_list"].moveToIndex(min(self.current_cat_idx, len(entries) - 1))
+
+    def open_section(self, section_key, title, icon_name="", push_history=True):
+        if push_history and self.current_section_key:
+            self.nav_stack.append((
+                self.current_section_key,
+                self.current_section_title,
+                list(self.current_items),
+                self["item_list"].getSelectedIndex() or 0,
+            ))
+
+        self.current_section_key = section_key
+        self.current_section_title = title
+        raw_items = self.db_data.get(section_key, [])
+        self.current_items = raw_items if isinstance(raw_items, list) else []
+
+        self["top_title"].setText(title or "Online4Tech Store")
+        self["items_header"].setText(title or "العناصر")
+        self["page_info"].setText("%d عنصر" % len(self.current_items))
+
+        list_entries = []
+        for it in self.current_items:
+            if "section" in it:
+                sub_title = clean_text(it.get("title", it.get("section", "")))
+                sub_key = it.get("section", "")
+                sub_count = len(self.db_data.get(sub_key, []))
+                list_entries.append(build_item_entry(sub_title, "قسم فرعي • %d عنصر" % sub_count, False, self.ui_font, 24))
+            else:
+                name = clean_text(it.get("name", "بدون اسم"))
+                path = it.get("path", "")
+                installed = bool(path and os.path.exists(path))
+                sub_txt = "المسار: %s" % path if path else "حزمة / سكريبت Online4Tech"
+                list_entries.append(build_item_entry(name, sub_txt, installed, self.ui_font, 24))
+
+        self["item_list"].setList(list_entries)
+        if list_entries:
+            self["item_list"].moveToIndex(0)
+        self.update_preview(icon_override=icon_name)
+
+    def update_preview(self, icon_override=""):
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
+            self["detail_title"].setText(self.current_section_title or "Online4Tech")
+            self["detail_status"].setText("لا توجد عناصر في هذا القسم")
+            self["detail_desc"].setText("اختر قسماً آخر من العمود الأيمن أو اضغط تحديث المصدر.")
+            return
+
+        item = self.current_items[idx]
+        if "section" in item:
+            title = clean_text(item.get("title", item.get("section", "")))
+            sub_key = item.get("section", "")
+            cnt = len(self.db_data.get(sub_key, []))
+            self["detail_title"].setText(title)
+            self["detail_status"].setText("قسم فرعي (%d عنصر)" % cnt)
+            self["detail_desc"].setText("اضغط OK أو الزر الأخضر لفتح هذا القسم واستعراض الحزم بداخله.")
+            self["action_cta"].setText("فتح القسم  •  OK")
+            self["action_sub"].setText("استعراض %d عنصر" % cnt)
+            icon_file = find_icon(item.get("icon", "") or icon_override)
+        else:
+            name = clean_text(item.get("name", "حزمة"))
+            path = item.get("path", "")
+            cmd = item.get("cmd", "")
+            installed = bool(path and os.path.exists(path))
+            self["detail_title"].setText(name)
+            self["detail_status"].setText("✓ مثبت على الجهاز" if installed else "غير مثبت حالياً")
+            desc_lines = []
+            if path:
+                desc_lines.append("المسار: %s" % path)
+            if cmd:
+                desc_lines.append("الأمر: %s" % cmd[:140])
+            if item.get("remove_cmd"):
+                desc_lines.append("يدعم الإزالة المباشرة بالزر الأصفر.")
+            self["detail_desc"].setText("\n".join(desc_lines) if desc_lines else "حزمة جاهزة للتثبيت عبر Online4Tech.")
+            self["action_cta"].setText("إعادة تثبيت / فتح  •  OK" if installed else "تثبيت الآن  •  OK")
+            self["action_sub"].setText("الأخضر: تثبيت  |  الأصفر: إزالة  |  EXIT: رجوع")
+            icon_file = find_icon(item.get("icon", "") or icon_override)
+
+        if icon_file and self["preview_icon"].instance:
+            self["preview_icon"].instance.setPixmapFromFile(icon_file)
+
+    def move_up(self):
+        if self.focus_pane == "cats":
+            self["cat_list"].up()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    clean_text(sec.get("title", sec.get("section", ""))),
+                    icon_name=sec.get("icon", ""),
+                    push_history=False,
+                )
+        else:
+            self["item_list"].up()
+            self.update_preview()
+
+    def move_down(self):
+        if self.focus_pane == "cats":
+            self["cat_list"].down()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    clean_text(sec.get("title", sec.get("section", ""))),
+                    icon_name=sec.get("icon", ""),
+                    push_history=False,
+                )
+        else:
+            self["item_list"].down()
+            self.update_preview()
+
+    def focus_cats_pane(self):
+        self.focus_pane = "cats"
+        self["footer_hint"].setText("التركيز: الأقسام  |  OK: فتح  |  يسار: العناصر  |  EXIT: رجوع")
+
+    def focus_items_pane(self):
+        self.focus_pane = "items"
+        self["footer_hint"].setText("التركيز: العناصر  |  OK: تثبيت  |  يمين: الأقسام  |  EXIT: رجوع")
+
+    def ok_pressed(self):
+        if self.focus_pane == "cats":
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    clean_text(sec.get("title", sec.get("section", ""))),
+                    icon_name=sec.get("icon", ""),
+                    push_history=True,
+                )
+                self.focus_items_pane()
+            return
+
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
+            return
+        item = self.current_items[idx]
+        if "section" in item:
+            self.open_section(
+                item.get("section", ""),
+                clean_text(item.get("title", item.get("section", ""))),
+                icon_name=item.get("icon", ""),
+                push_history=True,
+            )
+        else:
+            cmd = item.get("cmd", "")
+            name = clean_text(item.get("name", "Package"))
+            if cmd:
+                self.session.open(Console, title="Online4Tech - %s" % name, cmdlist=[cmd], closeOnSuccess=False)
+
+    def remove_pressed(self):
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
+            return
+        item = self.current_items[idx]
+        rem_cmd = item.get("remove_cmd", "")
+        name = clean_text(item.get("name", "Package"))
+        if rem_cmd:
+            self.session.open(Console, title="Online4Tech Remove - %s" % name, cmdlist=[rem_cmd], closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, "لا يوجد أمر حذف تلقائي متاح لهذا العنصر.", MessageBox.TYPE_INFO, timeout=3)
+
+    def back_pressed(self):
+        if self.nav_stack:
+            prev_key, prev_title, prev_items, prev_idx = self.nav_stack.pop()
+            self.current_section_key = prev_key
+            self.current_section_title = prev_title
+            self.current_items = prev_items
+            self["top_title"].setText(prev_title or "Online4Tech Store")
+            self["items_header"].setText(prev_title or "العناصر")
+            self["page_info"].setText("%d عنصر" % len(prev_items))
+
+            entries = []
+            for it in prev_items:
+                if "section" in it:
+                    sub_t = clean_text(it.get("title", it.get("section", "")))
+                    cnt = len(self.db_data.get(it.get("section", ""), []))
+                    entries.append(build_item_entry(sub_t, "قسم فرعي • %d عنصر" % cnt, False, self.ui_font, 24))
+                else:
+                    nm = clean_text(it.get("name", "بدون اسم"))
+                    pth = it.get("path", "")
+                    inst = bool(pth and os.path.exists(pth))
+                    entries.append(build_item_entry(nm, "المسار: %s" % pth if pth else "حزمة Online4Tech", inst, self.ui_font, 24))
+
+            self["item_list"].setList(entries)
+            if entries:
+                self["item_list"].moveToIndex(min(prev_idx, len(entries) - 1))
+            self.update_preview()
+        else:
+            self.close()

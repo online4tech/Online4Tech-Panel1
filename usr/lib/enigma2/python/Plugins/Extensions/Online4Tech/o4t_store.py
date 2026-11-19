@@ -1,1080 +1,868 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-import os, sys, json, time, socket, ssl
+import io
+import json
+import math
+import os
+import re
+import socket
+import ssl
+import sys
+from datetime import datetime
+
+try:
+    from urllib.request import urlopen, Request
+except ImportError:
+    from urllib2 import urlopen, Request
+
+from enigma import (
+    eListboxPythonMultiContent,
+    gFont,
+    RT_HALIGN_RIGHT,
+    RT_HALIGN_LEFT,
+    RT_HALIGN_CENTER,
+    RT_VALIGN_CENTER,
+    addFont,
+)
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
+try:
+    from enigma import BT_SCALE
+except ImportError:
+    BT_SCALE = 0
 from Screens.Screen import Screen
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
-from Screens.ChoiceBox import ChoiceBox
-from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Components.ActionMap import ActionMap
+from Components.MenuList import MenuList
 from Components.Label import Label
 from Components.Pixmap import Pixmap
-from Components.MenuList import MenuList
-from enigma import eListboxPythonMultiContent, gFont, addFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, eTimer
 from Tools.LoadPixmap import LoadPixmap
 
-PY3 = sys.version_info[0] >= 3
-if PY3:
-    import urllib.request as urlreq
-else:
-    import urllib2 as urlreq
-
-PLUGIN_PATH = "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
-ICONS_PATH = os.path.join(PLUGIN_PATH, "icons")
-FONTS_PATH = os.path.join(PLUGIN_PATH, "fonts")
+PLUGIN_DIR = "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
+FONTS_DIR = os.path.join(PLUGIN_DIR, "fonts")
+ICONS_DIR = os.path.join(PLUGIN_DIR, "icons")
 DB_URL = "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/o4t_database.json"
-CACHE_FILE = "/tmp/o4t_database.json"
-SETTINGS_FILE = "/etc/enigma2/o4t_settings.json"
+CACHE_DB = "/tmp/o4t_database.json"
 
-# تسجيل الخطوط المخصصة (Cairo و Amiri) إذا توفرت في مجلد fonts بالبلجن
-if not os.path.exists(FONTS_PATH):
-    try:
-        os.makedirs(FONTS_PATH)
-    except Exception:
-        pass
+STORE_URL = "sllr.co/online4tech"
+SUPPORT_PHONE = "01006699169"
+ITEMS_PER_PAGE = 9
 
-for fname, fkey in [("Cairo-Regular.ttf", "Cairo"), ("Amiri-Regular.ttf", "Amiri")]:
-    fpath = os.path.join(FONTS_PATH, fname)
-    if os.path.exists(fpath):
-        try:
-            addFont(fpath, fkey, 100, 0)
-        except Exception:
-            pass
+ARABIC_SECTIONS = {
+    "online4tech_official": "Online4Tech الرسمي",
+    "favourites": "المفضلة المختارة",
+    "updated-dependencic": "تحديث الحزم والمكتبات",
+    "backupimages": "باك اب الصور",
+    "panels": "لوحات التحكم (Panels)",
+    "plugins": "البلجنات (Plugins)",
+    "novaler": "إضافات Novaler",
+    "channels": "ملفات القنوات",
+    "feeds": "الفيدات (Feeds)",
+    "bootlogos": "شاشات الإقلاع",
+    "spinners": "أيقونات التحميل",
+    "tools": "أدوات الصيانة",
+    "system": "إضافات النظام",
+    "media": "الميديا و IPTV",
+    "ciefp": "باقة Ciefp",
+    "multiboot": "المالتي بوت (Multiboot)",
+    "softcams": "السوفت كام (Softcams)",
+    "backup": "نسخ احتياطي",
+    "restore": "استعادة النسخ",
+    "skins": "السكينات (Skins)",
+    "images": "صور الإنيجما 2",
+    "picons": "البيكونات (Picons)",
+    "remove": "حذف الإضافات",
+}
 
-def to_str(val):
-    if val is None:
+PACKAGE_TYPE_LABELS = {
+    "online4tech_official": "حزمة رسمية • Online4Tech",
+    "favourites": "إضافة مختارة • Enigma2",
+    "panels": "لوحة تحكم وإضافات",
+    "plugins": "بلجن إضافي • Enigma2",
+    "channels": "ملف قنوات وباقات",
+    "feeds": "مصدر تحديثات (Feed)",
+    "bootlogos": "شاشة إقلاع (Bootlogo)",
+    "spinners": "مؤشر تحميل (Spinner)",
+    "tools": "أداة صيانة وإصلاح",
+    "system": "إضافة نظام أساسية",
+    "media": "مشغل وسائط و IPTV",
+    "softcams": "محاكي شفرات (Softcam)",
+    "skins": "واجهة عرض (FHD Skin)",
+    "images": "صورة نظام كاملة",
+    "picons": "حزمة شعارات قنوات",
+    "remove": "أداة تنظيف وإزالة",
+}
+
+_PIXMAP_CACHE = {}
+
+
+def ensure_fonts_loaded():
+    loaded = set()
+    candidates = [
+        ("O4TArabic", ["Cairo-Bold.ttf", "Cairo-Regular.ttf", "Amiri-Bold.ttf", "Amiri-Regular.ttf"]),
+        ("O4TRegular", ["Cairo-Regular.ttf", "Amiri-Regular.ttf", "Cairo-Bold.ttf"]),
+    ]
+    if not os.path.isdir(FONTS_DIR):
+        return loaded
+    for alias, files in candidates:
+        for fname in files:
+            fpath = os.path.join(FONTS_DIR, fname)
+            if os.path.isfile(fpath) and os.path.getsize(fpath) > 0:
+                try:
+                    addFont(fpath, alias, 100, False)
+                    loaded.add(alias)
+                    break
+                except Exception:
+                    pass
+    return loaded
+
+
+def clean_text(txt):
+    if not txt:
         return ""
-    if not PY3 and isinstance(val, unicode):
-        return val.encode("utf-8")
-    if PY3 and isinstance(val, bytes):
-        return val.decode("utf-8", "ignore")
-    return str(val)
-
-def load_settings():
-    cfg = {"lang": "ar", "font_scale": "normal", "font_type": "Regular"}
-    if os.path.exists(SETTINGS_FILE):
+    if not isinstance(txt, type(u"")):
         try:
-            raw = open(SETTINGS_FILE, "rb").read().decode("utf-8", "ignore")
-            data = json.loads(raw)
-            if isinstance(data, dict):
-                cfg.update(data)
+            txt = txt.decode("utf-8", "ignore")
         except Exception:
-            pass
-    return cfg
+            txt = str(txt)
+    txt = re.sub(r"\(\s*\)", "", txt)
+    txt = re.sub(r"\s+", " ", txt).strip()
+    return txt
 
-def save_settings(cfg):
+
+def parse_item_name(raw_name):
+    txt = clean_text(raw_name)
+    m = re.search(r"\(([^)]*[\u0600-\u06FF][^)]*)\)", txt)
+    if m:
+        ar_desc = m.group(1).strip()
+        title = (txt[:m.start()] + txt[m.end():]).strip(" -_")
+        return (title if title else txt), ar_desc
+    return txt, ""
+
+
+def truncate_text(txt, max_len=36):
+    if not txt or len(txt) <= max_len:
+        return txt
+    return txt[: max_len - 3].rstrip() + "..."
+
+
+def get_device_info():
+    py_ver = "%d.%d" % (sys.version_info[0], sys.version_info[1])
+    ip = "Offline"
     try:
-        raw = json.dumps(cfg, indent=2)
-        with open(SETTINGS_FILE, "wb") as f:
-            f.write(raw.encode("utf-8"))
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(1.5)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
     except Exception:
         pass
 
-SPELL_FIXES = {
-    "Update Dependencic": "Update Dependencies",
-    "update dependencic": "Update Dependencies",
-    "Dependencic": "Dependencies",
-    "vaninbal": "Vhannibal",
-    "Vaninbal": "Vhannibal",
-    "Puere2": "Pure2",
-    "puere2": "Pure2",
-    "OpenPli_py3": "OpenPLi (Python 3)",
-    "OpenPli_py2": "OpenPLi (Python 2)",
-    "Chanal": "Channel",
-}
+    image_name = "Enigma2"
+    for p in ["/etc/issue", "/etc/version"]:
+        if os.path.isfile(p):
+            try:
+                with io.open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    raw = f.read()
+                    raw = re.sub(r"\\[a-zA-Z]", "", raw)
+                    lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+                    if lines:
+                        image_name = lines[0][:22].upper()
+                        break
+            except Exception:
+                pass
 
-def fix_spelling(text):
-    s = to_str(text).strip()
-    for wrong, right in SPELL_FIXES.items():
-        if wrong in s:
-            s = s.replace(wrong, right)
-    return s
+    now = datetime.now()
+    clock_str = now.strftime("%I:%M %p").lstrip("0")
+    date_str = now.strftime("%Y-%m-%d")
+    return image_name, py_ver, ip, clock_str, date_str
 
-def split_name_desc(raw_name, fallback_desc=""):
-    s = fix_spelling(raw_name)
-    if "(" in s and ")" in s and s.find("(") < s.rfind(")"):
-        i1 = s.find("(")
-        i2 = s.rfind(")")
-        title_part = s[:i1].strip()
-        desc_part = s[i1 + 1:i2].strip()
-        if title_part:
-            return title_part, (desc_part if desc_part else to_str(fallback_desc))
-    return s, to_str(fallback_desc)
 
-UI_TEXT = {
-    "ar": {
-        "ver_title": "Online4Tech | الإصدار 7.5",
-        "search_hint": "ابحث عن البلاجينات والإضافات (0: بحث | MENU: اللغة والخط)",
-        "sys_title": "النظام",
-        "preview_title": "معاينة الحزمة",
-        "cats_header": "الأقسام",
-        "exit": "خروج",
-        "back": "رجوع",
-        "back_cats": "رجوع للأقسام",
-        "enter_cat": "دخول للقسم",
-        "install_open": "تثبيت / فتح",
-        "grid_view": "عرض شبكة 4x3",
-        "list_view": "عرض القائمة",
-        "refresh": "تحديث السيرفر",
-        "badge_side": "MENU: اللغة والخط  |  OK أو السهم للدخول",
-        "badge_center": "MENU: اللغة والخط  |  0: بحث سريع",
-        "badge_grid": "وضع الشبكة 4x3  |  أصفر للقائمة  |  MENU: الإعدادات",
-        "installed": "مثبت",
-        "not_installed": "غير مثبت",
-        "available": "متاح",
-        "status_lbl": "الحالة",
-        "cat_lbl": "الفئة",
-        "official_ver": "الإصدار الرسمي",
-        "store_sub": "متجر أونلاين تكنولوجي الرسمي",
-        "sub_fmt": "قسم فرعي (%d ملف)",
-        "sec_fmt": "قسم (%d عنصر)",
-        "page_fmt": "%d عنصر   صفحة %d/%d",
-        "sub_desc_fmt": "%s\nيحتوي على %d عنصر. اضغط OK للاستعراض.",
-        "pkg_desc_fmt": "%s\nاضغط OK أو الزر الأخضر للتثبيت المباشر على الرسيفر.",
-        "empty_msg": "هذا القسم (%s) فارغ حاليا.",
-        "no_cmd_msg": "لا يوجد أمر تثبيت مسجل لهذا العنصر (%s).",
-        "sync_msg": "جاري مزامنة قاعدة بيانات Online4Tech...",
-        "search_kbd": "ابحث عن بلجن أو ملف قنوات في Online4Tech:",
-        "search_res": "بحث: ",
-        "menu_title": "إعدادات Online4Tech (اللغة ونوع وحجم الخط):",
-    },
-    "en": {
-        "ver_title": "Online4Tech | v7.5 Gold",
-        "search_hint": "Search Plugins & Packages (0: Search | MENU: Language & Font)",
-        "sys_title": "System Info",
-        "preview_title": "Package Preview",
-        "cats_header": "Categories",
-        "exit": "Exit",
-        "back": "Back",
-        "back_cats": "Categories",
-        "enter_cat": "Open Section",
-        "install_open": "Install / Open",
-        "grid_view": "Grid View 4x3",
-        "list_view": "List View",
-        "refresh": "Sync Server",
-        "badge_side": "MENU: Lang & Font  |  OK / Arrows: Enter",
-        "badge_center": "MENU: Lang & Font  |  0: Quick Search",
-        "badge_grid": "Grid View 4x3  |  Yellow: List  |  MENU: Settings",
-        "installed": "Installed",
-        "not_installed": "Not Installed",
-        "available": "Available",
-        "status_lbl": "Status",
-        "cat_lbl": "Category",
-        "official_ver": "Official Release",
-        "store_sub": "Online4Tech Official Store",
-        "sub_fmt": "Sub-category (%d files)",
-        "sec_fmt": "Section (%d items)",
-        "page_fmt": "%d Items   Page %d/%d",
-        "sub_desc_fmt": "%s\nContains %d items. Press OK to browse.",
-        "pkg_desc_fmt": "%s\nPress OK or Green button for direct installation.",
-        "empty_msg": "This section (%s) is currently empty.",
-        "no_cmd_msg": "No installation command found for (%s).",
-        "sync_msg": "Synchronizing Online4Tech cloud database...",
-        "search_kbd": "Search plugins or channel lists in Online4Tech:",
-        "search_res": "Search: ",
-        "menu_title": "Online4Tech Preferences (Language, Font Type & Size):",
-    }
-}
+def find_icon_path(icon_name):
+    candidates = []
+    if icon_name:
+        candidates.append(os.path.join(ICONS_DIR, icon_name))
+        candidates.append(os.path.join(PLUGIN_DIR, icon_name))
+    candidates.append(os.path.join(PLUGIN_DIR, "logo.png"))
+    candidates.append(os.path.join(PLUGIN_DIR, "plugin.png"))
+    candidates.append(os.path.join(PLUGIN_DIR, "icon.png"))
+    candidates.append(os.path.join(PLUGIN_DIR, "icon.png"))
+    for path in candidates:
+        if os.path.isfile(path) and os.path.getsize(path) > 0:
+            return path
+    return None
 
-CAT_INFO = [
-    ("online4tech", "حصريات أونلاين تكنولوجي", "إضافات وملفات حصرية لمتجر Online4Tech", "Online4Tech Exclusives", "Official Online4Tech plugins & tools",      "default",   "exclusive"),
-    ("fav",         "المفضلة",                 "أهم البلاجينات والإضافات المختارة",     "My Favorites",           "Most popular & essential Enigma2 plugins",   "default",   "exclusive"),
-    ("channel",     "ملفات القنوات",           "تحديث وتثبيت أحدث ملفات القنوات",       "Channel Settings",       "Install latest satellite channel lists",     "channels",  "exclusive"),
-    ("plugin",      "الإضافات",                "إدارة وتثبيت البلاجينات",               "Enigma2 Plugins",        "Browse & install general Enigma2 plugins",   "plugins",   "enigma2"),
-    ("panel",       "البانلات",                "استكشف بانلات انيجما 2 مع روابط المطورين", "Panels & Stores",     "Explore popular Enigma2 addon panels",       "panels",    "enigma2"),
-    ("feed",        "الفيدات",                 "تحديث وتثبيت الفيدات",                  "System Feeds",           "Install & update official image feeds",      "feeds",     "enigma2"),
-    ("ciefp",       "إضافات سييف",             "إدارة وتثبيت بلاجينات وملفات سييف",     "Ciefp Plugins",          "Ciefp settings, picons & utilities",         "ciefp",     "enigma2"),
-    ("media",       "الميديا و IPTV",          "مشغلات الميديا والصوتيات والآي بي تي في", "Media & IPTV",         "VOD, IPTV players & streaming addons",       "plugins",   "enigma2"),
-    ("iptv",        "آي بي تي في",             "إضافات ومشغلات القنوات عبر الإنترنت",   "IPTV Players",           "Stream live TV & VOD playlists",             "plugins",   "enigma2"),
-    ("novaler",     "نوفالر",                  "بلاجينات وأدوات لأجهزة نوفالر",         "Novaler Addons",         "Dedicated plugins for Novaler receivers",    "novaler",   "enigma2"),
-    ("cam",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير",    "Softcams & Emulators",   "OSCam, NCam & CCcam softcam packages",       "cams",      "cams"),
-    ("emu",         "السوفتكامات",             "إدارة السوفتكامات وإيموهات التشفير",    "Softcams & Emulators",   "OSCam, NCam & CCcam softcam packages",       "cams",      "cams"),
-    ("skin",        "السكينات",                "اختيار وتطبيق السكينات",                "Enigma2 Skins",          "FHD & HD graphical user interface skins",    "skins",     "display"),
-    ("picon",       "البيكونات",               "تثبيت وإدارة شعارات القنوات",           "Channel Picons",         "High-resolution satellite channel logos",    "picons",    "display"),
-    ("bootlogo",    "شعارات الإقلاع",          "تغيير شعارات الإقلاع وأيقونات التحميل", "Bootlogos",              "Custom startup bootlogo wallpapers",         "display",   "display"),
-    ("spinner",     "العرض والسبينر",          "تغيير شعارات الإقلاع وأيقونات التحميل", "Loading Spinners",       "Animated waiting & loading spinners",        "display",   "display"),
-    ("multiboot",   "ملتي بوت",                "تثبيت وإدارة بلاجينات الملتي بوت",      "Multiboot Tools",        "Multi-image boot managers & flashers",       "multiboot", "images"),
-    ("backup",      "صور الباك اب",            "تحميل وتثبيت صور انيجما 2 الجاهزة",     "Backup Images",          "Pre-configured full Enigma2 backup images",  "display",   "images"),
-    ("image",       "صور الأجهزة",             "تحميل وتثبيت صور انيجما 2 الخام",       "Clean Images",           "Official clean firmware receiver images",    "display",   "images"),
-    ("depend",      "تحديث المكتبات",          "تحديث مكتبات البايثون ومشغلات النظام",  "Update Dependencies",    "Fix & install missing Python libraries",     "feeds",     "system"),
-    ("tool",        "الأدوات",                 "أدوات وإضافات خدمية مفيدة",             "Utility Tools",          "System maintenance & helper tools",          "tools",     "system"),
-    ("system",      "خدمات النظام",            "إعدادات وأوامر صيانة الرسيفر",          "System Services",        "Core system tweaks & service scripts",       "tools",     "system"),
-    ("restore",     "الاستعادة والنسخ",        "استعادة الإعدادات والنسخ الاحتياطي",    "Backup & Restore",       "Save & restore settings and bouquets",       "tools",     "system"),
-    ("remove",      "حذف الإضافات",            "إزالة وحذف البلاجينات والحزم من الرسيفر", "Remove Packages",      "Uninstall plugins, skins & extensions",      "remove",    "system"),
-    ("setting",     "الإعدادات",               "جرب قنوات وترددات وإعدادات جديدة",      "Tuner & Settings",       "Transponders, satellites.xml & configs",     "channels",  "system"),
-]
 
-MASTER_GROUPS = [
-    ("exclusive", "أونلاين تكنولوجي", "الحصريات والمفضلة وأحدث ملفات القنوات",             "Online4Tech", "Exclusives, Favorites & Channel Lists",     "default"),
-    ("enigma2",   "البلاجنز",         "الإضافات والبانلات والفيدات والميديا وسييف ونوفالر", "Plugins",     "Addons, Panels, Feeds, Media & Novaler",    "plugins"),
-    ("display",   "الاسكينات",        "السكينات والبيكونات وشعارات الإقلاع والسبينر",       "Skins & UI",  "Skins, Picons, Bootlogos & Spinners",       "skins"),
-    ("cams",      "السوفتكام",        "إدارة وتثبيت السوفتكامات وإيموهات التشفير",         "Softcams",    "Manage & install OSCam, NCam & Emulators",  "cams"),
-    ("images",    "الملتي بوت",       "الملتي بوت وصور الأجهزة الخام وصور الباك اب",       "Multiboot",   "Multiboot managers, Clean & Backup Images", "multiboot"),
-    ("system",    "النظام",           "تحديث المكتبات والأدوات والاستعادة وحذف الإضافات",   "System",      "Dependencies, Tools, Restore & Uninstaller","tools"),
-]
+def get_cached_pixmap(icon_name):
+    path = find_icon_path(icon_name)
+    if not path:
+        return None
+    if path not in _PIXMAP_CACHE:
+        try:
+            _PIXMAP_CACHE[path] = LoadPixmap(path, cached=True)
+        except Exception:
+            _PIXMAP_CACHE[path] = None
+    return _PIXMAP_CACHE[path]
 
-def resolve_cat_full(raw_name, sec_key, cnt, lang="ar"):
-    combined = (to_str(raw_name) + " " + to_str(sec_key)).lower()
-    for key_sub, ar_t, ar_d, en_t, en_d, ic, grp in CAT_INFO:
-        if key_sub in combined:
-            title = en_t if lang == "en" else ar_t
-            desc = en_d if lang == "en" else ar_d
-            return title, desc, ic, grp
-    clean_title, ext_desc = split_name_desc(raw_name, "")
-    if lang == "en":
-        fallback = "%d packages available" % cnt
-        if any(ord(ch) > 127 for ch in ext_desc):
-            ext_desc = fallback
-    else:
-        fallback = "%d حزمة متاحة في هذا القسم" % cnt
-    return (clean_title or to_str(sec_key)), (ext_desc or fallback), "plugins", "enigma2"
 
-def guess_icon(sec_name):
-    _, _, ic, _ = resolve_cat_full(sec_name, sec_name, 0, "ar")
-    return ic
+class Online4TechMenuList(MenuList):
+    def __init__(self, list_items, font_name="Regular", font_size=24, item_height=64):
+        MenuList.__init__(self, list_items, enableWrapAround=True, content=eListboxPythonMultiContent)
+        self.l.setFont(0, gFont(font_name, font_size))
+        self.l.setFont(1, gFont(font_name, max(18, font_size - 5)))
+        self.l.setItemHeight(item_height)
 
-class O4TCardList(MenuList):
-    def __init__(self, items):
-        MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(74)
-        self.l.setFont(0, gFont("Regular", 23))
-        self.l.setFont(1, gFont("Regular", 19))
 
-class O4TGridRows(MenuList):
-    def __init__(self, items):
-        MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(250)
-        self.l.setFont(0, gFont("Regular", 22))
-        self.l.setFont(1, gFont("Regular", 18))
+def build_category_entry(title, count_num, icon_name=""):
+    display_title = truncate_text(title, 24)
+    count_str = str(count_num) if count_num is not None else ""
+    px = get_cached_pixmap(icon_name)
 
-class O4TSideList(MenuList):
-    def __init__(self, items):
-        MenuList.__init__(self, items, False, eListboxPythonMultiContent)
-        self.l.setItemHeight(64)
-        self.l.setFont(0, gFont("Regular", 23))
-        self.l.setFont(1, gFont("Regular", 18))
+    res = [(title, count_num, icon_name)]
+    # Card Background & Bottom Divider
+    res.append(
+        MultiContentEntryText(
+            pos=(4, 4),
+            size=(417, 58),
+            font=0,
+            flags=RT_HALIGN_RIGHT | RT_VALIGN_CENTER,
+            text="",
+            color=0xFFFFFF,
+            color_sel=0xF3D778,
+            backcolor=0x162038,
+            backcolor_sel=0x2B2412,
+        )
+    )
+    # Right Icon Box
+    res.append(
+        MultiContentEntryText(
+            pos=(366, 11),
+            size=(44, 44),
+            font=1,
+            flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER,
+            text="" if px else "◈",
+            color=0xD4AF37,
+            color_sel=0xF3D778,
+            backcolor=0x0D1322,
+            backcolor_sel=0x1C170B,
+        )
+    )
+    if px:
+        res.append(
+            MultiContentEntryPixmapAlphaBlend(
+                pos=(370, 15),
+                size=(36, 36),
+                png=px, flags=BT_SCALE,
+            )
+        )
+    # Category Title (Right-aligned)
+    res.append(
+        MultiContentEntryText(
+            pos=(78, 8),
+            size=(278, 50),
+            font=0,
+            flags=RT_HALIGN_RIGHT | RT_VALIGN_CENTER,
+            text=display_title,
+            color=0xE2E8F0,
+            color_sel=0xF3D778,
+        )
+    )
+    # Left Count Badge
+    if count_str:
+        res.append(
+            MultiContentEntryText(
+                pos=(12, 16),
+                size=(56, 34),
+                font=1,
+                flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER,
+                text=count_str,
+                color=0x94A3B8,
+                color_sel=0x0B0D14,
+                backcolor=0x0D1322,
+                backcolor_sel=0xD4AF37,
+            )
+        )
+    return res
 
-SKIN_FHD = """
-<screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Panel" flags="wfNoBorder" backgroundColor="#0b0d12">
-    <widget zPosition="1" name="bg_main" position="0,0" size="1920,1080" alphatest="blend" />
 
-    <widget zPosition="3" name="clock_lbl" position="55,12" size="260,48" font="Regular;40" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="center" />
-    <widget zPosition="3" name="date_lbl" position="55,62" size="260,26" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
+def build_item_entry(title, subtitle, installed=False, icon_name=""):
+    display_title = truncate_text(title, 36)
+    display_sub = truncate_text(subtitle, 44)
+    px = get_cached_pixmap(icon_name)
+    status_txt = "✓ مثبت" if installed else "متاح"
+    status_col = 0x22C55E if installed else 0x94A3B8
 
-    <widget zPosition="3" name="center_header" position="645,28" size="710,56" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#161a24" transparent="1" halign="center" valign="center" />
+    res = [(title, subtitle, installed, icon_name)]
+    # Card Background
+    res.append(
+        MultiContentEntryText(
+            pos=(4, 4),
+            size=(692, 74),
+            font=0,
+            flags=RT_HALIGN_RIGHT | RT_VALIGN_CENTER,
+            text="",
+            color=0xFFFFFF,
+            color_sel=0xF3D778,
+            backcolor=0x162038,
+            backcolor_sel=0x2B2412,
+        )
+    )
+    # Right Icon Frame
+    res.append(
+        MultiContentEntryText(
+            pos=(624, 11),
+            size=(60, 60),
+            font=0,
+            flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER,
+            text="" if px else "★",
+            color=0xD4AF37,
+            color_sel=0xF3D778,
+            backcolor=0x0D1322,
+            backcolor_sel=0x1C170B,
+        )
+    )
+    if px:
+        res.append(
+            MultiContentEntryPixmapAlphaBlend(
+                pos=(630, 17),
+                size=(48, 48),
+                png=px, flags=BT_SCALE,
+            )
+        )
+    # Left Status Pill
+    res.append(
+        MultiContentEntryText(
+            pos=(14, 21),
+            size=(112, 40),
+            font=1,
+            flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER,
+            text=status_txt,
+            color=status_col,
+            color_sel=0x22C55E if installed else 0xF3D778,
+            backcolor=0x0D1322,
+            backcolor_sel=0x1C170B,
+        )
+    )
+    # Main Title (Line 1)
+    res.append(
+        MultiContentEntryText(
+            pos=(136, 8),
+            size=(476, 36),
+            font=0,
+            flags=RT_HALIGN_RIGHT | RT_VALIGN_CENTER,
+            text=display_title,
+            color=0xF8FAFC,
+            color_sel=0xF3D778,
+        )
+    )
+    # Clean Arabic Subtitle (Line 2)
+    res.append(
+        MultiContentEntryText(
+            pos=(136, 42),
+            size=(476, 30),
+            font=1,
+            flags=RT_HALIGN_RIGHT | RT_VALIGN_CENTER,
+            text=display_sub,
+            color=0x38BDF8,
+            color_sel=0xE2E8F0,
+        )
+    )
+    return res
 
-    <eLabel zPosition="3" text="Online4TechPanel" position="1480,18" size="390,46" font="Regular;34" foregroundColor="#f5d061" backgroundColor="#0b0d12" transparent="1" halign="center" />
-    <widget zPosition="3" name="ver_lbl" position="1480,66" size="390,28" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="center" />
-
-    <widget zPosition="3" name="left_title" position="55,192" size="350,34" font="Regular;22" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
-    <widget zPosition="3" name="left_info" position="55,250" size="350,650" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
-
-    <widget zPosition="4" name="preview_icon" position="155,245" size="150,150" alphatest="blend" />
-    <widget zPosition="4" name="left_pkg_name" position="50,412" size="360,42" font="Regular;24" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="center" />
-    <widget zPosition="4" name="left_pkg_ver" position="55,456" size="350,30" font="Regular;19" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
-
-    <widget zPosition="4" name="left_stat_lbl" position="235,515" size="150,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="4" name="left_stat_val" position="65,515" size="165,32" font="Regular;20" foregroundColor="#ef4444" backgroundColor="#12151d" transparent="1" halign="left" />
-
-    <widget zPosition="4" name="left_cat_lbl" position="235,558" size="150,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="4" name="left_cat_val" position="65,558" size="165,32" font="Regular;20" foregroundColor="#ffffff" backgroundColor="#12151d" transparent="1" halign="left" />
-
-    <widget zPosition="4" name="left_desc" position="55,620" size="350,220" font="Regular;20" foregroundColor="#cbd5e1" backgroundColor="#12151d" transparent="1" halign="center" />
-
-    <widget zPosition="3" name="page_info" position="465,134" size="380,32" font="Regular;20" foregroundColor="#94a3b8" backgroundColor="#0b0d12" transparent="1" halign="left" />
-    <widget zPosition="3" name="section_heading" position="860,126" size="550,40" font="Regular;29" foregroundColor="#ffffff" backgroundColor="#0b0d12" transparent="1" halign="right" />
-    <widget zPosition="3" name="list" position="460,180" size="960,740" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
-
-    <widget zPosition="3" name="right_header" position="1480,162" size="380,34" font="Regular;21" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="center" />
-    <widget zPosition="3" name="side_list" position="1468,220" size="404,640" backgroundColor="#12151d" backgroundColorSelected="#1d222f" scrollbarMode="showNever" enableWrapAround="1" />
-    <widget zPosition="3" name="side_page_lbl" position="1480,918" size="380,30" font="Regular;18" foregroundColor="#94a3b8" backgroundColor="#12151d" transparent="1" halign="right" />
-
-    <widget zPosition="4" name="grid_list" position="55,175" size="1810,750" backgroundColor="#0b0d12" backgroundColorSelected="#0b0d12" scrollbarMode="showNever" enableWrapAround="1" />
-
-    <widget zPosition="3" name="key_red" position="1635,1003" size="180,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="3" name="key_green" position="1325,1003" size="210,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="3" name="key_yellow" position="945,1003" size="290,36" font="Regular;21" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="3" name="key_blue" position="655,1003" size="230,36" font="Regular;21" foregroundColor="#e2e8f0" backgroundColor="#12151d" transparent="1" halign="right" />
-    <widget zPosition="3" name="mode_badge" position="75,1003" size="560,36" font="Regular;20" foregroundColor="#f5d061" backgroundColor="#12151d" transparent="1" halign="left" />
-</screen>
-"""
 
 class Online4TechStoreScreen(Screen):
+    skin = """
+    <screen name="Online4TechStoreScreen" position="0,0" size="1920,1080" title="Online4Tech Store v7.5 Gold" backgroundColor="#0a0e17" flags="wfNoBorder">
+        <!-- Top Header Bar -->
+        <eLabel position="28,20" size="1864,118" backgroundColor="#111827" zPosition="-10" />
+        <eLabel position="28,20" size="1864,3" backgroundColor="#d4af37" zPosition="-5" />
+        <eLabel position="28,136" size="1864,2" backgroundColor="#243049" zPosition="-5" />
+
+        <!-- Right Header: Brand & Support Card -->
+        <widget name="brand_logo" position="1786,34" size="88,88" alphatest="blend" scale="1" zPosition="5" />
+        <eLabel text="ONLINE4TECH STORE" position="1385,30" size="385,42" font="Regular;31" halign="right" foregroundColor="#f3d778" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <eLabel text="VU+ • DREAMBOX • ENIGMA2 GOLD v7.5" position="1340,70" size="430,26" font="Regular;18" halign="right" foregroundColor="#38bdf8" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <eLabel position="1340,98" size="430,30" backgroundColor="#1f2937" zPosition="-6" />
+        <widget name="brand_sub" position="1345,99" size="420,28" font="Regular;19" halign="center" noWrap="1" foregroundColor="#f3d778" backgroundColor="#1f2937" transparent="1" zPosition="5" />
+
+        <!-- Center Header: Active Section Title -->
+        <widget name="top_title" position="640,34" size="680,44" font="Regular;31" halign="center" foregroundColor="#f3d778" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <widget name="top_subtitle" position="640,84" size="680,34" font="Regular;21" halign="center" foregroundColor="#94a3b8" backgroundColor="#111827" transparent="1" zPosition="5" />
+
+        <!-- Left Header Card 1: Clock & Date -->
+        <eLabel position="46,32" size="255,92" backgroundColor="#162038" zPosition="-8" />
+        <eLabel position="46,32" size="255,2" backgroundColor="#334155" zPosition="-5" />
+        <widget name="clock_lbl" position="54,40" size="239,42" font="Regular;30" halign="center" foregroundColor="#ffffff" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="date_lbl" position="54,84" size="239,30" font="Regular;19" halign="center" foregroundColor="#d4af37" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Left Header Card 2: Receiver & Python Info -->
+        <eLabel position="315,32" size="305,92" backgroundColor="#162038" zPosition="-8" />
+        <eLabel position="315,32" size="305,2" backgroundColor="#334155" zPosition="-5" />
+        <widget name="dev_info_top" position="325,42" size="285,36" font="Regular;23" halign="center" foregroundColor="#38bdf8" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="dev_info_bot" position="325,82" size="285,32" font="Regular;19" halign="center" foregroundColor="#cbd5e1" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Column 1 (Right): Categories Sidebar (x: 1437..1892) -->
+        <eLabel position="1437,154" size="455,834" backgroundColor="#111827" zPosition="-10" />
+        <eLabel position="1437,154" size="455,3" backgroundColor="#d4af37" zPosition="-5" />
+        <widget name="cats_header" position="1455,168" size="418,44" font="Regular;28" halign="right" foregroundColor="#f3d778" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <eLabel position="1455,220" size="418,2" backgroundColor="#243049" zPosition="-5" />
+        <widget name="cat_list" position="1452,232" size="425,726" scrollbarMode="showNever" backgroundColor="#111827" backgroundColorSelected="#2b2412" foregroundColorSelected="#f3d778" transparent="1" zPosition="5" />
+
+        <!-- Column 2 (Center): Items & Packages List (x: 682..1417) -->
+        <eLabel position="682,154" size="735,834" backgroundColor="#111827" zPosition="-10" />
+        <eLabel position="682,154" size="735,3" backgroundColor="#38bdf8" zPosition="-5" />
+        <widget name="items_header" position="940,168" size="455,44" font="Regular;27" halign="right" foregroundColor="#f8fafc" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <widget name="page_info" position="702,172" size="230,36" font="Regular;21" halign="left" foregroundColor="#d4af37" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <eLabel position="702,220" size="695,2" backgroundColor="#243049" zPosition="-5" />
+        <widget name="item_list" position="698,232" size="700,738" scrollbarMode="showNever" backgroundColor="#111827" backgroundColorSelected="#2b2412" foregroundColorSelected="#f3d778" transparent="1" zPosition="5" />
+
+        <!-- Column 3 (Left): Preview & Details Card (x: 28..662) -->
+        <eLabel position="28,154" size="634,834" backgroundColor="#111827" zPosition="-10" />
+        <eLabel position="28,154" size="634,3" backgroundColor="#d4af37" zPosition="-5" />
+
+        <!-- Top Status Dot Indicator -->
+        <eLabel position="54,174" size="26,26" backgroundColor="#162038" zPosition="-8" />
+        <widget name="status_dot" position="54,172" size="26,28" font="Regular;22" halign="center" foregroundColor="#22c55e" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Centered Icon Frame -->
+        <eLabel position="255,182" size="180,180" backgroundColor="#162038" zPosition="-8" />
+        <eLabel position="255,182" size="180,2" backgroundColor="#d4af37" zPosition="-5" />
+        <widget name="preview_icon" position="275,202" size="140,140" alphatest="blend" scale="1" zPosition="5" />
+
+        <!-- Item Title & Install Status -->
+        <widget name="detail_title" position="48,378" size="594,68" font="Regular;28" halign="center" foregroundColor="#ffffff" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <widget name="detail_status" position="48,450" size="594,36" font="Regular;22" halign="center" foregroundColor="#22c55e" backgroundColor="#111827" transparent="1" zPosition="5" />
+        <eLabel position="58,496" size="574,2" backgroundColor="#243049" zPosition="-5" />
+
+        <!-- Structured Details Box (Pure Arabic Labels to prevent BiDi scrambling) -->
+        <eLabel position="52,510" size="586,155" backgroundColor="#162038" zPosition="-8" />
+        <widget name="meta_cat" position="68,520" size="554,36" font="Regular;22" halign="right" foregroundColor="#f3d778" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="meta_type" position="68,566" size="554,36" font="Regular;22" halign="right" foregroundColor="#38bdf8" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="meta_source" position="68,612" size="554,36" font="Regular;21" halign="right" foregroundColor="#cbd5e1" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Item Description Area -->
+        <widget name="detail_desc" position="58,682" size="574,158" font="Regular;23" halign="right" foregroundColor="#e2e8f0" backgroundColor="#111827" transparent="1" zPosition="5" />
+
+        <!-- Gold CTA Button inside Preview Column -->
+        <eLabel position="58,862" size="574,94" backgroundColor="#d4af37" zPosition="-8" />
+        <widget name="action_cta" position="72,874" size="546,40" font="Regular;27" halign="center" foregroundColor="#0a0e17" backgroundColor="#d4af37" transparent="1" zPosition="5" />
+        <widget name="action_sub" position="72,916" size="546,30" font="Regular;20" halign="center" foregroundColor="#1e1b10" backgroundColor="#d4af37" transparent="1" zPosition="5" />
+
+        <!-- Bottom Color Buttons Bar (Preserving Existing Button Order & Functionality) -->
+        <eLabel position="28,1004" size="1864,58" backgroundColor="#111827" zPosition="-10" />
+        <eLabel position="28,1004" size="1864,2" backgroundColor="#243049" zPosition="-5" />
+
+        <!-- Red Button: Back / Exit -->
+        <eLabel position="1610,1013" size="265,40" backgroundColor="#162038" zPosition="-6" />
+        <eLabel text="●" position="1835,1014" size="30,38" font="Regular;24" halign="center" foregroundColor="#ef4444" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="key_red" position="1618,1015" size="215,36" font="Regular;21" halign="right" valign="center" foregroundColor="#f8fafc" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Green Button: Install / Open -->
+        <eLabel position="1325,1013" size="265,40" backgroundColor="#162038" zPosition="-6" />
+        <eLabel text="●" position="1550,1014" size="30,38" font="Regular;24" halign="center" foregroundColor="#22c55e" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="key_green" position="1333,1015" size="215,36" font="Regular;21" halign="right" valign="center" foregroundColor="#f8fafc" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Yellow Button: Uninstall -->
+        <eLabel position="1040,1013" size="265,40" backgroundColor="#162038" zPosition="-6" />
+        <eLabel text="●" position="1265,1014" size="30,38" font="Regular;24" halign="center" foregroundColor="#eab308" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="key_yellow" position="1048,1015" size="215,36" font="Regular;21" halign="right" valign="center" foregroundColor="#f8fafc" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Blue Button: Refresh Server -->
+        <eLabel position="755,1013" size="265,40" backgroundColor="#162038" zPosition="-6" />
+        <eLabel text="●" position="980,1014" size="30,38" font="Regular;24" halign="center" foregroundColor="#3b82f6" backgroundColor="#162038" transparent="1" zPosition="5" />
+        <widget name="key_blue" position="763,1015" size="215,36" font="Regular;21" halign="right" valign="center" foregroundColor="#f8fafc" backgroundColor="#162038" transparent="1" zPosition="5" />
+
+        <!-- Left Navigation Hint -->
+        <widget name="footer_hint" position="48,1014" size="685,38" font="Regular;20" halign="left" valign="center" foregroundColor="#94a3b8" backgroundColor="#111827" transparent="1" zPosition="5" />
+    </screen>
+    """
+
     def __init__(self, session):
-        self.skin = SKIN_FHD
         Screen.__init__(self, session)
+        self.session = session
+        loaded_fonts = ensure_fonts_loaded()
+        self.ui_font = "O4TArabic" if "O4TArabic" in loaded_fonts else ("O4TRegular" if "O4TRegular" in loaded_fonts else "Regular")
 
-        self.cfg = load_settings()
-        self.lang = self.cfg.get("lang", "ar")
-        if self.lang not in ("ar", "en"):
-            self.lang = "ar"
-
-        self["bg_main"] = Pixmap()
-        self["clock_lbl"] = Label("")
-        self["date_lbl"] = Label("")
-        self["ver_lbl"] = Label("")
-        self["center_header"] = Label("")
-        self["left_title"] = Label("")
-        self["left_info"] = Label("")
-
-        self["preview_icon"] = Pixmap()
-        self["left_pkg_name"] = Label("")
-        self["left_pkg_ver"] = Label("")
-        self["left_stat_lbl"] = Label("")
-        self["left_stat_val"] = Label("")
-        self["left_cat_lbl"] = Label("")
-        self["left_cat_val"] = Label("")
-        self["left_desc"] = Label("")
-
-        self["page_info"] = Label("")
-        self["section_heading"] = Label("")
-        self["right_header"] = Label("")
-        self["side_page_lbl"] = Label("")
-
-        self["key_red"] = Label("")
-        self["key_green"] = Label("")
-        self["key_yellow"] = Label("")
-        self["key_blue"] = Label("")
-        self["mode_badge"] = Label("")
-
-        self["list"] = O4TCardList([])
-        self["side_list"] = O4TSideList([])
-        self["grid_list"] = O4TGridRows([])
-
-        self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "NumberActions", "MenuActions"], {
-            "ok": self.ok_pressed,
-            "cancel": self.back_pressed,
-            "red": self.back_pressed,
-            "green": self.ok_pressed,
-            "yellow": self.toggle_view_mode,
-            "blue": self.refresh_server,
-            "menu": self.open_settings_menu,
-            "9": self.open_settings_menu,
-            "0": self.open_search,
-            "up": self.move_up,
-            "down": self.move_down,
-            "left": self.move_left,
-            "right": self.move_right,
-        }, -1)
-
-        self.db = {}
-        self.focus_pane = "side"
-        self.nav_stack = []
-        self.view_style = "list"
+        self.db_data = {}
+        self.main_sections = []
+        self.current_cat_idx = 0
+        self.current_section_key = ""
+        self.current_section_title = ""
+        self.current_section_icon = ""
         self.current_items = []
-        self.main_cats_meta = []
-        self.active_cat_idx = 0
-        self.grid_index = 0
+        self.focus_pane = "cats"
+        self.nav_stack = []
 
-        self.icon_cache = {}
-        self.cached_sys_info = ""
+        img_name, py_ver, ip, clock_str, date_str = get_device_info()
 
-        self.card_norm = None
-        self.card_sel = None
-        self.grid_norm = None
-        self.grid_sel = None
-        self.pill_gold = None
-        self.pill_dark = None
-        self.badge_inst = None
-        self.badge_inst_en = None
+        self["brand_logo"] = Pixmap()
+        self["brand_sub"] = Label("%s  •  %s" % (SUPPORT_PHONE, STORE_URL))
+        self["top_title"] = Label("متجر Online4Tech الرسمي")
+        self["top_subtitle"] = Label("جاري تحميل قاعدة البيانات...")
 
-        self.timer = eTimer()
-        try:
-            self.timer.callback.append(self.update_clock)
-        except AttributeError:
-            self.timer_conn = self.timer.timeout.connect(self.update_clock)
-        self.onLayoutFinish.append(self.startup)
+        self["clock_lbl"] = Label(clock_str)
+        self["date_lbl"] = Label(date_str)
+        self["dev_info_top"] = Label(img_name)
+        self["dev_info_bot"] = Label("Py %s  •  IP: %s" % (py_ver, ip))
 
-    def tr(self, key):
-        return UI_TEXT.get(self.lang, UI_TEXT["ar"]).get(key, key)
+        self["cats_header"] = Label("أقسام المتجر")
+        self["cat_list"] = Online4TechMenuList([], font_name=self.ui_font, font_size=23, item_height=64)
 
-    def apply_font_settings(self):
-        f_type = self.cfg.get("font_type", "Regular")
-        scale_key = self.cfg.get("font_scale", "normal")
-        delta = -2 if scale_key == "small" else (3 if scale_key == "large" else 0)
+        self["items_header"] = Label("الحزم والإضافات")
+        self["page_info"] = Label("0 عنصر")
+        self["item_list"] = Online4TechMenuList([], font_name=self.ui_font, font_size=24, item_height=82)
 
-        try:
-            self["list"].l.setFont(0, gFont(f_type, 23 + delta))
-            self["list"].l.setFont(1, gFont(f_type, 19 + delta))
-            self["grid_list"].l.setFont(0, gFont(f_type, 22 + delta))
-            self["grid_list"].l.setFont(1, gFont(f_type, 18 + delta))
-            self["side_list"].l.setFont(0, gFont(f_type, 23 + delta))
-            self["side_list"].l.setFont(1, gFont(f_type, 18 + delta))
-        except Exception:
-            pass
+        self["status_dot"] = Label("●")
+        self["preview_icon"] = Pixmap()
+        self["detail_title"] = Label("Online4Tech v7.5 Gold")
+        self["detail_status"] = Label("جاهز للاستعراض")
+        self["meta_cat"] = Label("القسم: الرئيسية")
+        self["meta_type"] = Label("النوع: متجر إضافات متكامل")
+        self["meta_source"] = Label("المصدر: مستودع Online4Tech السحابي")
+        self["detail_desc"] = Label("تنقل بين الأقسام على اليمين أو اضغط يسار للدخول إلى قائمة الإضافات وتثبيتها مباشرة.")
+        self["action_cta"] = Label("تثبيت / فتح  •  OK")
+        self["action_sub"] = Label("الأخضر: تنفيذ  |  الأصفر: إزالة  |  الأزرق: تحديث")
 
-        widget_sizes = [
-            ("center_header", 20), ("ver_lbl", 19), ("left_title", 22),
-            ("left_info", 20), ("left_pkg_name", 24), ("left_pkg_ver", 19),
-            ("left_stat_lbl", 20), ("left_stat_val", 20), ("left_cat_lbl", 20),
-            ("left_cat_val", 20), ("left_desc", 20), ("page_info", 20),
-            ("section_heading", 28), ("right_header", 21), ("key_red", 21),
-            ("key_green", 21), ("key_yellow", 21), ("key_blue", 21), ("mode_badge", 20)
-        ]
-        for w_name, base_sz in widget_sizes:
-            if w_name in self and self[w_name].instance:
-                try:
-                    self[w_name].instance.setFont(gFont(f_type, max(14, base_sz + delta)))
-                except Exception:
-                    pass
+        self["key_red"] = Label("رجوع / إغلاق")
+        self["key_green"] = Label("تثبيت / فتح")
+        self["key_yellow"] = Label("حذف / إزالة")
+        self["key_blue"] = Label("تحديث المصدر")
+        self["footer_hint"] = Label("التركيز: الأقسام  |  يسار: العناصر  |  OK: اختيار")
 
-    def open_settings_menu(self):
-        cur_lang_lbl = "English" if self.lang == "ar" else "العربية (Arabic)"
-        if self.lang == "ar":
-            options = [
-                ("تغيير اللغة إلى: %s" % cur_lang_lbl, "toggle_lang"),
-                ("نوع الخط: الافتراضي (Regular)", "font_regular"),
-                ("نوع الخط: عريض (Bold)", "font_bold"),
-                ("نوع الخط: كايرو (Cairo)", "font_cairo"),
-                ("نوع الخط: أميري (Amiri)", "font_amiri"),
-                ("حجم الخط: صغير (Small)", "scale_small"),
-                ("حجم الخط: قياسي (Normal)", "scale_normal"),
-                ("حجم الخط: كبير (Large)", "scale_large"),
-            ]
-        else:
-            options = [
-                ("Switch Language to: %s" % cur_lang_lbl, "toggle_lang"),
-                ("Font Type: Regular (Default)", "font_regular"),
-                ("Font Type: Bold", "font_bold"),
-                ("Font Type: Cairo", "font_cairo"),
-                ("Font Type: Amiri", "font_amiri"),
-                ("Font Size: Small", "scale_small"),
-                ("Font Size: Normal", "scale_normal"),
-                ("Font Size: Large", "scale_large"),
-            ]
-        self.session.openWithCallback(self.settings_menu_cb, ChoiceBox, title=self.tr("menu_title"), list=options)
+        self["actions"] = ActionMap(
+            ["OkCancelActions", "ColorActions", "DirectionActions", "ChannelSelectBaseActions"],
+            {
+                "ok": self.ok_pressed,
+                "cancel": self.back_pressed,
+                "red": self.back_pressed,
+                "green": self.ok_pressed,
+                "yellow": self.remove_pressed,
+                "blue": self.refresh_db,
+                "up": self.move_up,
+                "down": self.move_down,
+                "left": self.focus_items_pane,
+                "right": self.focus_cats_pane,
+                "nextBouquet": self.page_down,
+                "prevBouquet": self.page_up,
+            },
+            -1,
+        )
 
-    def settings_menu_cb(self, choice):
-        if not choice:
-            return
-        act = choice[1]
-        if act == "toggle_lang":
-            self.lang = "en" if self.lang == "ar" else "ar"
-            self.cfg["lang"] = self.lang
-        elif act == "font_regular":
-            self.cfg["font_type"] = "Regular"
-        elif act == "font_bold":
-            self.cfg["font_type"] = "Bold"
-        elif act == "font_cairo":
-            self.cfg["font_type"] = "Cairo"
-        elif act == "font_amiri":
-            self.cfg["font_type"] = "Amiri"
-        elif act == "scale_small":
-            self.cfg["font_scale"] = "small"
-        elif act == "scale_normal":
-            self.cfg["font_scale"] = "normal"
-        elif act == "scale_large":
-            self.cfg["font_scale"] = "large"
+        self.onLayoutFinish.append(self.init_screen)
 
-        save_settings(self.cfg)
-        self.apply_font_settings()
-        self.apply_static_labels()
-        self.build_main_categories_meta()
-        self.preview_active_category()
-
-    def apply_static_labels(self):
-        self["ver_lbl"].setText(self.tr("ver_title"))
-        self["center_header"].setText(self.tr("search_hint"))
-        self["right_header"].setText(self.tr("cats_header"))
-        self["key_blue"].setText(self.tr("refresh"))
-        self.update_footer_hints()
-
-    def update_clock(self):
-        self["clock_lbl"].setText(time.strftime("%H:%M"))
-        self["date_lbl"].setText(time.strftime("%A %d %B"))
-
-    def detect_image_name(self):
-        for p in ["/etc/issue", "/etc/image-version"]:
-            if os.path.exists(p):
-                try:
-                    raw = open(p, "rb").read().decode("utf-8", "ignore")
-                    txt = raw.splitlines()[0].replace("\\n", "").replace("\\l", "").strip()
-                    if txt:
-                        return txt[:22]
-                except Exception:
-                    pass
-        return "EGAMI-Team"
-
-    def get_sys_info_text(self):
-        lines = []
-        try:
-            model = "Vu+ DUO4K"
-            if os.path.exists("/proc/stb/info/vumodel"):
-                model = "Vu+ " + open("/proc/stb/info/vumodel", "rb").read().decode("utf-8", "ignore").strip().upper()
-            elif os.path.exists("/proc/stb/info/boxtype"):
-                model = open("/proc/stb/info/boxtype", "rb").read().decode("utf-8", "ignore").strip().upper()
-            lines.append("Box: " + model)
-            lines.append("Image: " + self.detect_image_name())
-            lines.append("Python: %d.%d.%d" % sys.version_info[:3])
+    def init_screen(self):
+        brand_img = find_icon_path("logo.png")
+        if brand_img and self["brand_logo"].instance:
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.settimeout(0.4)
-                s.connect(("8.8.8.8", 80))
-                ip = s.getsockname()[0]
-                s.close()
-                lines.append("IP: " + ip)
+                self["brand_logo"].instance.setScale(1)
             except Exception:
-                lines.append("IP: Local")
-            lines.append("Net: Online")
-            st = os.statvfs("/")
-            free_gb = (st.f_bavail * st.f_frsize) / (1024.0 ** 3)
-            tot_gb = (st.f_blocks * st.f_frsize) / (1024.0 ** 3)
-            lines.append("Flash: %.1fGB / %.1fGB" % (free_gb, tot_gb))
-            if os.path.exists("/proc/meminfo"):
-                mem_lines = open("/proc/meminfo", "rb").read().decode("utf-8", "ignore").splitlines()
-                mem_map = {}
-                for line in mem_lines:
-                    parts = line.split()
-                    if len(parts) >= 2:
-                        try:
-                            mem_map[parts[0].rstrip(":")] = int(parts[1])
-                        except Exception:
-                            pass
-                tot_m = mem_map.get("MemTotal", 0) // 1024
-                if "MemAvailable" in mem_map:
-                    avl_m = mem_map["MemAvailable"] // 1024
-                else:
-                    avl_m = (mem_map.get("MemFree", 0) + mem_map.get("Buffers", 0) + mem_map.get("Cached", 0)) // 1024
-                if tot_m > 0:
-                    lines.append("Ram: %dMB / %dMB" % (max(0, tot_m - avl_m), tot_m))
-        except Exception:
-            pass
-        return "\n\n".join(lines)
-
-    def get_sub_items(self, item):
-        if not isinstance(item, dict):
-            return None
-        for k in ["items", "list", "sub", "packages", "data"]:
-            if isinstance(item.get(k), list):
-                return item.get(k)
-        sec = item.get("section", "") or item.get("sub_section", "") or item.get("target", "")
-        if sec and sec in self.db and isinstance(self.db[sec], list):
-            return self.db[sec]
-        return None
-
-    def startup(self):
-        for attr, fname in [
-            ("card_norm",     "card_norm_fhd.png"),
-            ("card_sel",      "card_sel_fhd.png"),
-            ("grid_norm",     "grid_norm.png"),
-            ("grid_sel",      "grid_sel.png"),
-            ("pill_gold",     "pill_gold.png"),
-            ("pill_dark",     "pill_dark.png"),
-            ("badge_inst",    "badge_inst.png"),
-            ("badge_inst_en", "badge_inst_en.png"),
-        ]:
-            p = os.path.join(ICONS_PATH, fname)
-            if os.path.exists(p):
-                setattr(self, attr, LoadPixmap(p))
-        self.cached_sys_info = self.get_sys_info_text()
-        self.update_clock()
-        self.timer.start(10000)
-        self.apply_font_settings()
-        self.apply_static_labels()
-        self.apply_view_visibility()
+                pass
+            try:
+                self["brand_logo"].instance.setScale(1)
+            except Exception:
+                pass
+            self["brand_logo"].instance.setPixmapFromFile(brand_img)
         self.load_database(force=False)
 
-    def update_footer_hints(self):
-        if self.view_style == "grid":
-            self["key_red"].setText(self.tr("back"))
-            self["key_green"].setText(self.tr("install_open"))
-            self["key_yellow"].setText(self.tr("list_view"))
-            self["mode_badge"].setText(self.tr("badge_grid"))
-            return
-
-        self["key_yellow"].setText(self.tr("grid_view"))
-        if self.focus_pane == "side":
-            self["key_red"].setText(self.tr("exit"))
-            self["key_green"].setText(self.tr("enter_cat"))
-            self["mode_badge"].setText(self.tr("badge_side"))
-        else:
-            self["key_red"].setText(self.tr("back") if self.nav_stack else self.tr("back_cats"))
-            self["key_green"].setText(self.tr("install_open"))
-            self["mode_badge"].setText(self.tr("badge_center"))
-
-    def apply_view_visibility(self):
-        is_grid = (self.view_style == "grid")
-        bg_name = "bg_grid.png" if is_grid else "bg_main.png"
-        bg_file = os.path.join(ICONS_PATH, bg_name)
-        if not os.path.exists(bg_file):
-            bg_file = os.path.join(ICONS_PATH, "bg_main.png")
-        if os.path.exists(bg_file) and self["bg_main"].instance:
-            self["bg_main"].instance.setPixmapFromFile(bg_file)
-
-        for w in ["left_title", "page_info", "section_heading", "list", "right_header", "side_list", "side_page_lbl"]:
-            if is_grid:
-                self[w].hide()
-            else:
-                self[w].show()
-        if is_grid:
-            for w in ["left_info", "preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
-                self[w].hide()
-            self["grid_list"].show()
-        else:
-            self["grid_list"].hide()
-        self.update_footer_hints()
-
-    def toggle_view_mode(self):
-        if self.view_style == "list":
-            self.view_style = "grid"
-        else:
-            self.view_style = "list"
-            if self.current_items:
-                self.focus_pane = "center"
-        self.apply_view_visibility()
-        self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
+    def get_section_arabic_title(self, sec_obj):
+        sec_key = sec_obj.get("section", "")
+        if sec_key in ARABIC_SECTIONS:
+            return ARABIC_SECTIONS[sec_key]
+        raw_t = clean_text(sec_obj.get("title", sec_key))
+        _, ar_sub = parse_item_name(raw_t)
+        return ar_sub if ar_sub else raw_t
 
     def load_database(self, force=False):
         try:
-            if force or not os.path.exists(CACHE_FILE):
-                if PY3:
-                    ctx = ssl._create_unverified_context()
-                    req = urlreq.urlopen(DB_URL, context=ctx, timeout=15)
-                else:
-                    req = urlreq.urlopen(DB_URL, timeout=15)
-                raw = req.read().decode("utf-8")
-                with open(CACHE_FILE, "wb") as f:
-                    f.write(raw.encode("utf-8"))
-            else:
-                with open(CACHE_FILE, "rb") as f:
-                    raw = f.read().decode("utf-8")
-            self.db = json.loads(raw)
+            if force or not os.path.exists(CACHE_DB) or os.path.getsize(CACHE_DB) == 0:
+                self["top_subtitle"].setText("جاري الاتصال بسيرفر Online4Tech...")
+                req = Request(DB_URL, headers={"User-Agent": "Online4Tech-Enigma2-v7.5"})
+                ctx = ssl._create_unverified_context() if hasattr(ssl, "_create_unverified_context") else None
+                resp = urlopen(req, timeout=20, context=ctx) if ctx else urlopen(req, timeout=20)
+                raw = resp.read().decode("utf-8", errors="ignore")
+                with io.open(CACHE_DB, "w", encoding="utf-8") as f:
+                    f.write(raw)
+
+            with io.open(CACHE_DB, "r", encoding="utf-8", errors="ignore") as f:
+                self.db_data = json.load(f)
+
+            self.main_sections = self.db_data.get("main", [])
             self.nav_stack = []
-            self.build_main_categories_meta()
-            self.active_cat_idx = 0
-            self.focus_pane = "side"
-            self.preview_active_category()
+            self.current_cat_idx = 0
+            self.populate_categories()
+            if self.main_sections:
+                first_sec = self.main_sections[0]
+                self.open_section(
+                    first_sec.get("section", ""),
+                    self.get_section_arabic_title(first_sec),
+                    icon_name=first_(sec.get("icon") or (sec.get("section", "") + ".png")),
+                    push_history=False,
+                )
+            self["top_subtitle"].setText("المتجر متصل • %d قسم رئيسي" % len(self.main_sections))
         except Exception as e:
-            self["center_header"].setText("Error: " + str(e))
+            self["top_subtitle"].setText("تعذر الاتصال بالسيرفر")
+            self["detail_desc"].setText("تأكد من اتصال الإنترنت بالريسيفر ثم اضغط الزر الأزرق للتحديث.\n%s" % clean_text(str(e)))
 
-    def build_main_categories_meta(self):
-        grouped = {g[0]: [] for g in MASTER_GROUPS}
-        for item in self.db.get("main", []):
-            sec = item.get("section", "")
-            raw_title = item.get("name", "") or item.get("title", "") or sec
-            sub_list = self.get_sub_items(item) or []
-            cnt = len(sub_list)
-            cat_title, cat_desc, ic_key, grp_key = resolve_cat_full(raw_title, sec, cnt, self.lang)
-            sub_cat_obj = {
-                "name": cat_title,
-                "desc": cat_desc,
-                "icon": ic_key,
-                "section": sec,
-                "items": sub_list
-            }
-            grouped.setdefault(grp_key, []).append(sub_cat_obj)
+    def refresh_db(self):
+        self.load_database(force=True)
 
-        self.main_cats_meta = []
-        for grp_key, ar_title, ar_desc, en_title, en_desc, grp_ic in MASTER_GROUPS:
-            subs = grouped.get(grp_key, [])
-            if not subs:
-                continue
-            target_items = subs[0]["items"] if len(subs) == 1 else subs
-            g_title = en_title if self.lang == "en" else ar_title
-            g_desc = en_desc if self.lang == "en" else ar_desc
-            self.main_cats_meta.append({
-                "title": g_title,
-                "subtitle": g_desc,
-                "count": len(target_items),
-                "badge": str(len(target_items)),
-                "icon": grp_ic,
-                "installed": False,
-                "data": {"name": g_title, "items": target_items}
-            })
+    def populate_categories(self):
+        entries = []
+        for sec in self.main_sections:
+            sec_key = sec.get("section", "")
+            ar_title = self.get_section_arabic_title(sec)
+            sec_items = self.db_data.get(sec_key, [])
+            cnt = len(sec_items) if isinstance(sec_items, list) else 0
+            entries.append(build_category_entry(ar_title, cnt, (sec.get("icon") or (sec.get("section", "") + ".png"))))
+        self["cat_list"].setList(entries)
+        if entries:
+            self["cat_list"].moveToIndex(0)
 
-    def get_icon_pix(self, icon_key):
-        if icon_key in self.icon_cache:
-            return self.icon_cache[icon_key]
-        ic_file = os.path.join(ICONS_PATH, "ic_%s.png" % icon_key)
-        if not os.path.exists(ic_file):
-            ic_file = os.path.join(ICONS_PATH, "ic_default.png")
-        pix = LoadPixmap(ic_file) if os.path.exists(ic_file) else None
-        self.icon_cache[icon_key] = pix
-        return pix
-
-    def refresh_sidebar(self):
-        side_entries = []
-        total = len(self.main_cats_meta)
-        align_fl = (RT_HALIGN_LEFT if self.lang == "en" else RT_HALIGN_RIGHT) | RT_VALIGN_CENTER
-        for i, meta in enumerate(self.main_cats_meta):
-            is_act = (i == self.active_cat_idx)
-            pill = self.pill_gold if is_act else self.pill_dark
-            cnt_col = 0x000b0d12 if is_act else 0x00cbd5e1
-            txt_col = 0x00f5d061 if is_act else 0x00cbd5e1
-            res = [meta["data"]]
-            if self.lang == "en":
-                if is_act:
-                    bar_col = 0x00f5d061 if self.focus_pane == "side" else 0x0094a3b8
-                    res.append((eListboxPythonMultiContent.TYPE_TEXT, 4, 12, 12, 40, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "|", bar_col, bar_col))
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 22, 12, 300, 40, 0, align_fl, to_str(meta["title"]), txt_col, 0x00f5d061))
-                if pill:
-                    res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 334, 17, 56, 30, pill))
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 334, 17, 56, 30, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, str(meta["count"]), cnt_col, cnt_col))
-            else:
-                if pill:
-                    res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 12, 17, 56, 30, pill))
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 12, 17, 56, 30, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, str(meta["count"]), cnt_col, cnt_col))
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 78, 12, 305, 40, 0, align_fl, to_str(meta["title"]), txt_col, 0x00f5d061))
-                if is_act:
-                    bar_col = 0x00f5d061 if self.focus_pane == "side" else 0x0094a3b8
-                    res.append((eListboxPythonMultiContent.TYPE_TEXT, 388, 12, 12, 40, 0, RT_HALIGN_CENTER | RT_VALIGN_CENTER, "|", bar_col, bar_col))
-            side_entries.append(res)
-        self["side_list"].setList(side_entries)
-        if side_entries and 0 <= self.active_cat_idx < total:
-            self["side_list"].moveToIndex(self.active_cat_idx)
-        self["side_page_lbl"].setText("%d / %d" % (self.active_cat_idx + 1, max(1, total)))
-
-    def make_list_card(self, entry, is_selected):
-        ic_pix = self.get_icon_pix(entry["icon"])
-        show_gold = (is_selected and self.focus_pane == "center")
-        bg_pix = self.card_sel if show_gold else self.card_norm
-        title = to_str(entry["title"])
-        subtitle = to_str(entry["subtitle"])
-        badge = to_str(entry["badge"])
-        is_installed = entry["installed"]
-        res = [entry["data"]]
-
-        if bg_pix:
-            res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 6, 3, 948, 68, bg_pix))
-        if ic_pix:
-            res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 874, 5, 64, 64, ic_pix))
-
-        t_col = 0x00f5d061 if show_gold else 0x00ffffff
-        if subtitle:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 485, 12, 375, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 130, 12, 345, 50, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, subtitle, 0x0094a3b8, 0x00cbd5e1))
-        else:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 135, 12, 725, 50, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, title, t_col, t_col))
-
-        if is_installed:
-            b_pix = (self.badge_inst_en or self.badge_inst) if self.lang == "en" else self.badge_inst
-            b_w = 104 if self.lang == "en" else 88
-            if b_pix:
-                res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 22, 21, b_w, 32, b_pix))
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 22, 21, b_w, 32, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, self.tr("installed"), 0x00fca5a5, 0x00ffffff))
-        elif badge:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 24, 18, 88, 38, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, badge, 0x00f5d061, 0x00ffffff))
-        return res
-
-    def build_grid_rows(self):
-        cols = 4
-        col_x = [1365, 915, 465, 15]
-        rows = []
+    def update_page_badge(self):
         total = len(self.current_items)
-        for r_start in range(0, total, cols):
-            row_entries = [r_start]
-            for c in range(cols):
-                idx = r_start + c
-                if idx >= total:
-                    break
-                entry = self.current_items[idx]
-                x0 = col_x[c]
-                is_selected = (idx == self.grid_index)
-                bg_pix = self.grid_sel if is_selected else self.grid_norm
-                if bg_pix:
-                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0, 6, 430, 235, bg_pix))
-                ic_pix = self.get_icon_pix(entry["icon"])
-                if ic_pix:
-                    row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 344, 22, 64, 64, ic_pix))
-                t_col = 0x00f5d061 if is_selected else 0x00ffffff
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 16, 24, 316, 60, 0, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, to_str(entry["title"]), t_col, t_col))
-                sub_txt = to_str(entry["subtitle"]) or self.tr("store_sub")
-                row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 18, 102, 390, 78, 1, RT_HALIGN_RIGHT | RT_VALIGN_CENTER, sub_txt, 0x00cbd5e1, 0x00ffffff))
-                if entry["installed"]:
-                    b_pix = (self.badge_inst_en or self.badge_inst) if self.lang == "en" else self.badge_inst
-                    b_w = 104 if self.lang == "en" else 88
-                    if b_pix:
-                        row_entries.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, x0 + 24, 190, b_w, 32, b_pix))
-                    row_entries.append((eListboxPythonMultiContent.TYPE_TEXT, x0 + 24, 190, b_w, 32, 1, RT_HALIGN_CENTER | RT_VALIGN_CENTER, self.tr("installed"), 0x00fca5a5, 0x00ffffff))
-            rows.append(row_entries)
-        self["grid_list"].setList(rows)
-        if rows:
-            self["grid_list"].moveToIndex(self.grid_index // cols)
-
-    def update_page_counter(self):
-        total = len(self.current_items)
-        per_page = 12 if self.view_style == "grid" else 10
-        tot_pages = max(1, (total + per_page - 1) // per_page)
-        cur_page = min(tot_pages, (self.grid_index // per_page) + 1)
-        self["page_info"].setText(self.tr("page_fmt") % (total, cur_page, tot_pages))
-
-    def render_current_items(self):
-        self.update_page_counter()
-        if self.view_style == "grid":
-            self.build_grid_rows()
-        else:
-            cards = []
-            for i, entry in enumerate(self.current_items):
-                cards.append(self.make_list_card(entry, i == self.grid_index))
-            self["list"].setList(cards)
-            if cards and 0 <= self.grid_index < len(cards):
-                self["list"].moveToIndex(self.grid_index)
-
-    def update_left_panel(self):
-        if self.view_style == "grid":
+        if total == 0:
+            self["page_info"].setText("0 عنصر")
             return
-        if self.focus_pane == "side" or not self.current_items:
-            for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
-                self[w].hide()
-            self["left_title"].setText(self.tr("sys_title"))
-            if not self.cached_sys_info:
-                self.cached_sys_info = self.get_sys_info_text()
-            self["left_info"].setText(self.cached_sys_info)
-            self["left_info"].show()
-            return
+        idx = self["item_list"].getSelectedIndex() or 0
+        total_pages = max(1, int(math.ceil(float(total) / ITEMS_PER_PAGE)))
+        cur_page = min(total_pages, (idx // ITEMS_PER_PAGE) + 1)
+        self["page_info"].setText("%d عنصر • صفحة %d / %d" % (total, cur_page, total_pages))
 
-        self["left_info"].hide()
-        for w in ["preview_icon", "left_pkg_name", "left_pkg_ver", "left_stat_lbl", "left_stat_val", "left_cat_lbl", "left_cat_val", "left_desc"]:
-            self[w].show()
+    def open_section(self, section_key, title, icon_name="", push_history=True):
+        if push_history and self.current_section_key:
+            self.nav_stack.append((
+                self.current_section_key,
+                self.current_section_title,
+                self.current_section_icon,
+                list(self.current_items),
+                self["item_list"].getSelectedIndex() or 0,
+            ))
 
-        self["left_title"].setText(self.tr("preview_title"))
-        if self.grid_index < 0 or self.grid_index >= len(self.current_items):
-            return
-        entry = self.current_items[self.grid_index]
-        data = entry["data"]
-        name = to_str(entry["title"])
-        sub_desc = to_str(entry["subtitle"])
+        self.current_section_key = section_key
+        self.current_section_title = title
+        self.current_section_icon = icon_name
+        raw_items = self.db_data.get(section_key, [])
+        self.current_items = raw_items if isinstance(raw_items, list) else []
 
-        ic_big = os.path.join(ICONS_PATH, "ic_%s_big.png" % entry["icon"])
-        if not os.path.exists(ic_big):
-            ic_big = os.path.join(ICONS_PATH, "ic_default_big.png")
-        if os.path.exists(ic_big) and self["preview_icon"].instance:
-            self["preview_icon"].instance.setPixmapFromFile(ic_big)
+        self["top_title"].setText(title or "Online4Tech Store")
+        self["items_header"].setText(title or "الحزم والإضافات")
 
-        self["left_pkg_name"].setText(name[:28])
-        sec_title = self["section_heading"].getText()
-        sub_list = self.get_sub_items(data)
-
-        self["left_stat_lbl"].setText(self.tr("status_lbl"))
-        self["left_cat_lbl"].setText(self.tr("cat_lbl"))
-        self["left_cat_val"].setText(sec_title)
-
-        if sub_list is not None:
-            self["left_pkg_ver"].setText(self.tr("sec_fmt") % len(sub_list))
-            self["left_stat_val"].setText(self.tr("available"))
-            self["left_desc"].setText(self.tr("sub_desc_fmt") % (sub_desc, len(sub_list)))
-        else:
-            self["left_pkg_ver"].setText(sub_desc if sub_desc else self.tr("official_ver"))
-            self["left_stat_val"].setText(self.tr("installed") if entry["installed"] else self.tr("not_installed"))
-            desc_line = sub_desc if sub_desc else name
-            self["left_desc"].setText(self.tr("pkg_desc_fmt") % desc_line)
-
-    def populate_items(self, items_list, sec_name, icon_hint=""):
-        self.grid_index = 0
-        self["section_heading"].setText(to_str(sec_name))
-        _, _, default_ic, _ = resolve_cat_full(sec_name, icon_hint, len(items_list), self.lang)
-
-        self.current_items = []
-        for item in items_list:
-            raw_name = item.get("name", "") or item.get("title", "Package")
-            custom_desc = item.get("desc", "")
-            custom_ic = item.get("icon", "")
-            clean_title, ext_desc = split_name_desc(raw_name, custom_desc)
-            if self.lang == "en" and any(ord(ch) > 127 for ch in ext_desc):
-                ext_desc = custom_desc if (custom_desc and not any(ord(ch) > 127 for ch in custom_desc)) else ""
-            sub_list = self.get_sub_items(item)
-            if sub_list is not None:
-                cnt = len(sub_list)
-                self.current_items.append({
-                    "title": clean_title,
-                    "subtitle": ext_desc or (self.tr("sub_fmt") % cnt),
-                    "badge": "(%d)" % cnt,
-                    "icon": custom_ic or guess_icon(raw_name + " " + item.get("section", "") + " " + icon_hint),
-                    "installed": False,
-                    "data": item
-                })
+        list_entries = []
+        for it in self.current_items:
+            if "section" in it:
+                sub_title = self.get_section_arabic_title(it)
+                sub_key = it.get("section", "")
+                sub_count = len(self.db_data.get(sub_key, []))
+                sub_icon = (it.get("icon") or (it.get("section", "") + ".png") or icon_name)
+                list_entries.append(build_item_entry(sub_title, "قسم فرعي • يحتوي على %d عنصر" % sub_count, False, sub_icon))
             else:
-                path = item.get("path", "")
-                inst = bool(path and os.path.exists(path))
-                self.current_items.append({
-                    "title": clean_title,
-                    "subtitle": ext_desc,
-                    "badge": "",
-                    "icon": custom_ic or default_ic,
-                    "installed": inst,
-                    "data": item
-                })
+                clean_title, ar_desc = parse_item_name(it.get("name", "حزمة"))
+                path = it.get("path", "")
+                installed = bool(path and os.path.exists(path))
+                sub_txt = ar_desc if ar_desc else ("قسم: %s" % title)
+                item_icon = (it.get("icon") or (it.get("section", "") + ".png") or icon_name)
+                list_entries.append(build_item_entry(clean_title, sub_txt, installed, item_icon))
 
-        self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
-        self.update_footer_hints()
+        self["item_list"].setList(list_entries)
+        if list_entries:
+            self["item_list"].moveToIndex(0)
+        self.update_page_badge()
+        self.update_preview(icon_override=icon_name)
 
-    def preview_active_category(self):
-        if not self.main_cats_meta:
+    def update_preview(self, icon_override=""):
+        self.update_page_badge()
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
+            self["detail_title"].setText(self.current_section_title or "Online4Tech")
+            self["detail_status"].setText("لا توجد عناصر في هذا القسم")
+            self["meta_cat"].setText("القسم: %s" % (self.current_section_title or "غير محدد"))
+            self["meta_type"].setText("النوع: قسم فارغ")
+            self["meta_source"].setText("المصدر: مستودع Online4Tech")
+            self["detail_desc"].setText("اختر قسماً آخر من القائمة اليمنى أو اضغط الزر الأزرق لتحديث البيانات.")
             return
-        self.nav_stack = []
-        if self.active_cat_idx >= len(self.main_cats_meta):
-            self.active_cat_idx = 0
-        cat_meta = self.main_cats_meta[self.active_cat_idx]
-        cat_data = cat_meta["data"]
-        sub_list = self.get_sub_items(cat_data) or []
-        self.populate_items(sub_list, cat_meta["title"], cat_meta["icon"])
 
-    def enter_center_pane(self):
-        if not self.current_items:
-            self.session.open(MessageBox, self.tr("empty_msg") % "", MessageBox.TYPE_INFO, timeout=3)
-            return
-        self.focus_pane = "center"
-        if self.grid_index < 0 or self.grid_index >= len(self.current_items):
-            self.grid_index = 0
-        self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
-        self.update_footer_hints()
+        item = self.current_items[idx]
+        pkg_type = PACKAGE_TYPE_LABELS.get(self.current_section_key, "حزمة إضافية • Enigma2")
 
-    def return_to_sidebar(self):
-        self.focus_pane = "side"
-        self.refresh_sidebar()
-        self.render_current_items()
-        self.update_left_panel()
-        self.update_footer_hints()
+        if "section" in item:
+            title = self.get_section_arabic_title(item)
+            sub_key = item.get("section", "")
+            cnt = len(self.db_data.get(sub_key, []))
+            self["detail_title"].setText(truncate_text(title, 34))
+            self["detail_status"].setText("قسم فرعي • %d عنصر متاح" % cnt)
+            self["meta_cat"].setText("القسم الرئيسي: %s" % self.current_section_title)
+            self["meta_type"].setText("النوع: مجلد أقسام فرعية")
+            self["meta_source"].setText("المصدر: Online4Tech Official")
+            self["detail_desc"].setText("اضغط OK أو الزر الأخضر لفتح هذا القسم واستعراض جميع الحزم والإضافات المتوفرة بداخله.")
+            self["action_cta"].setText("فتح القسم الفرعي  •  OK")
+            self["action_sub"].setText("استعراض %d عنصر" % cnt)
+            icon_file = find_icon_path((item.get("icon") or (item.get("section", "") + ".png") or icon_override) or self.current_section_icon)
+        else:
+            clean_title, ar_desc = parse_item_name(item.get("name", "حزمة"))
+            path = item.get("path", "")
+            installed = bool(path and os.path.exists(path))
+            has_remove = bool(item.get("remove_cmd"))
 
-    def after_install_cb(self, *args):
-        for entry in self.current_items:
-            path = entry["data"].get("path", "")
-            if path:
-                entry["installed"] = os.path.exists(path)
-        self.cached_sys_info = self.get_sys_info_text()
-        self.render_current_items()
-        self.update_left_panel()
+            self["detail_title"].setText(truncate_text(clean_title, 34))
+            self["detail_status"].setText("✓ مثبتة على جهازك وجاهزة" if installed else "متاحة للتثبيت المباشر")
+            self["meta_cat"].setText("القسم: %s" % self.current_section_title)
+            self["meta_type"].setText("النوع: %s" % pkg_type)
+            self["meta_source"].setText("الإزالة التلقائية: %s" % ("مدعومة بالزر الأصفر" if has_remove else "غير متوفرة"))
 
-    def open_search(self):
-        self.session.openWithCallback(self.run_search, VirtualKeyBoard, title=self.tr("search_kbd"), text="")
+            if ar_desc:
+                desc_body = "الوصف: %s\n\nاضغط زر موافق أو الزر الأخضر لبدء التحميل والتثبيت التلقائي على الجهاز." % ar_desc
+            else:
+                desc_body = "حزمة جاهزة للتحميل والتثبيت المباشر من خوادم Online4Tech المتوافقة مع صورة جهازك."
+            self["detail_desc"].setText(desc_body)
+            self["action_cta"].setText("إعادة تثبيت / تحديث  •  OK" if installed else "تثبيت الآن  •  OK")
+            self["action_sub"].setText("الأخضر: تثبيت  |  الأصفر: إزالة  |  EXIT: رجوع")
+            icon_file = find_icon_path((item.get("icon") or (item.get("section", "") + ".png") or icon_override) or self.current_section_icon)
 
-    def run_search(self, keyword):
-        if not keyword:
-            return
-        kw = to_str(keyword).lower().strip()
-        results = []
-        seen = set()
-        for k, val in self.db.items():
-            if k == "main" or not isinstance(val, list):
-                continue
-            for item in val:
-                if not isinstance(item, dict):
-                    continue
-                name = to_str(item.get("name", "") or item.get("title", ""))
-                if kw in name.lower() and item.get("cmd") and name not in seen:
-                    seen.add(name)
-                    results.append(item)
-        self.focus_pane = "center"
-        self.nav_stack = []
-        self.populate_items(results, self.tr("search_res") + to_str(keyword), "plugins")
+        if icon_file and self["preview_icon"].instance:
+            try:
+                self["preview_icon"].instance.setScale(1)
+            except Exception:
+                pass
+            try:
+                self["preview_icon"].instance.setScale(1)
+            except Exception:
+                pass
+            self["preview_icon"].instance.setPixmapFromFile(icon_file)
 
     def move_up(self):
-        if self.view_style == "grid":
-            if self.grid_index >= 4:
-                self.grid_index -= 4
-                self.render_current_items()
-            return
-
-        if self.focus_pane == "side":
-            total_cats = len(self.main_cats_meta)
-            if total_cats:
-                self.active_cat_idx = (self.active_cat_idx - 1) % total_cats
-                self.preview_active_category()
+        if self.focus_pane == "cats":
+            self["cat_list"].up()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    self.get_section_arabic_title(sec),
+                    icon_name=(sec.get("icon") or (sec.get("section", "") + ".png")),
+                    push_history=False,
+                )
         else:
-            total = len(self.current_items)
-            if total:
-                self.grid_index = (self.grid_index - 1) % total
-                self.render_current_items()
-                self.update_left_panel()
+            self["item_list"].up()
+            self.update_preview()
 
     def move_down(self):
-        if self.view_style == "grid":
-            if self.grid_index + 4 < len(self.current_items):
-                self.grid_index += 4
-                self.render_current_items()
-            return
-
-        if self.focus_pane == "side":
-            total_cats = len(self.main_cats_meta)
-            if total_cats:
-                self.active_cat_idx = (self.active_cat_idx + 1) % total_cats
-                self.preview_active_category()
+        if self.focus_pane == "cats":
+            self["cat_list"].down()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    self.get_section_arabic_title(sec),
+                    icon_name=(sec.get("icon") or (sec.get("section", "") + ".png")),
+                    push_history=False,
+                )
         else:
-            total = len(self.current_items)
-            if total:
-                self.grid_index = (self.grid_index + 1) % total
-                self.render_current_items()
-                self.update_left_panel()
+            self["item_list"].down()
+            self.update_preview()
 
-    def move_left(self):
-        if self.view_style == "grid":
-            if self.grid_index + 1 < len(self.current_items):
-                self.grid_index += 1
-                self.render_current_items()
-            return
-
-        if self.focus_pane == "side":
-            self.enter_center_pane()
+    def page_up(self):
+        if self.focus_pane == "cats":
+            self["cat_list"].pageUp()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(sec.get("section", ""), self.get_section_arabic_title(sec), icon_name=(sec.get("icon") or (sec.get("section", "") + ".png")), push_history=False)
         else:
-            self.return_to_sidebar()
+            self["item_list"].pageUp()
+            self.update_preview()
 
-    def move_right(self):
-        if self.view_style == "grid":
-            if self.grid_index > 0:
-                self.grid_index -= 1
-                self.render_current_items()
-            return
-
-        if self.focus_pane == "center":
-            self.return_to_sidebar()
+    def page_down(self):
+        if self.focus_pane == "cats":
+            self["cat_list"].pageDown()
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(sec.get("section", ""), self.get_section_arabic_title(sec), icon_name=(sec.get("icon") or (sec.get("section", "") + ".png")), push_history=False)
         else:
-            self.enter_center_pane()
+            self["item_list"].pageDown()
+            self.update_preview()
+
+    def focus_cats_pane(self):
+        self.focus_pane = "cats"
+        self["footer_hint"].setText("التركيز: الأقسام  |  OK: فتح  |  يسار: العناصر  |  EXIT: رجوع")
+
+    def focus_items_pane(self):
+        self.focus_pane = "items"
+        self["footer_hint"].setText("التركيز: العناصر  |  OK: تثبيت  |  يمين: الأقسام  |  EXIT: رجوع")
 
     def ok_pressed(self):
-        if self.view_style == "list" and self.focus_pane == "side":
-            self.enter_center_pane()
+        if self.focus_pane == "cats":
+            idx = self["cat_list"].getSelectedIndex()
+            if idx is not None and 0 <= idx < len(self.main_sections):
+                self.current_cat_idx = idx
+                sec = self.main_sections[idx]
+                self.open_section(
+                    sec.get("section", ""),
+                    self.get_section_arabic_title(sec),
+                    icon_name=(sec.get("icon") or (sec.get("section", "") + ".png")),
+                    push_history=True,
+                )
+                self.focus_items_pane()
             return
 
-        if not self.current_items or self.grid_index < 0 or self.grid_index >= len(self.current_items):
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
             return
-        entry = self.current_items[self.grid_index]
-        data = entry["data"]
-        title = to_str(entry["title"])
-        sub_list = self.get_sub_items(data)
-
-        if sub_list is not None:
-            if len(sub_list) == 0:
-                self.session.open(MessageBox, self.tr("empty_msg") % title, MessageBox.TYPE_INFO, timeout=4)
-                return
-            self.nav_stack.append((list(self.current_items), self["section_heading"].getText(), self.grid_index))
-            self.populate_items(sub_list, title, entry["icon"])
-            return
-
-        cmd = data.get("cmd", "")
-        if cmd:
-            self.session.openWithCallback(self.after_install_cb, Console, title="Online4Tech: " + title, cmdlist=[to_str(cmd)])
+        item = self.current_items[idx]
+        if "section" in item:
+            self.open_section(
+                item.get("section", ""),
+                self.get_section_arabic_title(item),
+                icon_name=item.get("icon", "") or self.current_section_icon,
+                push_history=True,
+            )
         else:
-            self.session.open(MessageBox, self.tr("no_cmd_msg") % title, MessageBox.TYPE_INFO, timeout=4)
+            cmd = item.get("cmd", "")
+            clean_title, _ = parse_item_name(item.get("name", "Package"))
+            if cmd:
+                self.session.open(Console, title="Online4Tech - %s" % clean_title, cmdlist=[cmd], closeOnSuccess=False)
 
-    def refresh_server(self):
-        self["center_header"].setText(self.tr("sync_msg"))
-        self.cached_sys_info = self.get_sys_info_text()
-        self.load_database(force=True)
-        self["center_header"].setText(self.tr("search_hint"))
+    def remove_pressed(self):
+        idx = self["item_list"].getSelectedIndex()
+        if idx is None or idx < 0 or idx >= len(self.current_items):
+            return
+        item = self.current_items[idx]
+        rem_cmd = item.get("remove_cmd", "")
+        clean_title, _ = parse_item_name(item.get("name", "Package"))
+        if rem_cmd:
+            self.session.open(Console, title="Online4Tech Remove - %s" % clean_title, cmdlist=[rem_cmd], closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, "لا يوجد أمر حذف تلقائي متاح لهذا العنصر.", MessageBox.TYPE_INFO, timeout=3)
 
     def back_pressed(self):
-        if self.view_style == "grid":
-            self.toggle_view_mode()
-            return
-
         if self.nav_stack:
-            prev_items, prev_heading, prev_idx = self.nav_stack.pop()
+            prev_key, prev_title, prev_icon, prev_items, prev_idx = self.nav_stack.pop()
+            self.current_section_key = prev_key
+            self.current_section_title = prev_title
+            self.current_section_icon = prev_icon
             self.current_items = prev_items
-            self.grid_index = prev_idx
-            self.focus_pane = "center"
-            self["section_heading"].setText(prev_heading)
-            self.refresh_sidebar()
-            self.render_current_items()
-            self.update_left_panel()
-            self.update_footer_hints()
-        elif self.focus_pane == "center":
-            self.return_to_sidebar()
+            self["top_title"].setText(prev_title or "Online4Tech Store")
+            self["items_header"].setText(prev_title or "الحزم والإضافات")
+
+            entries = []
+            for it in prev_items:
+                if "section" in it:
+                    sub_t = self.get_section_arabic_title(it)
+                    cnt = len(self.db_data.get(it.get("section", ""), []))
+                    entries.append(build_item_entry(sub_t, "قسم فرعي • يحتوي على %d عنصر" % cnt, False, it.get("icon", "") or prev_icon))
+                else:
+                    nm, ar_d = parse_item_name(it.get("name", "حزمة"))
+                    pth = it.get("path", "")
+                    inst = bool(pth and os.path.exists(pth))
+                    entries.append(build_item_entry(nm, ar_d if ar_d else ("قسم: %s" % prev_title), inst, it.get("icon", "") or prev_icon))
+
+            self["item_list"].setList(entries)
+            if entries:
+                self["item_list"].moveToIndex(min(prev_idx, len(entries) - 1))
+            self.update_preview(icon_override=prev_icon)
         else:
-            self.timer.stop()
             self.close()
