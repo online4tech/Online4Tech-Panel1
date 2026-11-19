@@ -1,46 +1,224 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import base64
+import io
+import os
+import subprocess
+import urllib.parse
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+PORT = 2020
+LOGO_PATHS = [
+    "/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.png",
+    "/usr/lib/enigma2/python/Plugins/Extensions/Online4TechWeb/assets/o4t_icon.png",
+    "/usr/lib/enigma2/python/Plugins/Extensions/Online4TechWeb/assets/o4t_banner.png",
+]
 
 
-<div id="o4t-v75-panel-action" style="margin:12px 0;padding:12px 16px;background:#131a29;border:1px solid rgba(245,196,66,0.45);border-radius:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;direction:rtl;">
-  <div>
-    <div style="color:#f5c442;font-weight:700;font-size:14px;">Online4Tech <img id="o4tHeaderLogoImg" src="data:image/png;base64,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" alt="Online4Tech" width="100" height="40" loading="eager" decoding="async" style="height:40px;width:auto;border-radius:8px;object-fit:contain;display:inline-block;vertical-align:middle;" /> Store v7.5 Gold</div>
-    <div style="color:#cbd5e1;font-size:12px;">تثبيت أو تحديث البلجن مباشرة على الريسيفر بضغطة واحدة</div>
+def get_logo_data_uri():
+    for p in LOGO_PATHS:
+        if os.path.exists(p) and os.path.getsize(p) > 0:
+            try:
+                with open(p, "rb") as f:
+                    b64 = base64.b64encode(f.read()).decode("ascii")
+                return "data:image/png;base64," + b64
+            except Exception:
+                pass
+    return ""
+
+
+def get_sys_stats():
+    ram_txt = "N/A"
+    flash_txt = "N/A"
+    temp_txt = "N/A"
+    try:
+        with open("/proc/meminfo", "r", encoding="utf-8", errors="ignore") as f:
+            lines = dict(
+                (parts[0].rstrip(":"), int(parts[1]))
+                for line in f
+                if len(line.split()) >= 2
+                for parts in [line.split()]
+            )
+        total_mb = lines.get("MemTotal", 0) // 1024
+        avail_mb = lines.get("MemAvailable", lines.get("MemFree", 0)) // 1024
+        used_mb = max(0, total_mb - avail_mb)
+        pct = int((used_mb * 100) / total_mb) if total_mb else 0
+        ram_txt = f"{pct}% ({used_mb}/{total_mb}MB)"
+    except Exception:
+        pass
+
+    try:
+        st = os.statvfs("/")
+        free_gb = (st.f_bavail * st.f_frsize) / (1024 ** 3)
+        total_gb = (st.f_blocks * st.f_frsize) / (1024 ** 3)
+        used_pct = int(((total_gb - free_gb) * 100) / total_gb) if total_gb else 0
+        flash_txt = f"{used_pct}% ({free_gb:.1f}G free)"
+    except Exception:
+        pass
+
+    for tp in ("/proc/stb/fp/temp_sensor", "/sys/class/thermal/thermal_zone0/temp"):
+        if os.path.exists(tp):
+            try:
+                with open(tp, "r", encoding="utf-8", errors="ignore") as tf:
+                    raw = tf.read().strip()
+                val = int(float(raw))
+                if val > 1000:
+                    val = val // 1000
+                temp_txt = f"{val}\u00b0C"
+                break
+            except Exception:
+                pass
+
+    return ram_txt, flash_txt, temp_txt
+
+
+def build_html(message=""):
+    logo_uri = get_logo_data_uri()
+    ram_txt, flash_txt, temp_txt = get_sys_stats()
+    logo_html = (
+        f'<img src="{logo_uri}" alt="Online4Tech" width="96" height="38" '
+        f'loading="eager" decoding="async" '
+        f'style="height:38px;width:auto;border-radius:8px;object-fit:contain;display:inline-block;vertical-align:middle;" />'
+        if logo_uri
+        else ""
+    )
+    msg_banner = (
+        f'<div style="margin:10px 0;padding:10px 14px;border-radius:8px;background:#162636;color:#7dd3fc;border:1px solid rgba(125,211,252,0.35);font-size:13px;">{message}</div>'
+        if message
+        else ""
+    )
+    return f"""<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online4Tech Web Panel • Port {PORT}</title>
+  <style>
+    body {{ margin:0; padding:16px; background:#0b0f17; color:#f8fafc; font-family:Tahoma,Arial,sans-serif; }}
+    .wrap {{ max-width:980px; margin:0 auto; }}
+    .hdr {{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:#121826; border:1px solid rgba(245,196,66,0.35); border-radius:12px; }}
+    .hdr-brand {{ display:flex; align-items:center; gap:10px; }}
+    .hdr-title {{ margin:0; font-size:18px; color:#f5c442; font-weight:700; }}
+    .hdr-sub {{ font-size:12px; color:#94a3b8; }}
+    .grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:14px 0; }}
+    .card {{ background:#121826; border:1px solid rgba(148,163,184,0.18); border-radius:10px; padding:12px; }}
+    .card-k {{ font-size:12px; color:#94a3b8; }}
+    .card-v {{ font-size:16px; font-weight:700; color:#f5c442; margin-top:4px; }}
+    .box {{ background:#121826; border:1px solid rgba(148,163,184,0.18); border-radius:12px; padding:14px; margin:12px 0; }}
+    .btn {{ border:none; border-radius:8px; padding:9px 14px; font-weight:700; font-size:13px; cursor:pointer; }}
+    .btn-gold {{ background:#f5c442; color:#0b0f17; }}
+    .btn-blue {{ background:#0284c7; color:#ffffff; }}
+    .btn-red {{ background:#be123c; color:#ffffff; }}
+    .btn-green {{ background:#059669; color:#ffffff; }}
+    .row {{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <div class="hdr-brand">
+        {logo_html}
+        <div>
+          <h1 class="hdr-title">Online4Tech</h1>
+          <div class="hdr-sub">لوحة التحكم المتكاملة لأجهزة Enigma2 • Port {PORT}</div>
+        </div>
+      </div>
+      <div class="hdr-sub">v7.5 Gold</div>
+    </div>
+
+    {msg_banner}
+
+    <div class="grid">
+      <div class="card"><div class="card-k">الذاكرة (RAM)</div><div class="card-v">{ram_txt}</div></div>
+      <div class="card"><div class="card-k">المساحة (Flash)</div><div class="card-v">{flash_txt}</div></div>
+      <div class="card"><div class="card-k">حرارة المعالج</div><div class="card-v">{temp_txt}</div></div>
+    </div>
+
+    <div class="box">
+      <div style="font-weight:700;margin-bottom:10px;color:#f5c442;">التحكم السريع وتثبيت Online4Tech Store v7.5 Gold</div>
+      <div class="row">
+        <button id="o4tInstallV75NowBtn" type="button" class="btn btn-gold" onclick="o4tInstallV75Direct()">تثبيت v7.5 Gold الآن</button>
+        <button type="button" class="btn btn-blue" onclick="o4tSendAction('restart_gui')">ريستارت الواجهة</button>
+        <button type="button" class="btn btn-red" onclick="o4tSendAction('reboot')">ريستارت الريسيفر</button>
+        <button type="button" class="btn btn-green" onclick="location.reload()">تحديث اللوحة</button>
+        <span id="o4tInstallV75Status" style="color:#38bdf8;font-size:12px;"></span>
+      </div>
+    </div>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <button id="o4tInstallV75NowBtn" type="button" onclick="o4tInstallV75Direct()" style="background:#f5c442;color:#0e131f;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;">
-      تثبيت v7.5 Gold الآن
-    </button>
-    <span id="o4tInstallV75Status" style="color:#38bdf8;font-size:12px;"></span>
-  </div>
-</div>
-<script id="o4t-v75-direct-js">
-function o4tInstallV75Direct() {
-  var st = document.getElementById("o4tInstallV75Status");
-  var btn = document.getElementById("o4tInstallV75NowBtn");
-  var installCmd = 'opkg install --force-reinstall "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk"';
-  if (btn) btn.disabled = true;
-  if (st) st.textContent = "جاري إرسال أمر التثبيت للريسيفر...";
 
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/run_cmd", true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-  xhr.timeout = 25000;
-  xhr.onload = function() {
-    if (btn) btn.disabled = false;
-    if (xhr.status >= 200 && xhr.status < 300) {
-      if (st) st.textContent = "تم تنفيذ تثبيت v7.5 Gold بنجاح";
-    } else {
-      if (st) st.textContent = "تم إرسال الأمر تحقق من الريسيفر";
-    }
-  };
-  xhr.onerror = xhr.ontimeout = function() {
-    if (btn) btn.disabled = false;
-    if (st) st.textContent = "تم إرسال أمر التثبيت (قد يعيد الريسيفر التشغيل)";
-  };
-  try {
-    xhr.send("cmd=" + encodeURIComponent(installCmd));
-  } catch (e) {
-    if (btn) btn.disabled = false;
-    if (st) st.textContent = "تعذر الإرسال المباشر";
-  }
-}
-</script>
+  <script>
+    function o4tSetStatus(txt) {{
+      var el = document.getElementById("o4tInstallV75Status");
+      if (el) el.textContent = txt;
+    }}
+    function o4tInstallV75Direct() {{
+      var cmd = 'opkg install --force-reinstall "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/enigma2-plugin-extensions-online4tech_7.5_all.ipk"';
+      o4tSetStatus("جاري إرسال أمر تثبيت v7.5 Gold...");
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/run_cmd", true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhr.onload = function() {{
+        o4tSetStatus(xhr.status >= 200 && xhr.status < 300 ? "تم تنفيذ أمر التثبيت v7.5 Gold" : "تم إرسال الأمر");
+      }};
+      xhr.onerror = function() {{
+        o4tSetStatus("تم إرسال أمر التثبيت");
+      }};
+      xhr.send("cmd=" + encodeURIComponent(cmd));
+    }}
+    function o4tSendAction(act) {{
+      o4tSetStatus("جاري تنفيذ الأمر...");
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/action", true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhr.onload = function() {{ o4tSetStatus("تم إرسال الأمر بنجاح"); }};
+      xhr.onerror = function() {{ o4tSetStatus("تم إرسال الأمر"); }};
+      xhr.send("act=" + encodeURIComponent(act));
+    }}
+  </script>
+</body>
+</html>"""
+
+
+class O4THandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return
+
+    def _send_html(self, html_str, status=200):
+        raw = html_str.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_GET(self):
+        self._send_html(build_html())
+
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length", "0") or "0")
+        body = self.rfile.read(length).decode("utf-8", errors="ignore")
+        params = urllib.parse.parse_qs(body)
+        if self.path == "/run_cmd":
+            cmd = params.get("cmd", [""])[0]
+            if cmd:
+                subprocess.Popen(["/bin/sh", "-c", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self._send_html("OK")
+            return
+        if self.path == "/action":
+            act = params.get("act", [""])[0]
+            if act == "restart_gui":
+                subprocess.Popen(["/bin/sh", "-c", "killall -9 enigma2 >/dev/null 2>&1 || true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            elif act == "reboot":
+                subprocess.Popen(["/bin/sh", "-c", "reboot >/dev/null 2>&1 || true"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self._send_html("OK")
+            return
+        self._send_html("NOT_FOUND", status=404)
+
+
+def main():
+    server = ThreadingHTTPServer(("0.0.0.0", PORT), O4THandler)
+    server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
