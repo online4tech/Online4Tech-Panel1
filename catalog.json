@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "updated": "2026-11-19",
+  "note": "Edit this file on GitHub to publish your own picks. method = feed (opkg package name), ipk (direct .ipk URL) or tar (direct .tar.gz URL extracted to /).",
+  "items": [
+    {
+      "type": "plugin",
+      "name": "EPG Import",
+      "version": "feed",
+      "desc": "Import EPG data from XMLTV sources. Installed from your image's package feed.",
+      "install": { "method": "feed", "pkg": "enigma2-plugin-extensions-epgimport" }
+    },
+    {
+      "type": "plugin",
+      "name": "OpenWebif",
+      "version": "feed",
+      "desc": "Web interface to control the receiver from a browser or phone. Installed from your image's package feed.",
+      "install": { "method": "feed", "pkg": "enigma2-plugin-extensions-openwebif" }
+    }
+  ]
+}
