@@ -204,7 +204,7 @@ class O4TListBase(Screen):
         Screen.__init__(self, session)
         self.console = Console()
         _watch_close(self)
-        self.items = []
+        self.rows = []
         self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
@@ -263,7 +263,7 @@ class O4TListBase(Screen):
                 idx = self["list"].getSelectionIndex()
             except Exception:
                 idx = 0
-        self.items = items
+        self.rows = items
         self["list"].setList([self.label_for(i) for i in items])
         if keep and items:
             try:
@@ -274,11 +274,11 @@ class O4TListBase(Screen):
         self.sel_changed()
 
     def current(self):
-        if not self.items:
+        if not self.rows:
             return None
         try:
             idx = self["list"].getSelectionIndex()
-            return self.items[idx]
+            return self.rows[idx]
         except Exception:
             return None
 
