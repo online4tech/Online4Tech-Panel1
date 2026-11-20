@@ -22,7 +22,8 @@ from twisted.web import resource, server
 from . import catalog
 from .utils import (PY3, compatible, get_setting, item_key, log, parse_opkg_list,
                     read_file, set_setting, shquote, txt, urlparse)
-from .version import (INSTALL_URL, SITE_URL, STORE_URL, SUPPORT_URL, VERSION, WEB_PORT)
+from .version import (INSTALL_URL, MESSENGER_URL, PAGE_URL, SITE_URL, STORE_URL, VERSION,
+                      WEB_PORT, WHATSAPP_NUMBER, WHATSAPP_URL)
 
 try:
     from urllib.parse import quote
@@ -187,7 +188,9 @@ def system_status():
         "temp": _temp(), "model": read_file("/proc/stb/info/model").strip() or "-",
         "image": image[0] if image else "-", "version": VERSION,
         "shell": bool(get_setting("web_shell", False)), "auth": bool(get_setting("web_auth", False)), "busy": running_job() is not None,
-        "links": {"support": SUPPORT_URL, "site": SITE_URL, "store": STORE_URL},
+        "links": {"whatsapp": WHATSAPP_URL, "messenger": MESSENGER_URL, "page": PAGE_URL,
+                  "store": STORE_URL, "site": SITE_URL},
+        "phone": WHATSAPP_NUMBER,
     }
 
 
