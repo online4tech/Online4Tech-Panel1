@@ -1,105 +1,199 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#070d1a"><title>Online4Tech Panel</title>
+<meta name="theme-color" content="#060b14"><title>Online4Tech Panel</title>
 <style>
-:root{--bg:#070d1a;--card:rgba(255,255,255,.045);--line:rgba(255,255,255,.09);--txt:#eaf1fb;--mut:#8fa3c2;--acc:#22d3ee;--acc2:#6366f1;--ok:#34d399;--bad:#f87171;--warn:#fbbf24}
+:root{--ink:#060b14;--deep:#0a1322;--panel:#0e1a2e;--edge:#1b2c47;--txt:#d6e2f3;--mut:#7f93b2;--sig:#29e0ff;--sig2:#5b8cff;--hot:#ff5d73;--sun:#ffb454;--ok:#3ee6a0;
+--glow:0 0 0 1px rgba(41,224,255,.35) inset,0 0 18px rgba(41,224,255,.22);--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;color:var(--txt);font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:15px;min-height:100vh;
-background:radial-gradient(900px 500px at 85% -10%,#12356a55,transparent),radial-gradient(700px 500px at 0% 110%,#4f1d9a44,transparent),var(--bg);background-attachment:fixed}
-header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(7,13,26,.8);border-bottom:1px solid var(--line)}
-.top{max-width:1150px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.logo{display:flex;align-items:center;gap:10px}.logo i{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-style:normal;font-weight:bold;color:#041322}
-.logo b{display:block;font-size:17px}.logo small{color:var(--mut);font-size:12px}
-nav{max-width:1150px;margin:auto;padding:0 12px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-nav button{white-space:nowrap;background:transparent;border:1px solid transparent;color:var(--mut);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer}
-nav button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#041322;font-weight:bold}
-main{max-width:1150px;margin:auto;padding:16px;display:grid;gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(8px)}
-h2{margin:0 0 12px;font-size:16px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.stat{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
-.stat small{color:var(--mut)}.stat b{display:block;font-size:19px;margin-top:6px;direction:ltr;color:var(--acc)}
-.bar{height:6px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2))}
-button,select,input{font:inherit;color:var(--txt);background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
-button{cursor:pointer;transition:.15s}button:hover{border-color:var(--acc);transform:translateY(-1px)}
-button.p{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#041322;border:0;font-weight:bold}button.d{color:var(--bad);border-color:#7f1d1d}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row>input{flex:1;min-width:140px}
-.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:thin}
-.chip{white-space:nowrap;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;color:var(--mut);font-size:13px}
-.chip.on{border-color:var(--acc);color:var(--acc);background:rgba(34,211,238,.1)}.chip em{font-style:normal;opacity:.6;margin-inline-start:5px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:6px}
-.it{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
-.it .n{font-weight:bold;word-break:break-word}.it .m{color:var(--mut);font-size:12px;margin-top:4px;line-height:1.5}
-.tag{font-size:11px;border-radius:6px;padding:2px 7px;background:rgba(52,211,153,.15);color:var(--ok);margin-inline-start:6px}.tag.w{background:rgba(251,191,36,.15);color:var(--warn)}
-.empty{color:var(--mut);padding:24px;text-align:center}
-pre{background:#030712;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0;min-height:130px;max-height:50vh;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;font-size:12px;color:#a7f3d0}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
-footer{text-align:center;padding:24px;color:var(--mut)}footer a{color:var(--acc);margin:0 10px;text-decoration:none}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0f1a30;border:1px solid var(--acc);padding:11px 20px;border-radius:12px;display:none;z-index:9}
-#drawer{position:fixed;inset-inline:0;bottom:0;z-index:8;background:rgba(7,13,26,.97);border-top:1px solid var(--acc);padding:12px 16px;display:none}
-#drawer .in{max-width:1150px;margin:auto}#drawer .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.sec{display:none}.sec.on{display:grid;gap:16px}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--txt);background:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;font-size:15px;line-height:1.55;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(1100px 520px at 90% -12%,rgba(41,224,255,.10),transparent 60%),radial-gradient(900px 600px at -10% 105%,rgba(91,140,255,.10),transparent 60%)}
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+aside{position:sticky;top:0;height:100vh;padding:22px 16px;border-inline-end:1px solid var(--edge);background:linear-gradient(180deg,rgba(14,26,46,.9),rgba(8,15,28,.95));display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;gap:12px;align-items:center}
+.mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(145deg,#0f3a52,#0a2236);border:1px solid rgba(41,224,255,.5);box-shadow:0 0 22px rgba(41,224,255,.28);display:grid;place-items:center}
+.mark svg{width:26px;height:26px}
+.brand b{font-size:17px;letter-spacing:.2px;display:block}.brand small{color:var(--mut);font-size:12px}
+.menu{display:grid;gap:6px}
+.menu button{display:flex;align-items:center;gap:12px;width:100%;text-align:start;background:transparent;border:1px solid transparent;color:var(--mut);padding:11px 12px;border-radius:12px;font:inherit;cursor:pointer;transition:.18s}
+.menu button svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.menu button:hover{color:var(--txt);background:rgba(41,224,255,.06)}
+.menu button.on{color:#eafcff;background:linear-gradient(90deg,rgba(41,224,255,.16),rgba(41,224,255,.03));border-color:rgba(41,224,255,.4);box-shadow:0 0 18px rgba(41,224,255,.15)}
+.side-foot{margin-top:auto;display:grid;gap:10px}
+.lang{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--edge);border-radius:999px;padding:3px;background:var(--deep)}
+.lang button{border:0;background:transparent;color:var(--mut);font:inherit;padding:7px;border-radius:999px;cursor:pointer;transition:.18s}
+.lang button.on{color:#02202a;background:linear-gradient(135deg,var(--sig),#7fb2ff);box-shadow:0 0 16px rgba(41,224,255,.5);font-weight:700}
+main{padding:28px clamp(16px,3vw,40px) 90px;max-width:1180px;width:100%}
+.page{display:none}.page.on{display:block}
+h1{font-size:26px;margin:0 0 4px;font-weight:700}.sub{color:var(--mut);margin:0 0 22px}
+.panel{background:linear-gradient(180deg,rgba(18,32,55,.78),rgba(11,20,36,.82));border:1px solid var(--edge);border-radius:18px;padding:20px}
+.panel+.panel{margin-top:18px}
+h2{font-size:16px;margin:0 0 14px;font-weight:600}
+.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.model{font-size:22px;font-weight:700;direction:ltr;text-align:start;word-break:break-word}.image{color:var(--mut);direction:ltr;text-align:start;margin-top:2px}
+.live{display:inline-flex;align-items:center;gap:8px;margin-top:12px;color:var(--ok);font-size:13px}
+.live i{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok)}
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}
+.g{display:grid;justify-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:rgba(6,11,20,.55);border:1px solid var(--edge)}
+.ring{position:relative;width:104px;height:104px}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}.ring .bg{stroke:#14243d}
+.ring .fg{stroke:var(--sig);stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1),stroke .3s;filter:drop-shadow(0 0 6px currentColor)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;direction:ltr}
+.g span{font-weight:600}.g small{color:var(--mut);direction:ltr}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.mini div{padding:12px 14px;border-radius:14px;background:rgba(6,11,20,.55);border:1px solid var(--edge)}
+.mini small{color:var(--mut);display:block}.mini b{display:inline-block;font-size:17px}
+.btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.btn,button.btn{font:inherit;color:#dff9ff;cursor:pointer;border-radius:12px;padding:12px 16px;border:1px solid rgba(41,224,255,.4);background:linear-gradient(180deg,#0f2a40,#0a1d2f);box-shadow:var(--glow);transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.btn:hover{transform:translateY(-1px);border-color:var(--sig);box-shadow:0 0 0 1px rgba(41,224,255,.7) inset,0 0 30px rgba(41,224,255,.45)}
+.btn:active{transform:translateY(0)}
+.btn.pri{color:#021a22;font-weight:700;border:0;background:linear-gradient(135deg,var(--sig),#79a8ff);box-shadow:0 0 24px rgba(41,224,255,.45)}
+.btn.pri:hover{box-shadow:0 0 38px rgba(41,224,255,.8)}
+.btn.sun{color:#ffe7bf;border-color:rgba(255,180,84,.5);background:linear-gradient(180deg,#33240f,#241a0b);box-shadow:0 0 0 1px rgba(255,180,84,.3) inset,0 0 18px rgba(255,180,84,.2)}
+.btn.sun:hover{border-color:var(--sun);box-shadow:0 0 0 1px rgba(255,180,84,.7) inset,0 0 30px rgba(255,180,84,.45)}
+.btn.hot{color:#ffd9de;border-color:rgba(255,93,115,.55);background:linear-gradient(180deg,#34121a,#240c12);box-shadow:0 0 0 1px rgba(255,93,115,.3) inset,0 0 18px rgba(255,93,115,.22)}
+.btn.hot:hover{border-color:var(--hot);box-shadow:0 0 0 1px rgba(255,93,115,.7) inset,0 0 30px rgba(255,93,115,.5)}
+.btn.sm{min-height:36px;padding:7px 14px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:wait}
+input,select{font:inherit;color:var(--txt);background:var(--deep);border:1px solid var(--edge);border-radius:12px;padding:11px 14px;min-height:44px;width:100%;transition:.18s}
+input:focus,select:focus{outline:none;border-color:var(--sig);box-shadow:0 0 0 3px rgba(41,224,255,.18)}
+:focus-visible{outline:2px solid var(--sig);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.row>.grow{flex:1;min-width:180px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 0 6px;scrollbar-width:thin}
+.chip{white-space:nowrap;border:1px solid var(--edge);background:var(--deep);color:var(--mut);padding:7px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:13.5px;transition:.18s}
+.chip:hover{color:var(--txt);border-color:#2b4570}
+.chip.on{color:#eafcff;border-color:var(--sig);background:rgba(41,224,255,.12);box-shadow:0 0 16px rgba(41,224,255,.3)}
+.chip em{font-style:normal;opacity:.65;margin-inline-start:6px}
+.count{color:var(--mut);font-size:13px;margin:10px 2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;justify-content:space-between;gap:14px;padding:16px;border-radius:16px;background:rgba(6,11,20,.55);border:1px solid var(--edge);transition:.2s}
+.card:hover{border-color:rgba(41,224,255,.45);box-shadow:0 0 24px rgba(41,224,255,.12)}
+.card .n{font-weight:650;word-break:break-word}.card .m{color:var(--mut);font-size:12.5px;margin-top:5px;max-width:60ch}
+.tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:7px;margin-inline-start:8px;vertical-align:middle}
+.tag.ok{color:var(--ok);background:rgba(62,230,160,.12)}.tag.w{color:var(--sun);background:rgba(255,180,84,.12)}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:36px 10px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.note{color:var(--mut);font-size:13px}
+pre{margin:0;background:#04080f;border:1px solid var(--edge);border-radius:12px;padding:14px;min-height:140px;max-height:48vh;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;font-size:12.5px;color:#a9f5d2;font-family:ui-monospace,Consolas,monospace}
+#drawer{position:fixed;inset-inline:0;bottom:0;z-index:20;background:rgba(6,11,20,.97);border-top:1px solid var(--sig);box-shadow:0 -12px 40px rgba(41,224,255,.15);padding:14px clamp(16px,3vw,40px);display:none}
+#drawer .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0d1a2e;border:1px solid var(--sig);box-shadow:0 0 24px rgba(41,224,255,.3);padding:11px 20px;border-radius:12px;display:none;z-index:30;max-width:90vw}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:860px){
+.shell{display:block}
+aside{position:fixed;z-index:15;inset:auto 0 0 0;top:auto;height:auto;flex-direction:row;padding:8px;border-inline-end:0;border-top:1px solid var(--edge);gap:6px;background:rgba(8,15,28,.97)}
+.brand,.side-foot .links{display:none}.menu{display:flex;flex:1;overflow-x:auto;gap:4px}
+.menu button{flex-direction:column;gap:3px;padding:8px 10px;font-size:11.5px;min-width:64px;justify-content:center;text-align:center}
+.side-foot{margin:0;align-self:center}.side-foot .note{display:none}.lang{width:96px}.lang button{padding:6px 4px;font-size:12px}.menu button{min-width:58px}
+main{padding:18px 14px 110px}.hero{grid-template-columns:1fr}.gauges{gap:10px}.ring{width:84px;height:84px}.ring b{font-size:16px}
+#drawer{bottom:68px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
-<header><div class="top"><div class="logo"><i>O4</i><div><b>Online4Tech Panel</b><small id="slog">خليك دايما اونلاين</small></div></div><small id="ver"></small></div>
-<nav id="nav"></nav></header>
+<div class="shell">
+<aside>
+ <div class="brand"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#29e0ff" stroke-width="1.8" stroke-linecap="round"><path d="M4 18a9 9 0 0 1 16 0"/><path d="M8 18a5 5 0 0 1 8 0"/><circle cx="12" cy="18" r="1.4" fill="#29e0ff"/><path d="M12 4v4M6 6l2 3M18 6l-2 3"/></svg></div><div><b>Online4Tech</b><small id="slog"></small></div></div>
+ <nav class="menu" id="menu"></nav>
+ <div class="side-foot"><div class="links" id="links"></div>
+ <div class="lang"><button id="l-ar">العربية</button><button id="l-en">English</button></div><small class="note" id="ver"></small></div>
+</aside>
 <main>
-<div class="sec" id="s-home"><section class="card"><h2>حالة الجهاز</h2><div class="stats" id="stats"></div></section>
-<section class="card"><h2>تحكم سريع</h2><div class="actions" id="acts"></div></section></div>
-<div class="sec" id="s-cat"><section class="card"><div class="row"><input id="q" placeholder="🔍 ابحث بالاسم..."><label class="row"><input type="checkbox" id="all" style="flex:none;min-width:0"> <small>إظهار غير المتوافق</small></label></div>
-<div class="chips" id="chips"></div><small id="count"></small><div class="grid" id="list"></div></section></div>
-<div class="sec" id="s-iptv"><section class="card"><h2>اشتراكات IPTV (XStreamity / XKlass)</h2>
-<div class="g2"><select id="pl"><option value="xstreamity">XStreamity</option><option value="xklass">XKlass</option></select>
-<input id="m3u" placeholder="رابط M3U كامل (اختياري)" dir="ltr"></div>
-<div class="g2" style="margin-top:8px"><input id="host" placeholder="Host / السيرفر" dir="ltr"><input id="port" placeholder="Port" dir="ltr"><input id="user" placeholder="Username" dir="ltr"><input id="pass" placeholder="Password" dir="ltr"></div>
-<div class="row" style="margin-top:12px"><button class="p" id="iptv">💾 حفظ الاشتراك</button><small>للاشتراكات الخاصة بك فقط.</small></div></section></div>
-<div class="sec" id="s-term"><section class="card"><h2>تيرمنال الويب</h2><div class="row"><input id="cmd" dir="ltr" placeholder="أمر لينكس..."><button id="run" class="p">تنفيذ</button></div>
-<p><small>يعمل بعد تفعيله من الجهاز: Tools ‹ Web control (صلاحية root).</small></p></section></div>
-</main>
-<footer id="links"></footer><div id="toast"></div>
-<div id="drawer"><div class="in"><div class="h"><b id="dt">المخرجات</b><button id="dx">إغلاق</button></div><pre id="out"></pre></div></div>
+ <section class="page" id="p-home">
+  <h1 data-i="home"></h1><p class="sub" data-i="home_sub"></p>
+  <div class="panel"><div class="hero"><div><div class="model" id="model">-</div><div class="image" id="image"></div><div class="live"><i></i><span data-i="online"></span></div></div></div>
+   <div class="gauges" id="gauges"></div><div class="mini" id="mini"></div></div>
+  <div class="panel"><h2 data-i="quick"></h2><div class="btns" id="acts"></div></div>
+ </section>
+ <section class="page" id="p-cat">
+  <h1 id="cat-title"></h1><p class="sub" id="cat-sub"></p>
+  <div class="panel"><div class="row"><input class="grow" id="q" data-ph="search" autocomplete="off"><label class="row note"><input type="checkbox" id="all" style="width:auto;min-height:0"> <span data-i="show_all"></span></label></div>
+  <div class="chips" id="chips"></div><div class="count" id="count"></div><div class="grid" id="list"></div></div>
+ </section>
+ <section class="page" id="p-iptv">
+  <h1 data-i="iptv"></h1><p class="sub" data-i="iptv_sub"></p>
+  <div class="panel"><div class="form"><select id="pl"><option value="xstreamity">XStreamity</option><option value="xklass">XKlass</option></select><input id="m3u" dir="ltr" data-ph="m3u"></div>
+  <div class="form" style="margin-top:12px"><input id="host" dir="ltr" placeholder="Host"><input id="port" dir="ltr" placeholder="Port"><input id="user" dir="ltr" placeholder="Username"><input id="pass" dir="ltr" placeholder="Password"></div>
+  <div class="row" style="margin-top:16px"><button class="btn pri" id="iptv-save" data-i="save_sub"></button><span class="note" data-i="own_only"></span></div></div>
+ </section>
+ <section class="page" id="p-term">
+  <h1 data-i="term"></h1><p class="sub" data-i="term_sub"></p>
+  <div class="panel"><div class="row"><input class="grow" id="cmd" dir="ltr" data-ph="cmd" autocomplete="off"><button class="btn pri" id="run" data-i="run"></button></div></div>
+ </section>
+</main></div>
+<div id="drawer"><div class="h"><b id="dt"></b><button class="btn sm" id="dx" data-i="close"></button></div><pre id="out"></pre></div>
+<div id="toast"></div>
 <script>
 "use strict";
-var $=function(i){return document.getElementById(i)},kind="plugin",cat="",busy=false;
-var TABS=[["home","🏠 الرئيسية"],["plugin","🧩 البلجنات"],["skin","🎨 السكنات"],["channels","📡 القنوات"],["picons","🖼 بيكونات"],["iptv","📺 IPTV"],["term","⌨ تيرمنال"]];
-var ACTS=[["restart_gui","إعادة تشغيل الواجهة"],["standby","ستاندباي"],["clear_ram","تنظيف الرام"],["clean_tmp","تنظيف tmp"],["update_feed","تحديث الفيد"],["sync_catalog","مزامنة الكتالوج"],["self_update","تحديث البانل","p"],["reboot","ريبوت","d"]];
-function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},3500)}
+var $=function(i){return document.getElementById(i)};
+var I={
+ar:{slog:"خليك دايما اونلاين",home:"الرئيسية",home_sub:"حالة الريسيفر والتحكم السريع",online:"متصل",quick:"تحكم سريع",plugin:"البلجنات",skin:"السكنات",channels:"قوائم القنوات",picons:"البيكونات",iptv:"اشتراكات IPTV",term:"التيرمنال",
+plugin_sub:"ثبّت أحدث البلجنات من الكتالوج",skin_sub:"سكنات جاهزة للتثبيت",channels_sub:"قوائم قنوات محدّثة",picons_sub:"حزم بيكونات القنوات",iptv_sub:"أضف اشتراكك إلى XStreamity أو XKlass",term_sub:"نفّذ أوامر مباشرة على الريسيفر",
+search:"ابحث بالاسم...",show_all:"إظهار غير المتوافق",all:"الكل",items:"عنصر",first:"أول",none:"لا توجد نتائج. جرّب كلمة أخرى أو قسماً آخر.",installed:"مثبّت",incompat:"غير متوافق",install:"تثبيت",reinstall:"إعادة تثبيت",remove:"حذف",confirm:"متأكد؟",confirm_rm:"حذف",
+ram:"الرام",flash:"الفلاش",temp:"الحرارة",uptime:"مدة التشغيل",image:"الصورة",m3u:"رابط M3U كامل (اختياري)",save_sub:"حفظ الاشتراك",own_only:"للاشتراكات الخاصة بك فقط.",cmd:"اكتب أمر لينكس",run:"تنفيذ",close:"إغلاق",output:"المخرجات",busy:"عملية أخرى قيد التنفيذ",done:"تم",
+restart_gui:"إعادة تشغيل الواجهة",standby:"ستاندباي",clear_ram:"تنظيف الرام",clean_tmp:"تنظيف الملفات المؤقتة",update_feed:"تحديث الفيد",sync_catalog:"مزامنة الكتالوج",self_update:"تحديث البانل",reboot:"إعادة تشغيل الجهاز",
+support:"الدعم",site:"الموقع",store:"المتجر",d:"ي",h:"س",m:"د"},
+en:{slog:"Stay online, always",home:"Home",home_sub:"Receiver status and quick controls",online:"Online",quick:"Quick controls",plugin:"Plugins",skin:"Skins",channels:"Channel lists",picons:"Picons",iptv:"IPTV subscriptions",term:"Terminal",
+plugin_sub:"Install the latest plugins from the catalog",skin_sub:"Ready-to-install skins",channels_sub:"Up-to-date channel lists",picons_sub:"Channel picon packs",iptv_sub:"Add your subscription to XStreamity or XKlass",term_sub:"Run commands directly on the receiver",
+search:"Search by name...",show_all:"Show incompatible",all:"All",items:"items",first:"first",none:"No results. Try another word or category.",installed:"Installed",incompat:"Incompatible",install:"Install",reinstall:"Reinstall",remove:"Remove",confirm:"Are you sure?",confirm_rm:"Remove",
+ram:"RAM",flash:"Flash",temp:"Temperature",uptime:"Uptime",image:"Image",m3u:"Full M3U link (optional)",save_sub:"Save subscription",own_only:"For your own subscriptions only.",cmd:"Type a Linux command",run:"Run",close:"Close",output:"Output",busy:"Another operation is running",done:"Done",
+restart_gui:"Restart GUI",standby:"Standby",clear_ram:"Clear RAM",clean_tmp:"Clean temp files",update_feed:"Update feed",sync_catalog:"Sync catalog",self_update:"Update panel",reboot:"Reboot device",
+support:"Support",site:"Website",store:"Store",d:"d",h:"h",m:"m"}};
+var lang="ar",cur="home",kind="plugin",cat="",busy=false,last=null;
+try{lang=localStorage.getItem("o4t_lang")||(/^ar/i.test(navigator.language)?"ar":"en")}catch(e){lang=/^ar/i.test(navigator.language||"")?"ar":"en"}
+var mq=/[?&]lang=(ar|en)/.exec(location.search);if(mq)lang=mq[1];
+function t(k){return(I[lang]&&I[lang][k])||k}
+var IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',plugin:'<path d="M9 3v4M15 3v4M7 7h10v5a5 5 0 0 1-10 0z"/><path d="M12 17v4"/>',skin:'<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/><path d="M12 21c-2 0-2-2 0-3 2-1 5-1 5-4"/>',
+channels:'<path d="M4 18a9 9 0 0 1 16 0"/><path d="M8 18a5 5 0 0 1 8 0"/><circle cx="12" cy="18" r="1"/>',picons:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',iptv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',term:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/>'};
+var NAV=["home","plugin","skin","channels","picons","iptv","term"];
+function el(tag,c,x){var e=document.createElement(tag);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function toast(m){var e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},3800)}
 function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method="POST";o.body=JSON.stringify(body)}
-return fetch(path,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||j.message||r.status);return j})})}
-function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
-function fmt(s){var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+"ي ":"")+h+"س "+m+"د"}
-function stat(t,v,p){var e=el("div","stat");e.appendChild(el("small","",t));e.appendChild(el("b","",v));if(p!=null){var b=el("div","bar"),i=el("i");i.style.width=Math.min(100,p)+"%";b.appendChild(i);e.appendChild(b)}return e}
-function status(){api("/api/status").then(function(s){var c=$("stats");c.textContent="";
-c.appendChild(stat("الموديل",s.model));c.appendChild(stat("الرام",s.ram_used+" / "+s.ram_total+" MB",s.ram_total?s.ram_used*100/s.ram_total:0));
-var u=s.flash_total-s.flash_free;c.appendChild(stat("الفلاش",u.toFixed(1)+" / "+s.flash_total+" GB",s.flash_total?u*100/s.flash_total:0));
-c.appendChild(stat("الحرارة",s.temp==null?"-":s.temp+" °C"));c.appendChild(stat("التشغيل",fmt(s.uptime)));c.appendChild(stat("الصورة",s.image));
-$("ver").textContent="v"+s.version;var l=$("links");l.textContent="";[["support","💬 الدعم"],["site","🌐 الموقع"],["store","🛒 المتجر"]].forEach(function(k){if(s.links[k[0]]){var a=el("a","",k[1]);a.href=s.links[k[0]];a.target="_blank";a.rel="noopener";l.appendChild(a)}});
-if(!l.firstChild)l.textContent="Online4Tech — خليك دايما اونلاين";busy=s.busy}).catch(function(e){toast(e.message)})}
-function drawer(show){$("drawer").style.display=show?"block":"none"}
-$("dx").onclick=function(){drawer(false)};
-function follow(id,title){var from=0,out=$("out");out.textContent="";$("dt").textContent=title||"المخرجات";drawer(true);busy=true;
-(function tick(){api("/api/job?id="+id+"&from="+from).then(function(j){if(j.out){out.textContent+=j.out;out.scrollTop=out.scrollHeight}from=j.next;if(!j.done)setTimeout(tick,1000);else{busy=false;if(cur!="home")load()}}).catch(function(e){toast(e.message);busy=false})})()}
-function start(path,body,title){if(busy)return toast("عملية أخرى قيد التنفيذ");api(path,body).then(function(r){if(r.job)follow(r.job,title);else toast("تم")}).catch(function(e){toast(e.message)})}
-var cur="home";
-function go(t){cur=t;Array.prototype.forEach.call($("nav").children,function(b){b.className=b.dataset.t==t?"on":""});
-["home","cat","iptv","term"].forEach(function(s){$("s-"+s).className="sec"});
-if(t=="plugin"||t=="skin"||t=="channels"||t=="picons"){kind=t;cat="";$("s-cat").className="sec on";load()}else $("s-"+t).className="sec on"}
-TABS.forEach(function(t){var b=el("button","",t[1]);b.dataset.t=t[0];b.onclick=function(){go(t[0])};$("nav").appendChild(b)});
-ACTS.forEach(function(a){var b=el("button",a[2]||"",a[1]);b.onclick=function(){if(/reboot|restart_gui|standby/.test(a[0])&&!confirm("متأكد؟"))return;start("/api/action",{name:a[0]},a[1])};$("acts").appendChild(b)});
-function chip(name,n,val){var c=el("div","chip"+(cat==val?" on":""),name);if(n!=null)c.appendChild(el("em","",n));c.onclick=function(){cat=val;load()};return c}
+ return fetch(path,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||j.message||r.status);return j})})}
+function applyLang(){var d=document.documentElement;d.lang=lang;d.dir=lang=="ar"?"rtl":"ltr";
+ try{localStorage.setItem("o4t_lang",lang)}catch(e){}
+ $("l-ar").className=lang=="ar"?"on":"";$("l-en").className=lang=="en"?"on":"";
+ Array.prototype.forEach.call(document.querySelectorAll("[data-i]"),function(n){n.textContent=t(n.dataset.i)});
+ Array.prototype.forEach.call(document.querySelectorAll("[data-ph]"),function(n){n.placeholder=t(n.dataset.ph)});
+ $("slog").textContent=t("slog");buildMenu();buildActs();if(last)renderStatus(last);if(cur!="home"&&cur!="iptv"&&cur!="term")load();setCatTitle()}
+function buildMenu(){var m=$("menu");m.textContent="";NAV.forEach(function(k){var b=el("button",cur==k?"on":"");b.innerHTML='<svg viewBox="0 0 24 24">'+IC[k]+'</svg>';b.appendChild(el("span","",t(k)));b.onclick=function(){go(k)};m.appendChild(b)})}
+var ACTS=[["self_update","pri"],["restart_gui",""],["sync_catalog",""],["update_feed",""],["clear_ram",""],["clean_tmp",""],["standby","sun"],["reboot","hot"]];
+function buildActs(){var a=$("acts");a.textContent="";ACTS.forEach(function(x){var b=el("button","btn "+x[1],t(x[0]));b.onclick=function(){if(/reboot|restart_gui|standby/.test(x[0])&&!confirm(t("confirm")))return;start("/api/action",{name:x[0]},t(x[0]))};a.appendChild(b)})}
+function fmt(s){var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+t("d")+" ":"")+h+t("h")+" "+m+t("m")}
+function gauge(label,pct,sub){var g=el("div","g"),r=el("div","ring"),NS="http://www.w3.org/2000/svg",s=document.createElementNS(NS,"svg");s.setAttribute("viewBox","0 0 100 100");
+ var a=document.createElementNS(NS,"circle");a.setAttribute("class","bg");a.setAttribute("cx",50);a.setAttribute("cy",50);a.setAttribute("r",42);
+ var b=document.createElementNS(NS,"circle");b.setAttribute("class","fg");b.setAttribute("cx",50);b.setAttribute("cy",50);b.setAttribute("r",42);
+ var col=pct>=90?"#ff5d73":pct>=75?"#ffb454":"#29e0ff";b.style.stroke=col;b.style.color=col;s.appendChild(a);s.appendChild(b);r.appendChild(s);r.appendChild(el("b","",Math.round(pct)+"%"));
+ g.appendChild(r);g.appendChild(el("span","",label));g.appendChild(el("small","",sub));setTimeout(function(){b.style.strokeDashoffset=264-264*Math.min(100,pct)/100},60);return g}
+function mini(l,v){var d=el("div");d.appendChild(el("small","",l));d.appendChild(el("b","",v));return d}
+function renderStatus(s){last=s;$("model").textContent=s.model;$("image").textContent=s.image;var G=$("gauges");G.textContent="";
+ var ramP=s.ram_total?s.ram_used*100/s.ram_total:0,fu=s.flash_total-s.flash_free,fp=s.flash_total?fu*100/s.flash_total:0;
+ G.appendChild(gauge(t("ram"),ramP,s.ram_used+" / "+s.ram_total+" MB"));G.appendChild(gauge(t("flash"),fp,fu.toFixed(1)+" / "+s.flash_total+" GB"));
+ G.appendChild(gauge(t("temp"),s.temp==null?0:Math.min(100,s.temp),s.temp==null?"-":s.temp+" °C"));
+ var M=$("mini");M.textContent="";M.appendChild(mini(t("uptime"),fmt(s.uptime)));M.appendChild(mini("Panel","v"+s.version));
+ $("ver").textContent="v"+s.version;var L=$("links");L.textContent="";[["support","support"],["site","site"],["store","store"]].forEach(function(k){if(s.links[k[0]]){var a=el("a","btn sm",t(k[1]));a.href=s.links[k[0]];a.target="_blank";a.rel="noopener";L.appendChild(a)}});busy=s.busy}
+function status(){api("/api/status").then(renderStatus).catch(function(e){toast(e.message)})}
+function drawer(on){$("drawer").style.display=on?"block":"none"}$("dx").onclick=function(){drawer(false)};
+function follow(id,title){var from=0,out=$("out");out.textContent="";$("dt").textContent=title||t("output");drawer(true);busy=true;
+ (function tick(){api("/api/job?id="+id+"&from="+from).then(function(j){if(j.out){out.textContent+=j.out;out.scrollTop=out.scrollHeight}from=j.next;if(!j.done)setTimeout(tick,1000);else{busy=false;if(NAV.indexOf(cur)>0&&cur!="iptv"&&cur!="term")load()}}).catch(function(e){toast(e.message);busy=false})})()}
+function start(path,body,title){if(busy)return toast(t("busy"));api(path,body).then(function(r){if(r.job)follow(r.job,title);else toast(t("done"))}).catch(function(e){toast(e.message)})}
+function setCatTitle(){if(["plugin","skin","channels","picons"].indexOf(cur)<0)return;$("cat-title").textContent=t(cur);$("cat-sub").textContent=t(cur+"_sub")}
+function go(k){cur=k;NAV.forEach(function(n){var p=$(n=="home"?"p-home":n=="iptv"?"p-iptv":n=="term"?"p-term":"p-cat");p.className="page"});
+ var p=k=="home"?"p-home":k=="iptv"?"p-iptv":k=="term"?"p-term":"p-cat";$(p).className="page on";buildMenu();window.scrollTo(0,0);
+ if(p=="p-cat"){kind=k;cat="";$("q").value="";setCatTitle();load()}}
+function chip(name,n,val){var c=el("button","chip"+(cat==val?" on":""),name);if(n!=null)c.appendChild(el("em","",n));c.onclick=function(){cat=val;load()};return c}
 function load(){var u="/api/catalog?kind="+kind+"&cat="+encodeURIComponent(cat)+"&q="+encodeURIComponent($("q").value)+"&all="+($("all").checked?1:0);
-api(u).then(function(d){var C=$("chips");C.textContent="";var tot=0;d.cats.forEach(function(c){tot+=c.count});C.appendChild(chip("الكل",tot,""));d.cats.forEach(function(c){C.appendChild(chip(c.name,c.count,c.name))});
-$("count").textContent=d.total+" عنصر"+(d.total>d.items.length?" (أول "+d.items.length+")":"");var L=$("list");L.textContent="";
-if(!d.items.length)L.appendChild(el("div","empty","لا توجد نتائج"));
-d.items.forEach(function(it){var r=el("div","it"),i=el("div"),n=el("div","n",it.name);if(it.installed)n.appendChild(el("span","tag","مثبّت"));if(!it.compat)n.appendChild(el("span","tag w","غير متوافق"));
-i.appendChild(n);i.appendChild(el("div","m",it.cat+(it.desc?" — "+it.desc:"")));r.appendChild(i);var g=el("div","row");
-var b=el("button","p",it.installed?"إعادة تثبيت":"تثبيت");b.onclick=function(){start("/api/install",{id:it.id},it.name)};g.appendChild(b);
-if(it.removable&&it.installed){var x=el("button","d","حذف");x.onclick=function(){if(confirm("حذف "+it.name+"؟"))start("/api/remove",{id:it.id},it.name)};g.appendChild(x)}
-r.appendChild(g);L.appendChild(r)})}).catch(function(e){toast(e.message)})}
+ api(u).then(function(d){var C=$("chips");C.textContent="";var tot=0;d.cats.forEach(function(c){tot+=c.count});C.appendChild(chip(t("all"),tot,""));d.cats.forEach(function(c){C.appendChild(chip(c.name,c.count,c.name))});
+  $("count").textContent=d.total+" "+t("items")+(d.total>d.items.length?" ("+t("first")+" "+d.items.length+")":"");var L=$("list");L.textContent="";
+  if(!d.items.length)L.appendChild(el("div","empty",t("none")));
+  d.items.forEach(function(it){var c=el("div","card"),i=el("div"),n=el("div","n",it.name);if(it.installed)n.appendChild(el("span","tag ok",t("installed")));if(!it.compat)n.appendChild(el("span","tag w",t("incompat")));
+   i.appendChild(n);i.appendChild(el("div","m",it.cat+(it.desc?" - "+it.desc:"")));c.appendChild(i);var g=el("div","row");
+   var b=el("button","btn sm"+(it.installed?"":" pri"),it.installed?t("reinstall"):t("install"));b.onclick=function(){start("/api/install",{id:it.id},it.name)};g.appendChild(b);
+   if(it.removable&&it.installed){var x=el("button","btn sm hot",t("remove"));x.onclick=function(){if(confirm(t("confirm_rm")+" "+it.name+"?"))start("/api/remove",{id:it.id},it.name)};g.appendChild(x)}
+   c.appendChild(g);L.appendChild(c)})}).catch(function(e){toast(e.message)})}
 var tm;$("q").oninput=function(){clearTimeout(tm);tm=setTimeout(load,300)};$("all").onchange=load;
-$("iptv").onclick=function(){api("/api/iptv",{player:$("pl").value,m3u:$("m3u").value,host:$("host").value,port:$("port").value,user:$("user").value,pass:$("pass").value}).then(function(r){toast(r.message);$("pass").value=""}).catch(function(e){toast(e.message)})};
+$("iptv-save").onclick=function(){api("/api/iptv",{player:$("pl").value,m3u:$("m3u").value,host:$("host").value,port:$("port").value,user:$("user").value,pass:$("pass").value}).then(function(r){toast(r.message);$("pass").value=""}).catch(function(e){toast(e.message)})};
 $("run").onclick=function(){var c=$("cmd").value.trim();if(c)start("/api/shell",{cmd:c},c.slice(0,40))};
 $("cmd").onkeydown=function(e){if(e.key=="Enter")$("run").click()};
-go("home");status();setInterval(status,15000);
+$("l-ar").onclick=function(){lang="ar";applyLang()};$("l-en").onclick=function(){lang="en";applyLang()};
+applyLang();go("home");status();setInterval(status,15000);
 </script></body></html>
