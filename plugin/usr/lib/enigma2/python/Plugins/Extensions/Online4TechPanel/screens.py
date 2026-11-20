@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function
 import os
 import sys
+import traceback
 
 from enigma import ePoint
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -33,6 +34,38 @@ FEED_FILTER = "grep -Ev '^[^ ]+-(src|dbg|dev|po|meta) '"
 FEED_PREFIX = {"plugin": "enigma2-plugin-extensions-", "skin": "enigma2-plugin-skins-"}
 
 
+GUARDED = ("layout_done", "open_current", "sync_catalog", "reload", "got_installed", "got_feed",
+           "refresh_view", "loaded", "apply", "finished", "start", "build", "show_info",
+           "got_version", "after", "after_change", "got_filter", "key_green", "key_yellow",
+           "key_blue", "key_menu", "toggle_fav", "toggle_compat", "install_favs", "show_cats",
+           "show_items", "load_feed", "sel_changed", "move", "pick")
+
+
+def _guard(fn):
+    def wrapper(self, *args, **kwargs):
+        try:
+            return fn(self, *args, **kwargs)
+        except Exception:
+            tb = traceback.format_exc()
+            log("ERROR in %s:\n%s" % (fn.__name__, tb))
+            try:
+                self.session.open(MessageBox, "Online4Tech Panel error in %s:\n%s\n\n"
+                                  "Details: /tmp/o4t_panel.log" % (fn.__name__, tb.strip().splitlines()[-1]),
+                                  MessageBox.TYPE_ERROR, timeout=12)
+            except Exception:
+                pass
+    wrapper.__name__ = fn.__name__
+    return wrapper
+
+
+def guarded(cls):
+    for name in GUARDED:
+        fn = cls.__dict__.get(name)
+        if fn is not None and callable(fn):
+            setattr(cls, name, _guard(fn))
+    return cls
+
+
 def _run(console, cmd, cb):
     def done(data, retval, extra=None):
         cb(txt(data), retval)
@@ -56,6 +89,7 @@ def _confirm(screen, text, fn):
 # =====================================================================
 # Main menu
 # =====================================================================
+@guarded
 class O4TMain(Screen):
     MENU = ["plugins", "skins", "updates", "installed", "tools", "info", "selfupdate", "about"]
 
@@ -147,15 +181,16 @@ class O4TMain(Screen):
 # =====================================================================
 # Generic list screen (list on the left, details on the right)
 # =====================================================================
+@guarded
 class O4TListBase(Screen):
-    TITLE = "m_plugins"
+    MENU_TITLE = "m_plugins"
 
     def __init__(self, session):
         self.skin = skin_list(self.__class__.__name__)
         Screen.__init__(self, session)
         self.console = Console()
         self.items = []
-        self["title"] = Label(T(self.TITLE))
+        self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
         self["list"] = MenuList([])
@@ -240,6 +275,7 @@ class O4TListBase(Screen):
 # =====================================================================
 # Plugins / Skins browser
 # =====================================================================
+@guarded
 class O4TPackages(O4TListBase):
     """Category list -> item list (plugins or skins) with favourites and compat filter."""
     FEED = "__feed__"
@@ -247,7 +283,7 @@ class O4TPackages(O4TListBase):
 
     def __init__(self, session, kind):
         self.kind = kind
-        self.TITLE = "m_plugins" if kind == "plugin" else "m_skins"
+        self.MENU_TITLE = "m_plugins" if kind == "plugin" else "m_skins"
         self.cat = None          # None = category list
         self.filter = ""
         self.show_all = False    # show items for the other Python generation too
@@ -272,7 +308,7 @@ class O4TPackages(O4TListBase):
         self["title"].setText(self.title_text())
 
     def title_text(self):
-        base = T(self.TITLE)
+        base = T(self.MENU_TITLE)
         if self.filter and self.cat is None:
             return "%s - %s" % (base, T("search_all"))
         if self.cat == self.FEED:
@@ -284,7 +320,7 @@ class O4TPackages(O4TListBase):
     def go_back(self):
         if self.cat is not None or self.filter:
             self.cat, self.filter = None, ""
-            self.show()
+            self.refresh_view()
         else:
             self.close()
 
@@ -295,13 +331,13 @@ class O4TPackages(O4TListBase):
 
     def got_installed(self, data, retval):
         self.installed = dict((p["pkg"], p["version"]) for p in parse_opkg_list(data))
-        self.show()
+        self.refresh_view()
 
     def visible(self):
         items = catalog.items(self.kind)
         return items if self.show_all else [i for i in items if compatible(i)]
 
-    def show(self, keep=False):
+    def refresh_view(self, keep=False):
         self.set_keys()
         if self.cat == self.FEED:
             self.load_feed()
@@ -415,13 +451,13 @@ class O4TPackages(O4TListBase):
         save_favs(self.favs)
         self.session.open(MessageBox, "%s\n%s" % (msg, it["name"]), MessageBox.TYPE_INFO,
                           timeout=1)
-        self.show(keep=True)
+        self.refresh_view(keep=True)
 
     def toggle_compat(self):
         self.show_all = not self.show_all
         self.session.open(MessageBox, T("compat_shown") if self.show_all else T("compat_hidden"),
                           MessageBox.TYPE_INFO, timeout=2)
-        self.show(keep=True)
+        self.refresh_view(keep=True)
 
     def install_favs(self):
         cmds = []
@@ -446,7 +482,7 @@ class O4TPackages(O4TListBase):
             return
         if "_cat" in it:
             self.cat = it["_cat"]
-            self.show()
+            self.refresh_view()
             return
         cmd = self.install_cmd(it)
         if cmd:
@@ -485,14 +521,14 @@ class O4TPackages(O4TListBase):
 
     def key_blue(self):
         if self.cat == self.FEED:
-            self.session.openWithCallback(lambda *a: self.show(), ConsoleScreen,
+            self.session.openWithCallback(lambda *a: self.refresh_view(), ConsoleScreen,
                                           title="opkg update", cmdlist=["opkg update"])
             return
 
         def done(ok):
             self.session.open(MessageBox, T("synced") if ok else T("sync_failed"),
                               MessageBox.TYPE_INFO if ok else MessageBox.TYPE_WARNING, timeout=4)
-            self.show()
+            self.refresh_view()
         catalog.refresh(self.console, done)
 
     def key_menu(self):
@@ -502,7 +538,7 @@ class O4TPackages(O4TListBase):
     def got_filter(self, text=None):
         if text is not None:
             self.filter = text.strip()
-            self.show()
+            self.refresh_view()
 
     def after_change(self, *args):
         self.reload()
@@ -512,8 +548,9 @@ class O4TPackages(O4TListBase):
 # =====================================================================
 # Updates
 # =====================================================================
+@guarded
 class O4TUpdates(O4TListBase):
-    TITLE = "m_updates"
+    MENU_TITLE = "m_updates"
 
     def __init__(self, session):
         self.only_plugins = True
@@ -574,8 +611,9 @@ class O4TUpdates(O4TListBase):
 # =====================================================================
 # Installed packages
 # =====================================================================
+@guarded
 class O4TInstalled(O4TListBase):
-    TITLE = "m_installed"
+    MENU_TITLE = "m_installed"
 
     def __init__(self, session):
         self.fmode = 0  # 0 all, 1 plugins, 2 skins
@@ -650,8 +688,9 @@ class O4TInstalled(O4TListBase):
 # =====================================================================
 # Tools
 # =====================================================================
+@guarded
 class O4TTools(O4TListBase):
-    TITLE = "m_tools"
+    MENU_TITLE = "m_tools"
 
     def __init__(self, session):
         O4TListBase.__init__(self, session)
@@ -711,14 +750,15 @@ class O4TTools(O4TListBase):
 # =====================================================================
 # Text screens
 # =====================================================================
+@guarded
 class O4TTextBase(Screen):
-    TITLE = "m_info"
+    MENU_TITLE = "m_info"
 
     def __init__(self, session):
         self.skin = skin_text(self.__class__.__name__)
         Screen.__init__(self, session)
         self.console = Console()
-        self["title"] = Label(T(self.TITLE))
+        self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
         self["detail"] = ScrollLabel("")
@@ -740,8 +780,9 @@ class O4TTextBase(Screen):
         pass
 
 
+@guarded
 class O4TInfo(O4TTextBase):
-    TITLE = "m_info"
+    MENU_TITLE = "m_info"
 
     def start(self):
         self["detail"].setText(T("loading"))
@@ -774,9 +815,10 @@ class O4TInfo(O4TTextBase):
         self["detail"].setText("\n".join(lines))
 
 
+@guarded
 class O4TDiag(O4TTextBase):
     """Support report: everything needed to debug a problem on a real receiver."""
-    TITLE = "t_diag"
+    MENU_TITLE = "t_diag"
 
     def start(self):
         self["detail"].setText(T("loading"))
@@ -814,16 +856,18 @@ class O4TDiag(O4TTextBase):
             pass
 
 
+@guarded
 class O4TAbout(O4TTextBase):
-    TITLE = "m_about"
+    MENU_TITLE = "m_about"
 
     def start(self):
         self["detail"].setText(T("about_text") + "\n\n" + SLOGAN + "\n" + HOME_URL +
                                "\nv" + VERSION)
 
 
+@guarded
 class O4TSelfUpdate(O4TTextBase):
-    TITLE = "m_selfupdate"
+    MENU_TITLE = "m_selfupdate"
 
     def __init__(self, session):
         O4TTextBase.__init__(self, session)
