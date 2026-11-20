@@ -9,7 +9,7 @@ import io
 import json
 import os
 
-from .utils import log, safe_cmd, safe_remove, txt, valid_pkg, valid_url, cmd_hosts, TRUSTED_HOSTS
+from .utils import log, safe_cmd, short_id, safe_remove, txt, valid_pkg, valid_url, cmd_hosts, TRUSTED_HOSTS
 from .version import PLUGIN_DIR, CATALOG_URL, TMP_CATALOG
 
 BUNDLED = os.path.join(PLUGIN_DIR, "data", "catalog.json")
@@ -17,6 +17,7 @@ BUNDLED = os.path.join(PLUGIN_DIR, "data", "catalog.json")
 ORDER = {
     "plugin": ["Panels", "Plugins", "Media", "IPTV", "Audio", "EPG", "Tools", "System", "Settings",
                "Translation", "Ciefp", "Novaler", "Multiboot", "Dependencies", "Community"],
+    "channels": ["Online4Tech & Others", "Ciefp", "Morph883", "Vaninbal"],
     "skin": ["OpenATV", "OpenBH", "Egami", "OpenPLi Py3", "OpenPLi Py2", "OpenSPA", "OpenVIX",
              "PurE2", "TeamNitro", "Display (LCD)", "XStreamity", "Community Skins",
              "Bootlogos", "Spinners", "Picons"],
@@ -45,7 +46,7 @@ def _clean(raw):
               "pkg": txt(raw.get("pkg", "")), "path": txt(raw.get("path", "")),
               "remove": txt(raw.get("remove", "")),
               "images": [txt(x) for x in raw.get("images", []) if x][:6]}
-        if not it["name"] or not it["category"] or it["type"] not in ("plugin", "skin"):
+        if not it["name"] or not it["category"] or it["type"] not in ("plugin", "skin", "channels"):
             return None
         m = it["method"]
         if m == "cmd":
@@ -64,6 +65,7 @@ def _clean(raw):
         if it["remove"] and not safe_remove(it["remove"]):
             it["remove"] = ""
         _keep_py(raw, it)
+        it["id"] = short_id("%s|%s|%s" % (it["type"], it["category"], it["name"]))
         return it
     except Exception:
         return None
@@ -98,7 +100,7 @@ def categories(kind, all_items=None):
     counts = {}
     for it in (all_items if all_items is not None else items(kind)):
         counts[it["category"]] = counts.get(it["category"], 0) + 1
-    order = [c for c in ORDER[kind] if c in counts]
+    order = [c for c in ORDER.get(kind, []) if c in counts]
     order += sorted(c for c in counts if c not in order)
     return [(c, counts[c]) for c in order]
 
@@ -119,3 +121,27 @@ def refresh(console, callback):
         callback(ok)
 
     console.ePopen(cmd, done)
+
+
+def install_cmd(it):
+    """Shell command that installs a catalog item (None when not installable)."""
+    from .utils import shquote
+    m = it.get("method")
+    if m == "cmd":
+        return it["cmd"]
+    if m == "feed" and valid_pkg(it.get("pkg", "")):
+        return "opkg install %s" % shquote(it["pkg"])
+    if m == "ipk" and valid_url(it.get("url", "")):
+        return ("wget -q --no-check-certificate -O /tmp/o4t_pkg.ipk %s && opkg install "
+                "--force-reinstall --force-overwrite /tmp/o4t_pkg.ipk; rm -f /tmp/o4t_pkg.ipk"
+                % shquote(it["url"]))
+    return None
+
+
+def remove_cmd(it):
+    from .utils import shquote
+    if it.get("remove"):
+        return it["remove"]
+    if it.get("method") == "feed" and valid_pkg(it.get("pkg", "")):
+        return "opkg remove %s" % shquote(it["pkg"])
+    return None

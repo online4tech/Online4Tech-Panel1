@@ -60,8 +60,12 @@ DB_MAP = collections.OrderedDict([
     ("bootlogos", ("skin", "Bootlogos")),
     ("spinners", ("skin", "Spinners")),
     ("picons", ("skin", "Picons")),
+    ("other_channels", ("channels", "Online4Tech & Others")),
+    ("ciefp_channels", ("channels", "Ciefp")),
+    ("morph883_channels", ("channels", "Morph883")),
+    ("vaninbal_channels", ("channels", "Vaninbal")),
 ])
-# Not imported: favourites (duplicates), channels*, feeds, images, backup*, restore, remove, softcams
+# Not imported: favourites (duplicates), feeds, images, backup*, restore, remove, softcams
 E2P_MAP = {"IPTV": "IPTV", "Audio": "Audio", "Tools": "Tools", "Translation": "Translation",
            "Panels": "Panels", "Other": "Plugins", "Settings": "Settings"}
 PJ_MAP = {"EPG": "EPG", "EPG Plugins": "EPG", "IPTV": "IPTV", "IPTV Plugins": "IPTV",
@@ -161,7 +165,7 @@ def main():
                 it["path"] = raw["path"]
             if raw.get("remove_cmd"):
                 it["remove"] = raw["remove_cmd"]
-            key = (typ, cat, norm(name)) if typ == "skin" else (typ, norm(name))
+            key = (typ, cat, norm(name)) if typ in ("skin", "channels") else (typ, norm(name))
             add(it, key)
 
     # 2) enigma2-plugins.json

@@ -38,7 +38,7 @@ GUARDED = ("layout_done", "open_current", "sync_catalog", "reload", "got_install
            "refresh_view", "loaded", "apply", "finished", "start", "build", "show_info",
            "got_version", "after", "after_change", "got_filter", "key_green", "key_yellow",
            "key_blue", "key_menu", "toggle_fav", "toggle_compat", "install_favs", "show_cats",
-           "show_items", "load_feed", "sel_changed", "move", "pick")
+           "show_items", "load_feed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick")
 
 
 def _guard(fn):
@@ -491,16 +491,7 @@ class O4TPackages(O4TListBase):
                                           cmdlist=[cmd])
 
     def install_cmd(self, it):
-        m = it.get("method")
-        if m == "cmd":
-            return it["cmd"]
-        if m == "feed" and valid_pkg(it.get("pkg", "")):
-            return "opkg install %s" % shquote(it["pkg"])
-        if m == "ipk" and valid_url(it.get("url", "")):
-            return ("wget -q --no-check-certificate -O /tmp/o4t_pkg.ipk %s && opkg install "
-                    "--force-reinstall --force-overwrite /tmp/o4t_pkg.ipk; rm -f /tmp/o4t_pkg.ipk"
-                    % shquote(it["url"]))
-        return None
+        return catalog.install_cmd(it)
 
     def key_yellow(self):
         it = self.current()
@@ -709,6 +700,7 @@ class O4TTools(O4TListBase):
              "desc": T("d_theme")},
             {"id": "lang", "name": "%s: %s" % (T("t_lang"), T("v_" + get_setting("lang", "auto"))),
              "desc": T("d_lang")},
+            {"id": "web", "name": T("t_web"), "desc": T("d_web")},
             {"id": "diag", "name": T("t_diag"), "desc": T("d_diag")},
         ], keep=True)
 
@@ -740,6 +732,8 @@ class O4TTools(O4TListBase):
             cycle_setting("lang", LANGS, "auto")
             self.reload()
             self.session.open(MessageBox, T("reopen"), MessageBox.TYPE_INFO, timeout=3)
+        elif k == "web":
+            self.session.open(O4TWeb)
         elif k == "diag":
             self.session.open(O4TDiag)
 
@@ -768,7 +762,7 @@ class O4TTextBase(Screen):
         self["actions"] = ActionMap(
             ["OkCancelActions", "ColorActions", "DirectionActions"],
             {"ok": self.close, "cancel": self.close, "red": self.close,
-             "green": self.key_green,
+             "green": self.key_green, "yellow": self.key_yellow, "blue": self.key_blue,
              "up": self["detail"].pageUp, "down": self["detail"].pageDown,
              "left": self["detail"].pageUp, "right": self["detail"].pageDown}, -1)
         self.onLayoutFinish.append(self.start)
@@ -777,6 +771,12 @@ class O4TTextBase(Screen):
         pass
 
     def key_green(self):
+        pass
+
+    def key_yellow(self):
+        pass
+
+    def key_blue(self):
         pass
 
 
@@ -813,6 +813,60 @@ class O4TInfo(O4TTextBase):
                  "Python: " + sys.version.split()[0], "Panel: v" + VERSION, "",
                  "## Image"] + image + ["", data.strip()]
         self["detail"].setText("\n".join(lines))
+
+
+@guarded
+class O4TWeb(O4TTextBase):
+    """Web control settings: address, password, enable/disable, web shell."""
+    MENU_TITLE = "t_web"
+
+    def start(self):
+        self["key_green"].setText(T("w_pass"))
+        self["key_yellow"].setText(T("w_shell"))
+        self["key_blue"].setText(T("w_toggle"))
+        self.render_info()
+
+    def render_info(self, ip="-"):
+        from . import webserver
+        port = get_setting("web_port", 8080)
+        on = get_setting("web_enabled", True)
+        shell = get_setting("web_shell", False)
+        ips = []
+        try:
+            import socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("192.0.2.1", 9))
+            ips.append(s.getsockname()[0])
+            s.close()
+        except Exception:
+            pass
+        url = "http://%s:%s" % (ips[0] if ips else "<receiver-ip>", port)
+        self["detail"].setText("\n".join([
+            "%s: %s" % (T("w_state"), T("w_on") if on and webserver.is_running() else T("w_off")),
+            "URL: " + url, "User: admin", "Password: " + webserver.password(), "",
+            "%s: %s" % (T("w_shell"), T("w_on") if shell else T("w_off")), "",
+            T("w_help")]))
+
+    def key_green(self):
+        from . import webserver
+        webserver.new_password()
+        self.render_info()
+
+    def key_yellow(self):
+        from .utils import set_setting
+        set_setting("web_shell", not get_setting("web_shell", False))
+        self.render_info()
+
+    def key_blue(self):
+        from . import webserver
+        from .utils import set_setting
+        on = not get_setting("web_enabled", True)
+        set_setting("web_enabled", on)
+        if on:
+            webserver.start()
+        else:
+            webserver.stop()
+        self.render_info()
 
 
 @guarded

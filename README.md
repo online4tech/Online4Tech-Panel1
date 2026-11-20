@@ -90,3 +90,15 @@ plugin/usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel/
 ## License
 
 MIT
+
+
+## Web control (port 8080)
+
+Open `http://<receiver-ip>:8080` — user `admin`, the password is shown on the receiver in
+**Tools > Web control** (green button generates a new one). Features: device status, quick
+control, browse/install/remove plugins, skins, channel lists and picons from the catalog,
+XStreamity/XKlass playlist entry, live console output, optional web shell.
+
+Security: Basic auth + 5-attempt lockout, CSRF header on POST, install commands come only
+from the validated catalog, web shell is OFF until enabled on the receiver (runs as root).
+Not included on purpose: softcam installers and CCcam/oscam/ncam server-line writers.

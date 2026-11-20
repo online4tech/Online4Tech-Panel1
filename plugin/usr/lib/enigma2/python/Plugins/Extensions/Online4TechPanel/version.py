@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import os
 
-VERSION = "1.1.1"
+VERSION = "1.2.0"
 PLUGIN_NAME = "Online4Tech Panel"
 SLOGAN = "خليك دايما اونلاين"
 
@@ -18,3 +18,9 @@ HOME_URL = "https://github.com/%s/tree/%s" % (GITHUB_REPO, BRANCH)
 
 TMP_CATALOG = "/tmp/o4t_catalog.json"
 TMP_VERSION = "/tmp/o4t_version.txt"
+
+# Optional support links shown in the web panel footer (leave empty to hide)
+SUPPORT_URL = ""
+SITE_URL = ""
+STORE_URL = ""
+WEB_PORT = 8080

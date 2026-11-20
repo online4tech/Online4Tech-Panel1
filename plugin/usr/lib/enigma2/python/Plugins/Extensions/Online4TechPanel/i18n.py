@@ -106,6 +106,18 @@ STR = {
     "t_lang": ("Language", "اللغة"),
     "d_lang": ("Auto follows the receiver language. Reopen the panel to apply.",
                "تلقائي = لغة الجهاز. اقفل البانل وافتحه تاني للتطبيق."),
+    "t_web": ("Web control (port 8080)", "التحكم عبر الويب (بورت 8080)"),
+    "d_web": ("Address, password and options of the browser control panel.",
+              "عنوان وكلمة سر وخيارات لوحة التحكم من المتصفح."),
+    "w_pass": ("New password", "كلمة سر جديدة"),
+    "w_shell": ("Web shell", "تيرمنال الويب"),
+    "w_toggle": ("Enable/Disable", "تشغيل/إيقاف"),
+    "w_state": ("Web server", "سيرفر الويب"),
+    "w_on": ("ON", "مفعّل"), "w_off": ("OFF", "متوقف"),
+    "w_help": ("Green: new password | Yellow: web shell on/off | Blue: server on/off.\n"
+               "The web shell runs commands as root - keep it off unless you need it.",
+               "أخضر: كلمة سر جديدة | أصفر: تيرمنال الويب | أزرق: تشغيل/إيقاف السيرفر.\n"
+               "تيرمنال الويب ينفذ أوامر بصلاحية root - اتركه مغلقاً إلا عند الحاجة."),
     "t_diag": ("Support report", "تقرير الدعم"),
     "d_diag": ("Shows system, catalog and log details and saves them to /tmp/o4t_report.txt.",
                "بيعرض بيانات الجهاز والكتالوج واللوج ويحفظها في /tmp/o4t_report.txt."),

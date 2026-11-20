@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Small Python 2/3 compatibility helpers."""
 from __future__ import absolute_import, print_function
+import hashlib
 import io
 import json
 import os
@@ -223,3 +224,9 @@ def log(msg):
             fh.write(type(u"")("%s  %s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), txt(msg))))
     except Exception:
         pass
+
+
+def short_id(text):
+    """Stable 12-char id for a native string (works on py2 and py3)."""
+    raw = text.encode("utf-8") if PY3 else text
+    return hashlib.sha1(raw).hexdigest()[:12]
