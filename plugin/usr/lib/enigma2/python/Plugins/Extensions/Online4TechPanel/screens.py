@@ -38,7 +38,7 @@ GUARDED = ("layout_done", "open_current", "sync_catalog", "reload", "got_install
            "refresh_view", "loaded", "apply", "finished", "start", "build", "show_info",
            "got_version", "after", "after_change", "got_filter", "key_green", "key_yellow",
            "key_blue", "key_menu", "toggle_fav", "toggle_compat", "install_favs", "show_cats",
-           "show_items", "load_feed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick")
+           "show_items", "load_feed", "go_back", "child_closed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick")
 
 
 def _guard(fn):
@@ -281,11 +281,15 @@ class O4TPackages(O4TListBase):
     FEED = "__feed__"
     FAV = "__fav__"
 
-    def __init__(self, session, kind):
+    def __init__(self, session, kind, cat=None, flt=""):
         self.kind = kind
         self.MENU_TITLE = "m_plugins" if kind == "plugin" else "m_skins"
-        self.cat = None          # None = category list
-        self.filter = ""
+        # Root screen shows the categories; opening one pushes a NEW screen so that
+        # "back" is a plain close() (re-filling one list in place crashed some images).
+        self.root = cat is None and not flt
+        self.cat = cat           # None (non-root) = search across all categories
+        self.filter = flt
+        self.start_filter = flt
         self.show_all = False    # show items for the other Python generation too
         self.installed = {}
         self.favs = load_favs()
@@ -300,7 +304,7 @@ class O4TPackages(O4TListBase):
 
     # ---- state helpers
     def in_cats(self):
-        return self.cat is None and not self.filter
+        return self.root
 
     def set_keys(self):
         self["key_green"].setText(T("k_open_cat") if self.in_cats() else T("k_install"))
@@ -318,8 +322,8 @@ class O4TPackages(O4TListBase):
         return "%s - %s" % (base, self.cat) if self.cat else base
 
     def go_back(self):
-        if self.cat is not None or self.filter:
-            self.cat, self.filter = None, ""
+        if not self.root and self.filter != self.start_filter:
+            self.filter = self.start_filter
             self.refresh_view()
         else:
             self.close()
@@ -481,8 +485,7 @@ class O4TPackages(O4TListBase):
         if not it:
             return
         if "_cat" in it:
-            self.cat = it["_cat"]
-            self.refresh_view()
+            self.session.openWithCallback(self.child_closed, O4TPackages, self.kind, it["_cat"])
             return
         cmd = self.install_cmd(it)
         if cmd:
@@ -527,9 +530,18 @@ class O4TPackages(O4TListBase):
                                       title=T("search"), text=self.filter)
 
     def got_filter(self, text=None):
-        if text is not None:
-            self.filter = text.strip()
+        if text is None:
+            return
+        text = text.strip()
+        if self.root and text:
+            self.session.openWithCallback(self.child_closed, O4TPackages, self.kind, None, text)
+        elif not self.root:
+            self.filter = text
             self.refresh_view()
+
+    def child_closed(self, *args):
+        self.favs = load_favs()
+        self.refresh_view(True)
 
     def after_change(self, *args):
         self.reload()
@@ -821,7 +833,7 @@ class O4TWeb(O4TTextBase):
     MENU_TITLE = "t_web"
 
     def start(self):
-        self["key_green"].setText(T("w_pass"))
+        self["key_green"].setText(T("w_auth"))
         self["key_yellow"].setText(T("w_shell"))
         self["key_blue"].setText(T("w_toggle"))
         self.render_info()
@@ -841,15 +853,20 @@ class O4TWeb(O4TTextBase):
         except Exception:
             pass
         url = "http://%s:%s" % (ips[0] if ips else "<receiver-ip>", port)
-        self["detail"].setText("\n".join([
-            "%s: %s" % (T("w_state"), T("w_on") if on and webserver.is_running() else T("w_off")),
-            "URL: " + url, "User: admin", "Password: " + webserver.password(), "",
-            "%s: %s" % (T("w_shell"), T("w_on") if shell else T("w_off")), "",
-            T("w_help")]))
+        auth = get_setting("web_auth", False)
+        lines = ["%s: %s" % (T("w_state"), T("w_on") if on and webserver.is_running() else T("w_off")),
+                 "URL: " + url, "%s: %s" % (T("w_auth"), T("w_on") if auth else T("w_off"))]
+        if auth:
+            lines += ["User: admin", "Password: " + webserver.password()]
+        lines += ["", "%s: %s" % (T("w_shell"), T("w_on") if shell else T("w_off")), "", T("w_help")]
+        self["detail"].setText("\n".join(lines))
 
     def key_green(self):
         from . import webserver
-        webserver.new_password()
+        from .utils import set_setting
+        set_setting("web_auth", not get_setting("web_auth", False))
+        if get_setting("web_auth", False):
+            webserver.password()
         self.render_info()
 
     def key_yellow(self):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Web control panel (default port 8080) - Twisted based, Python 2 / 3 compatible.
 
-* Basic-auth protected (user "admin", random password generated on first start).
+* Open on the local network by default; optional Basic auth (user "admin") via Tools > Web control.
 * POST endpoints need the X-O4T-Request header (CSRF protection) and a matching Origin.
 * The web shell is OFF until it is enabled from the receiver itself (Tools > Web control).
 * Install / remove commands come only from the validated catalog (never from the client);
@@ -186,7 +186,7 @@ def system_status():
         "flash_total": round(fl_total, 1), "flash_free": round(fl_free, 1),
         "temp": _temp(), "model": read_file("/proc/stb/info/model").strip() or "-",
         "image": image[0] if image else "-", "version": VERSION,
-        "shell": bool(get_setting("web_shell", False)), "busy": running_job() is not None,
+        "shell": bool(get_setting("web_shell", False)), "auth": bool(get_setting("web_auth", False)), "busy": running_job() is not None,
         "links": {"support": SUPPORT_URL, "site": SITE_URL, "store": STORE_URL},
     }
 
@@ -303,6 +303,8 @@ class Root(resource.Resource):
             request.setHeader(k, v)
 
     def _auth(self, request):
+        if not get_setting("web_auth", False):   # open access by default (LAN use)
+            return 200
         ip = txt(request.getClientIP())
         fails = _state["fails"].get(ip)
         now = time.time()

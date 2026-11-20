@@ -1,94 +1,105 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Online4Tech Panel</title>
+<meta name="theme-color" content="#070d1a"><title>Online4Tech Panel</title>
 <style>
-:root{--bg:#0b1220;--card:#121b2e;--line:#1f2d4a;--txt:#e6edf7;--mut:#8ea0bd;--acc:#22d3ee;--ok:#34d399;--bad:#f87171;--warn:#fbbf24}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif;font-size:15px}
-header{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-h1{margin:0;font-size:20px;color:var(--acc)}small{color:var(--mut)}
-main{max-width:1100px;margin:auto;padding:16px;display:grid;gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-.card h2{margin:0 0 12px;font-size:16px}
+:root{--bg:#070d1a;--card:rgba(255,255,255,.045);--line:rgba(255,255,255,.09);--txt:#eaf1fb;--mut:#8fa3c2;--acc:#22d3ee;--acc2:#6366f1;--ok:#34d399;--bad:#f87171;--warn:#fbbf24}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--txt);font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:15px;min-height:100vh;
+background:radial-gradient(900px 500px at 85% -10%,#12356a55,transparent),radial-gradient(700px 500px at 0% 110%,#4f1d9a44,transparent),var(--bg);background-attachment:fixed}
+header{position:sticky;top:0;z-index:5;backdrop-filter:blur(14px);background:rgba(7,13,26,.8);border-bottom:1px solid var(--line)}
+.top{max-width:1150px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{display:flex;align-items:center;gap:10px}.logo i{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-style:normal;font-weight:bold;color:#041322}
+.logo b{display:block;font-size:17px}.logo small{color:var(--mut);font-size:12px}
+nav{max-width:1150px;margin:auto;padding:0 12px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav button{white-space:nowrap;background:transparent;border:1px solid transparent;color:var(--mut);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer}
+nav button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#041322;font-weight:bold}
+main{max-width:1150px;margin:auto;padding:16px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(8px)}
+h2{margin:0 0 12px;font-size:16px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.stat{background:#0e1627;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
-.stat b{display:block;font-size:20px;color:var(--acc);margin-top:6px;direction:ltr}
-.bar{height:6px;background:#1b2740;border-radius:4px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
-button,select,input,textarea{font:inherit;color:var(--txt);background:#0e1627;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-button{cursor:pointer;background:#17233d}button:hover{border-color:var(--acc)}button.p{background:var(--acc);color:#04222a;border:0;font-weight:bold}
-button.d{border-color:#7f1d1d;color:var(--bad)}button:disabled{opacity:.5;cursor:wait}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row>input{flex:1;min-width:120px}
-.tabs button.on{background:var(--acc);color:#04222a;border:0}
-.list{display:grid;gap:8px;margin-top:12px;max-height:480px;overflow:auto}
-.it{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#0e1627;border:1px solid var(--line);border-radius:10px;padding:10px}
-.it .n{font-weight:bold}.it .m{color:var(--mut);font-size:12px;margin-top:3px}
-.tag{font-size:11px;border-radius:6px;padding:2px 6px;background:#12301f;color:var(--ok);margin-inline-start:6px}.tag.w{background:#3a2b08;color:var(--warn)}
-pre{background:#050a14;border:1px solid var(--line);border-radius:10px;padding:12px;margin:0;min-height:140px;max-height:360px;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;font-size:12px;color:#b6f3c9}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
-footer{text-align:center;padding:20px}footer a{color:var(--acc);margin:0 10px;text-decoration:none}
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--acc);padding:10px 18px;border-radius:10px;display:none}
+.stat{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.stat small{color:var(--mut)}.stat b{display:block;font-size:19px;margin-top:6px;direction:ltr;color:var(--acc)}
+.bar{height:6px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+button,select,input{font:inherit;color:var(--txt);background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+button{cursor:pointer;transition:.15s}button:hover{border-color:var(--acc);transform:translateY(-1px)}
+button.p{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#041322;border:0;font-weight:bold}button.d{color:var(--bad);border-color:#7f1d1d}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row>input{flex:1;min-width:140px}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:thin}
+.chip{white-space:nowrap;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;color:var(--mut);font-size:13px}
+.chip.on{border-color:var(--acc);color:var(--acc);background:rgba(34,211,238,.1)}.chip em{font-style:normal;opacity:.6;margin-inline-start:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:6px}
+.it{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.it .n{font-weight:bold;word-break:break-word}.it .m{color:var(--mut);font-size:12px;margin-top:4px;line-height:1.5}
+.tag{font-size:11px;border-radius:6px;padding:2px 7px;background:rgba(52,211,153,.15);color:var(--ok);margin-inline-start:6px}.tag.w{background:rgba(251,191,36,.15);color:var(--warn)}
+.empty{color:var(--mut);padding:24px;text-align:center}
+pre{background:#030712;border:1px solid var(--line);border-radius:12px;padding:12px;margin:0;min-height:130px;max-height:50vh;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;font-size:12px;color:#a7f3d0}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+footer{text-align:center;padding:24px;color:var(--mut)}footer a{color:var(--acc);margin:0 10px;text-decoration:none}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0f1a30;border:1px solid var(--acc);padding:11px 20px;border-radius:12px;display:none;z-index:9}
+#drawer{position:fixed;inset-inline:0;bottom:0;z-index:8;background:rgba(7,13,26,.97);border-top:1px solid var(--acc);padding:12px 16px;display:none}
+#drawer .in{max-width:1150px;margin:auto}#drawer .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sec{display:none}.sec.on{display:grid;gap:16px}
 </style></head><body>
-<header><div><h1>Online4Tech Panel</h1><small id="slog">خليك دايما اونلاين</small></div><small id="ver"></small></header>
+<header><div class="top"><div class="logo"><i>O4</i><div><b>Online4Tech Panel</b><small id="slog">خليك دايما اونلاين</small></div></div><small id="ver"></small></div>
+<nav id="nav"></nav></header>
 <main>
-<section class="card"><h2>حالة الجهاز</h2><div class="stats" id="stats"></div></section>
-
-<section class="card"><h2>تحكم سريع</h2><div class="row">
-<button data-a="restart_gui">إعادة تشغيل الواجهة</button><button data-a="reboot" class="d">ريبوت</button>
-<button data-a="standby">ستاندباي</button><button data-a="clear_ram">تنظيف الرام</button>
-<button data-a="clean_tmp">تنظيف tmp</button><button data-a="update_feed">تحديث الفيد</button>
-<button data-a="sync_catalog">مزامنة الكتالوج</button><button data-a="self_update" class="p">تحديث البانل</button></div></section>
-
-<section class="card"><h2>الإضافات والسكنات والقنوات</h2>
-<div class="row tabs" id="tabs"></div>
-<div class="row" style="margin-top:10px"><select id="cat"></select><input id="q" placeholder="بحث...">
-<label><input type="checkbox" id="all"> إظهار غير المتوافق</label></div>
-<small id="count"></small><div class="list" id="list"></div></section>
-
-<section class="card"><h2>اشتراكات IPTV (XStreamity / XKlass)</h2>
-<div class="grid2"><select id="pl"><option value="xstreamity">XStreamity</option><option value="xklass">XKlass</option></select>
+<div class="sec" id="s-home"><section class="card"><h2>حالة الجهاز</h2><div class="stats" id="stats"></div></section>
+<section class="card"><h2>تحكم سريع</h2><div class="actions" id="acts"></div></section></div>
+<div class="sec" id="s-cat"><section class="card"><div class="row"><input id="q" placeholder="🔍 ابحث بالاسم..."><label class="row"><input type="checkbox" id="all" style="flex:none;min-width:0"> <small>إظهار غير المتوافق</small></label></div>
+<div class="chips" id="chips"></div><small id="count"></small><div class="grid" id="list"></div></section></div>
+<div class="sec" id="s-iptv"><section class="card"><h2>اشتراكات IPTV (XStreamity / XKlass)</h2>
+<div class="g2"><select id="pl"><option value="xstreamity">XStreamity</option><option value="xklass">XKlass</option></select>
 <input id="m3u" placeholder="رابط M3U كامل (اختياري)" dir="ltr"></div>
-<div class="grid2" style="margin-top:8px"><input id="host" placeholder="السيرفر / Host" dir="ltr"><input id="port" placeholder="البورت" dir="ltr">
-<input id="user" placeholder="اسم المستخدم" dir="ltr"><input id="pass" placeholder="كلمة المرور" dir="ltr"></div>
-<div class="row" style="margin-top:10px"><button class="p" id="iptv">حفظ الاشتراك</button><small>للاشتراكات الخاصة بك فقط.</small></div></section>
-
-<section class="card"><h2>تيرمنال الويب</h2><div class="row"><input id="cmd" dir="ltr" placeholder="أمر لينكس..."><button id="run" class="p">تنفيذ</button></div>
-<small>يعمل فقط بعد تفعيله من الجهاز: Tools &gt; Web control (صلاحية root).</small></section>
-
-<section class="card"><h2>مخرجات العمليات</h2><pre id="out">—</pre></section>
+<div class="g2" style="margin-top:8px"><input id="host" placeholder="Host / السيرفر" dir="ltr"><input id="port" placeholder="Port" dir="ltr"><input id="user" placeholder="Username" dir="ltr"><input id="pass" placeholder="Password" dir="ltr"></div>
+<div class="row" style="margin-top:12px"><button class="p" id="iptv">💾 حفظ الاشتراك</button><small>للاشتراكات الخاصة بك فقط.</small></div></section></div>
+<div class="sec" id="s-term"><section class="card"><h2>تيرمنال الويب</h2><div class="row"><input id="cmd" dir="ltr" placeholder="أمر لينكس..."><button id="run" class="p">تنفيذ</button></div>
+<p><small>يعمل بعد تفعيله من الجهاز: Tools ‹ Web control (صلاحية root).</small></p></section></div>
 </main>
 <footer id="links"></footer><div id="toast"></div>
+<div id="drawer"><div class="in"><div class="h"><b id="dt">المخرجات</b><button id="dx">إغلاق</button></div><pre id="out"></pre></div></div>
 <script>
 "use strict";
-var $=function(i){return document.getElementById(i)},kind="plugin",busy=false,names={plugin:"البلجنات",skin:"السكنات",channels:"قوائم القنوات",picons:"Picons"};
-function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";setTimeout(function(){e.style.display="none"},3500)}
-function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method="POST";o.body=JSON.stringify(body);o.headers["Content-Type"]="application/json"}
+var $=function(i){return document.getElementById(i)},kind="plugin",cat="",busy=false;
+var TABS=[["home","🏠 الرئيسية"],["plugin","🧩 البلجنات"],["skin","🎨 السكنات"],["channels","📡 القنوات"],["picons","🖼 بيكونات"],["iptv","📺 IPTV"],["term","⌨ تيرمنال"]];
+var ACTS=[["restart_gui","إعادة تشغيل الواجهة"],["standby","ستاندباي"],["clear_ram","تنظيف الرام"],["clean_tmp","تنظيف tmp"],["update_feed","تحديث الفيد"],["sync_catalog","مزامنة الكتالوج"],["self_update","تحديث البانل","p"],["reboot","ريبوت","d"]];
+function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},3500)}
+function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method="POST";o.body=JSON.stringify(body)}
 return fetch(path,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||j.message||r.status);return j})})}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
-function fmt(s){var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return (d?d+"ي ":"")+h+"س "+m+"د"}
+function fmt(s){var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+"ي ":"")+h+"س "+m+"د"}
 function stat(t,v,p){var e=el("div","stat");e.appendChild(el("small","",t));e.appendChild(el("b","",v));if(p!=null){var b=el("div","bar"),i=el("i");i.style.width=Math.min(100,p)+"%";b.appendChild(i);e.appendChild(b)}return e}
 function status(){api("/api/status").then(function(s){var c=$("stats");c.textContent="";
 c.appendChild(stat("الموديل",s.model));c.appendChild(stat("الرام",s.ram_used+" / "+s.ram_total+" MB",s.ram_total?s.ram_used*100/s.ram_total:0));
-c.appendChild(stat("الفلاش",(s.flash_total-s.flash_free).toFixed(1)+" / "+s.flash_total+" GB",s.flash_total?(s.flash_total-s.flash_free)*100/s.flash_total:0));
+var u=s.flash_total-s.flash_free;c.appendChild(stat("الفلاش",u.toFixed(1)+" / "+s.flash_total+" GB",s.flash_total?u*100/s.flash_total:0));
 c.appendChild(stat("الحرارة",s.temp==null?"-":s.temp+" °C"));c.appendChild(stat("التشغيل",fmt(s.uptime)));c.appendChild(stat("الصورة",s.image));
-$("ver").textContent="v"+s.version;var l=$("links");l.textContent="";[["support","الدعم"],["site","الموقع"],["store","المتجر"]].forEach(function(k){if(s.links[k[0]]){var a=el("a","",k[1]);a.href=s.links[k[0]];a.target="_blank";a.rel="noopener";l.appendChild(a)}});
-busy=s.busy}).catch(function(e){toast(e.message)})}
-function follow(id){var from=0,out=$("out");out.textContent="";busy=true;(function tick(){api("/api/job?id="+id+"&from="+from).then(function(j){if(j.out){out.textContent+=j.out;out.scrollTop=out.scrollHeight}from=j.next;if(!j.done)setTimeout(tick,1000);else{busy=false;load()}}).catch(function(e){toast(e.message);busy=false})})()}
-function start(path,body){if(busy)return toast("عملية أخرى قيد التنفيذ");api(path,body).then(function(r){if(r.job)follow(r.job);else toast("تم")}).catch(function(e){toast(e.message)})}
-document.querySelectorAll("[data-a]").forEach(function(b){b.onclick=function(){var a=b.dataset.a;if((a=="reboot"||a=="restart_gui"||a=="standby")&&!confirm("متأكد؟"))return;start("/api/action",{name:a})}});
-var tabs=$("tabs");Object.keys(names).forEach(function(k){var b=el("button","",names[k]);b.onclick=function(){kind=k;$("cat").value="";load()};b.dataset.k=k;tabs.appendChild(b)});
-function load(){Array.prototype.forEach.call(tabs.children,function(b){b.className=b.dataset.k==kind?"on":""});
-var u="/api/catalog?kind="+kind+"&cat="+encodeURIComponent($("cat").value)+"&q="+encodeURIComponent($("q").value)+"&all="+($("all").checked?1:0);
-api(u).then(function(d){var s=$("cat"),cur=s.value;s.textContent="";var o=el("option","","كل الأقسام");o.value="";s.appendChild(o);
-d.cats.forEach(function(c){var x=el("option","",c.name+" ("+c.count+")");x.value=c.name;s.appendChild(x)});s.value=cur;
-$("count").textContent=d.total+" عنصر";var L=$("list");L.textContent="";
+$("ver").textContent="v"+s.version;var l=$("links");l.textContent="";[["support","💬 الدعم"],["site","🌐 الموقع"],["store","🛒 المتجر"]].forEach(function(k){if(s.links[k[0]]){var a=el("a","",k[1]);a.href=s.links[k[0]];a.target="_blank";a.rel="noopener";l.appendChild(a)}});
+if(!l.firstChild)l.textContent="Online4Tech — خليك دايما اونلاين";busy=s.busy}).catch(function(e){toast(e.message)})}
+function drawer(show){$("drawer").style.display=show?"block":"none"}
+$("dx").onclick=function(){drawer(false)};
+function follow(id,title){var from=0,out=$("out");out.textContent="";$("dt").textContent=title||"المخرجات";drawer(true);busy=true;
+(function tick(){api("/api/job?id="+id+"&from="+from).then(function(j){if(j.out){out.textContent+=j.out;out.scrollTop=out.scrollHeight}from=j.next;if(!j.done)setTimeout(tick,1000);else{busy=false;if(cur!="home")load()}}).catch(function(e){toast(e.message);busy=false})})()}
+function start(path,body,title){if(busy)return toast("عملية أخرى قيد التنفيذ");api(path,body).then(function(r){if(r.job)follow(r.job,title);else toast("تم")}).catch(function(e){toast(e.message)})}
+var cur="home";
+function go(t){cur=t;Array.prototype.forEach.call($("nav").children,function(b){b.className=b.dataset.t==t?"on":""});
+["home","cat","iptv","term"].forEach(function(s){$("s-"+s).className="sec"});
+if(t=="plugin"||t=="skin"||t=="channels"||t=="picons"){kind=t;cat="";$("s-cat").className="sec on";load()}else $("s-"+t).className="sec on"}
+TABS.forEach(function(t){var b=el("button","",t[1]);b.dataset.t=t[0];b.onclick=function(){go(t[0])};$("nav").appendChild(b)});
+ACTS.forEach(function(a){var b=el("button",a[2]||"",a[1]);b.onclick=function(){if(/reboot|restart_gui|standby/.test(a[0])&&!confirm("متأكد؟"))return;start("/api/action",{name:a[0]},a[1])};$("acts").appendChild(b)});
+function chip(name,n,val){var c=el("div","chip"+(cat==val?" on":""),name);if(n!=null)c.appendChild(el("em","",n));c.onclick=function(){cat=val;load()};return c}
+function load(){var u="/api/catalog?kind="+kind+"&cat="+encodeURIComponent(cat)+"&q="+encodeURIComponent($("q").value)+"&all="+($("all").checked?1:0);
+api(u).then(function(d){var C=$("chips");C.textContent="";var tot=0;d.cats.forEach(function(c){tot+=c.count});C.appendChild(chip("الكل",tot,""));d.cats.forEach(function(c){C.appendChild(chip(c.name,c.count,c.name))});
+$("count").textContent=d.total+" عنصر"+(d.total>d.items.length?" (أول "+d.items.length+")":"");var L=$("list");L.textContent="";
+if(!d.items.length)L.appendChild(el("div","empty","لا توجد نتائج"));
 d.items.forEach(function(it){var r=el("div","it"),i=el("div"),n=el("div","n",it.name);if(it.installed)n.appendChild(el("span","tag","مثبّت"));if(!it.compat)n.appendChild(el("span","tag w","غير متوافق"));
 i.appendChild(n);i.appendChild(el("div","m",it.cat+(it.desc?" — "+it.desc:"")));r.appendChild(i);var g=el("div","row");
-var b=el("button","p",it.installed?"إعادة تثبيت":"تثبيت");b.onclick=function(){start("/api/install",{id:it.id})};g.appendChild(b);
-if(it.removable&&it.installed){var x=el("button","d","حذف");x.onclick=function(){if(confirm("حذف "+it.name+"؟"))start("/api/remove",{id:it.id})};g.appendChild(x)}
+var b=el("button","p",it.installed?"إعادة تثبيت":"تثبيت");b.onclick=function(){start("/api/install",{id:it.id},it.name)};g.appendChild(b);
+if(it.removable&&it.installed){var x=el("button","d","حذف");x.onclick=function(){if(confirm("حذف "+it.name+"؟"))start("/api/remove",{id:it.id},it.name)};g.appendChild(x)}
 r.appendChild(g);L.appendChild(r)})}).catch(function(e){toast(e.message)})}
-var tm;$("q").oninput=function(){clearTimeout(tm);tm=setTimeout(load,300)};$("cat").onchange=load;$("all").onchange=load;
+var tm;$("q").oninput=function(){clearTimeout(tm);tm=setTimeout(load,300)};$("all").onchange=load;
 $("iptv").onclick=function(){api("/api/iptv",{player:$("pl").value,m3u:$("m3u").value,host:$("host").value,port:$("port").value,user:$("user").value,pass:$("pass").value}).then(function(r){toast(r.message);$("pass").value=""}).catch(function(e){toast(e.message)})};
-$("run").onclick=function(){var c=$("cmd").value.trim();if(c)start("/api/shell",{cmd:c})};
+$("run").onclick=function(){var c=$("cmd").value.trim();if(c)start("/api/shell",{cmd:c},c.slice(0,40))};
 $("cmd").onkeydown=function(e){if(e.key=="Enter")$("run").click()};
-status();load();setInterval(status,15000);
+go("home");status();setInterval(status,15000);
 </script></body></html>

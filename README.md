@@ -94,8 +94,8 @@ MIT
 
 ## Web control (port 8080)
 
-Open `http://<receiver-ip>:8080` — user `admin`, the password is shown on the receiver in
-**Tools > Web control** (green button generates a new one). Features: device status, quick
+Open `http://<receiver-ip>:8080` (no login by default; optional password in
+**Tools > Web control**). Features: device status, quick
 control, browse/install/remove plugins, skins, channel lists and picons from the catalog,
 XStreamity/XKlass playlist entry, live console output, optional web shell.
 
