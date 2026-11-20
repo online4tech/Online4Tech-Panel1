@@ -68,8 +68,21 @@ def guarded(cls):
 
 def _run(console, cmd, cb):
     def done(data, retval, extra=None):
+        if getattr(console, "_o4t_dead", False):   # screen already closed
+            return
         cb(txt(data), retval)
     console.ePopen(cmd, done)
+
+
+def _watch_close(screen):
+    """Stop late console callbacks from touching a screen that has been closed."""
+    def cleanup():
+        screen.console._o4t_dead = True
+        try:
+            screen.console.killAll()
+        except Exception:
+            pass
+    screen.onClose.append(cleanup)
 
 
 def _ask_restart(screen):
@@ -97,6 +110,7 @@ class O4TMain(Screen):
         self.skin = skin_main()
         Screen.__init__(self, session)
         self.console = Console()
+        _watch_close(self)
         self.idx = 0
         self["title"] = Label("Online4Tech Panel")
         self["slogan"] = Label(SLOGAN)
@@ -189,6 +203,7 @@ class O4TListBase(Screen):
         self.skin = skin_list(self.__class__.__name__)
         Screen.__init__(self, session)
         self.console = Console()
+        _watch_close(self)
         self.items = []
         self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
@@ -764,6 +779,7 @@ class O4TTextBase(Screen):
         self.skin = skin_text(self.__class__.__name__)
         Screen.__init__(self, session)
         self.console = Console()
+        _watch_close(self)
         self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)

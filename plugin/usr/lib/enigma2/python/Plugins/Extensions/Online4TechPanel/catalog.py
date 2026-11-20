@@ -111,6 +111,8 @@ def refresh(console, callback):
            "mv -f %s.part %s" % (TMP_CATALOG, CATALOG_URL, TMP_CATALOG, TMP_CATALOG))
 
     def done(data, retval, extra=None):
+        if getattr(console, "_o4t_dead", False):
+            return
         ok = (retval == 0) and _load(TMP_CATALOG) is not None
         if not ok:
             for p in (TMP_CATALOG, TMP_CATALOG + ".part"):
