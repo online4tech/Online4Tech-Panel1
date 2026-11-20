@@ -21,8 +21,8 @@ from Tools.LoadPixmap import LoadPixmap
 from . import catalog
 from .i18n import T
 from .skin import MAIN_POS, metrics, skin_list, skin_main, skin_text
-from .utils import (parse_opkg_list, pretty_name, read_file, shquote, txt,
-                    valid_pkg, valid_url, version_tuple)
+from .utils import (cmd_hosts, detect_image_group, parse_opkg_list, pretty_name,
+                    read_file, shquote, txt, valid_pkg, valid_url, version_tuple)
 from .version import (HOME_URL, INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
                       VERSION_URL)
 
@@ -164,7 +164,7 @@ class O4TListBase(Screen):
         self["key_red"].setText(T("k_back"))
         self["actions"] = ActionMap(
             ["OkCancelActions", "ColorActions", "DirectionActions", "MenuActions"],
-            {"ok": self.key_green, "cancel": self.close, "red": self.close,
+            {"ok": self.key_green, "cancel": self.go_back, "red": self.go_back,
              "green": self.key_green, "yellow": self.key_yellow, "blue": self.key_blue,
              "menu": self.key_menu,
              "up": self["list"].up, "down": self["list"].down,
@@ -173,6 +173,9 @@ class O4TListBase(Screen):
         self.onLayoutFinish.append(self.reload)
 
     # -- to override
+    def go_back(self):
+        self.close()
+
     def reload(self):
         pass
 
@@ -225,78 +228,189 @@ class O4TListBase(Screen):
 # Plugins / Skins browser
 # =====================================================================
 class O4TPackages(O4TListBase):
+    """Category list -> item list. Works for plugins and skins."""
+    FEED = "__feed__"
+
     def __init__(self, session, kind):
         self.kind = kind
         self.TITLE = "m_plugins" if kind == "plugin" else "m_skins"
-        self.mode = "feed"
+        self.cat = None          # None = category list
         self.filter = ""
-        self.all_items = []
         self.installed = {}
+        self.feed_items = []
+        self.recommended = detect_image_group() if kind == "skin" else ""
         O4TListBase.__init__(self, session)
-        self["key_green"].setText(T("k_install"))
-        self["key_yellow"].setText(T("k_featured"))
-        self["key_blue"].setText(T("k_refresh"))
+        self["key_blue"].setText(T("k_sync"))
+        self.set_keys()
 
+    # ---- state helpers
+    def in_cats(self):
+        return self.cat is None and not self.filter
+
+    def set_keys(self):
+        self["key_green"].setText(T("k_open_cat") if self.in_cats() else T("k_install"))
+        self["key_yellow"].setText("" if self.in_cats() else T("k_remove"))
+        self["title"].setText(self.title_text())
+
+    def title_text(self):
+        base = T(self.TITLE)
+        if self.filter and self.cat is None:
+            return "%s - %s" % (base, T("search_all"))
+        if self.cat == self.FEED:
+            return "%s - %s" % (base, T("cat_feed"))
+        return "%s - %s" % (base, self.cat) if self.cat else base
+
+    def go_back(self):
+        if self.cat is not None or self.filter:
+            self.cat, self.filter = None, ""
+            self.show()
+        else:
+            self.close()
+
+    # ---- loading
     def reload(self):
+        self.set_status(T("loading"))
+        self.run(OPKG_INSTALLED, self.got_installed)
+
+    def got_installed(self, data, retval):
+        self.installed = dict((p["pkg"], p["version"]) for p in parse_opkg_list(data))
+        self.show()
+
+    def show(self):
+        self.set_keys()
+        if self.cat == self.FEED:
+            self.load_feed()
+        elif self.in_cats():
+            self.show_cats()
+        else:
+            self.show_items()
+
+    def show_cats(self):
+        entries = [{"_cat": self.FEED, "name": T("cat_feed"), "count": None}]
+        for cat, n in catalog.categories(self.kind):
+            entries.append({"_cat": cat, "name": cat, "count": n})
+        if self.recommended:
+            entries.sort(key=lambda e: 0 if e["_cat"] == self.recommended else 1)
+            entries.sort(key=lambda e: 0 if e["_cat"] == self.FEED else 1)  # feed always first
+        self.set_items(entries)
+
+    def match(self, it):
+        f = self.filter.lower()
+        return not f or f in it["name"].lower() or f in it.get("desc", "").lower() \
+            or f in it.get("pkg", "").lower()
+
+    def show_items(self):
+        out = [i for i in catalog.items(self.kind)
+               if (self.cat is None or i["category"] == self.cat) and self.match(i)]
+        self.set_items(out)
+
+    def load_feed(self):
         self.set_items([])
         self.set_status(T("loading"))
-        cmd = "%s; echo '@@FEED@@'; " % OPKG_INSTALLED
-        if self.mode == "feed":
-            cmd += "opkg list 2>/dev/null | grep '^%s' | %s" % (FEED_PREFIX[self.kind], FEED_FILTER)
-        self.run(cmd, self.loaded)
+        cmd = "opkg list 2>/dev/null | grep '^%s' | %s" % (FEED_PREFIX[self.kind], FEED_FILTER)
+        self.run(cmd, self.got_feed)
 
-    def loaded(self, data, retval):
-        head, _sep, tail = data.partition("@@FEED@@")
-        self.installed = dict((p["pkg"], p["version"]) for p in parse_opkg_list(head))
+    def got_feed(self, data, retval):
         items = []
-        if self.mode == "feed":
-            for p in parse_opkg_list(tail):
-                p["name"] = pretty_name(p["pkg"])
-                p["method"] = "feed"
-                p["source"] = "src_feed"
-                items.append(p)
-            items.sort(key=lambda i: i["name"].lower())
-        else:
-            for p in catalog.items_for(self.kind):
-                p["source"] = "src_picks"
-                items.append(p)
-        self.all_items = items
-        self.apply_filter()
-        if not items:
-            self.set_status(T("empty_feed") if self.mode == "feed" else T("empty"))
+        for p in parse_opkg_list(data):
+            p.update({"name": pretty_name(p["pkg"]), "method": "feed", "category": T("cat_feed")})
+            items.append(p)
+        items.sort(key=lambda i: i["name"].lower())
+        self.feed_items = items
+        self.set_items([i for i in items if self.match(i)],
+                       T("empty_feed"))
 
-    def apply_filter(self):
-        f = self.filter.lower()
-        items = [i for i in self.all_items
-                 if not f or f in i["name"].lower() or f in i.get("pkg", "").lower()
-                 or f in i.get("desc", "").lower()]
-        self.set_items(items)
+    # ---- rendering
+    def is_installed(self, it):
+        if it.get("pkg") and it["pkg"] in self.installed:
+            return True
+        return bool(it.get("path")) and os.path.exists(it["path"])
 
-    def label_for(self, item):
-        mark = "* " if item.get("pkg") in self.installed else "   "
-        return mark + item["name"]
+    def label_for(self, it):
+        if "_cat" in it:
+            label = it["name"] if it["count"] is None else "%s   (%d)" % (it["name"], it["count"])
+            if it["_cat"] == self.recommended and self.recommended:
+                label += "   - " + T("recommended")
+            return label
+        return ("* " if self.is_installed(it) else "   ") + it["name"]
 
-    def detail_for(self, item):
-        pkg = item.get("pkg", "")
-        state = T("installed_yes") if pkg in self.installed else T("installed_no")
-        lines = [item["name"], "",
-                 "%s: %s" % (T("status"), state),
-                 "%s: %s" % (T("version"), item.get("version") or "-"),
-                 "%s: %s" % (T("source"), T(item.get("source", "src_feed")))]
-        if pkg:
-            lines.append("%s: %s" % (T("package"), pkg))
-        if item.get("desc"):
-            lines += ["", item["desc"]]
+    def detail_for(self, it):
+        if "_cat" in it:
+            if it["_cat"] == self.FEED:
+                return "%s\n\n%s" % (it["name"], T("feed_hint"))
+            lines = [it["name"], "", "%d %s" % (it["count"], T("n_items")), "", T("cat_hint")]
+            if it["_cat"] == self.recommended and self.recommended:
+                lines += ["", T("recommended")]
+            return "\n".join(lines)
+        lines = [it["name"], "",
+                 "%s: %s" % (T("status"), T("installed_yes") if self.is_installed(it)
+                             else T("installed_no")),
+                 "%s: %s" % (T("category"), it.get("category", ""))]
+        if it.get("version"):
+            lines.append("%s: %s" % (T("version"), it["version"]))
+        if it.get("pkg"):
+            lines.append("%s: %s" % (T("package"), it["pkg"]))
+        src = it.get("url") or it.get("cmd") or ""
+        hosts = sorted(cmd_hosts(src))
+        if hosts:
+            lines.append("%s: %s" % (T("dl_from"), ", ".join(hosts)))
+        if it.get("images"):
+            lines.append("%s: %s" % (T("images"), ", ".join(it["images"])))
+        if it.get("desc"):
+            lines += ["", it["desc"]]
         return "\n".join(lines)
 
+    # ---- actions
+    def key_green(self):
+        it = self.current()
+        if not it:
+            return
+        if "_cat" in it:
+            self.cat = it["_cat"]
+            self.show()
+            return
+        cmd = self.install_cmd(it)
+        if cmd:
+            self.session.openWithCallback(self.after_change, ConsoleScreen, title=it["name"],
+                                          cmdlist=[cmd])
+
+    def install_cmd(self, it):
+        m = it.get("method")
+        if m == "cmd":
+            return it["cmd"]
+        if m == "feed" and valid_pkg(it.get("pkg", "")):
+            return "opkg install %s" % shquote(it["pkg"])
+        if m == "ipk" and valid_url(it.get("url", "")):
+            return ("wget -q --no-check-certificate -O /tmp/o4t_pkg.ipk %s && opkg install "
+                    "--force-reinstall --force-overwrite /tmp/o4t_pkg.ipk; rm -f /tmp/o4t_pkg.ipk"
+                    % shquote(it["url"]))
+        return None
+
     def key_yellow(self):
-        self.mode = "picks" if self.mode == "feed" else "feed"
-        self["key_yellow"].setText(T("k_featured") if self.mode == "feed" else T("k_feed"))
-        self.reload()
+        it = self.current()
+        if not it or "_cat" in it:
+            return
+        if it.get("remove"):
+            cmd = it["remove"]
+        elif it.get("method") == "feed" and valid_pkg(it.get("pkg", "")):
+            cmd = "opkg remove %s" % shquote(it["pkg"])
+        else:
+            return
+        _confirm(self, "%s\n\n%s" % (T("confirm_remove"), it["name"]),
+                 lambda: self.session.openWithCallback(self.after_change, ConsoleScreen,
+                                                       title=it["name"], cmdlist=[cmd]))
 
     def key_blue(self):
-        self.session.openWithCallback(lambda *a: self.reload(), ConsoleScreen,
-                                      title="opkg update", cmdlist=["opkg update"])
+        if self.cat == self.FEED:
+            self.session.openWithCallback(lambda *a: self.show(), ConsoleScreen,
+                                          title="opkg update", cmdlist=["opkg update"])
+            return
+
+        def done(ok):
+            self.session.open(MessageBox, T("synced") if ok else T("sync_failed"),
+                              MessageBox.TYPE_INFO if ok else MessageBox.TYPE_WARNING, timeout=4)
+            self.show()
+        catalog.refresh(self.console, done)
 
     def key_menu(self):
         self.session.openWithCallback(self.got_filter, VirtualKeyBoard,
@@ -304,30 +418,10 @@ class O4TPackages(O4TListBase):
 
     def got_filter(self, text=None):
         if text is not None:
-            self.filter = text
-            self.apply_filter()
+            self.filter = text.strip()
+            self.show()
 
-    def key_green(self):
-        item = self.current()
-        if not item:
-            return
-        method = item.get("method")
-        if method == "feed" and valid_pkg(item.get("pkg", "")):
-            cmds = ["opkg install %s" % shquote(item["pkg"])]
-        elif method == "ipk" and valid_url(item.get("url", "")):
-            tmp = "/tmp/o4t_pkg.ipk"
-            cmds = ["wget -q --no-check-certificate -O %s %s && opkg install --force-reinstall "
-                    "--force-overwrite %s; rm -f %s" % (tmp, shquote(item["url"]), tmp, tmp)]
-        elif method == "tar" and valid_url(item.get("url", "")):
-            tmp = "/tmp/o4t_pkg.tar.gz"
-            cmds = ["wget -q --no-check-certificate -O %s %s && tar -xzf %s -C /; rm -f %s"
-                    % (tmp, shquote(item["url"]), tmp, tmp)]
-        else:
-            return
-        self.session.openWithCallback(self.after_install, ConsoleScreen,
-                                      title=item["name"], cmdlist=cmds)
-
-    def after_install(self, *args):
+    def after_change(self, *args):
         self.reload()
         _ask_restart(self)
 
@@ -614,7 +708,7 @@ class O4TSelfUpdate(O4TTextBase):
             T("su_newer") if newer else T("su_same")))
 
     def key_green(self):
-        cmd = "wget -q --no-check-certificate -O - %s | sh" % shquote(INSTALL_URL)
+        cmd = "wget -q --no-check-certificate -O - %s | O4T_NO_RESTART=1 /bin/sh" % shquote(INSTALL_URL)
         self.session.openWithCallback(self.after, ConsoleScreen, title="Online4Tech Panel",
                                       cmdlist=[cmd])
 

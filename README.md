@@ -9,8 +9,8 @@ A modern glass-style panel for Enigma2 receivers: browse and install the newest 
 
 | # | القسم | الوظيفة |
 |---|-------|---------|
-| 1 | Plugins | تصفح فيد الصورة (opkg) + مختارات Online4Tech، بحث (MENU)، تثبيت بزر واحد |
-| 2 | Skins | نفس الفكرة للاسكينات |
+| 1 | Plugins | اقسام Online4Tech + فيد الصورة، بحث (MENU)، تثبيت وحذف |
+| 2 | Skins | اسكينات حسب نوع الصورة + بوت لوجو + سبينر + بايكونز |
 | 3 | Updates | يفحص النسخ الأحدث ويحدّث حزمة او الكل |
 | 4 | Installed | عرض وحذف البلجنات/الاسكينات المثبتة |
 | 5 | Tools | ريستارت واجهة، ريبوت، تفريغ الرام، مسح /tmp، تحديث الفيد |
@@ -25,45 +25,55 @@ A modern glass-style panel for Enigma2 receivers: browse and install the newest 
 ### Telnet / SSH (الأسهل)
 
 ```sh
-wget -q --no-check-certificate -O - https://raw.githubusercontent.com/YOUR_GITHUB_USER/Online4Tech-Panel/main/install.sh | sh
+wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh
 ```
 
-الجهاز هيعمل ريستارت للواجهة تلقائي، وبعدها افتح **Plugins** او **Extensions** ← *Online4Tech Panel*.
+بيحمّل ملف IPK صغير (~400KB) ويثبّته، وبعدها الجهاز بيعمل ريستارت للواجهة تلقائي. افتح **Plugins** او **Extensions** ← *Online4Tech Panel*.
 
-### IPK
+### IPK يدوي
 
 ```sh
-./build_ipk.sh            # ينتج dist/enigma2-plugin-extensions-online4techpanel_<ver>_all.ipk
-opkg install /tmp/enigma2-plugin-extensions-online4techpanel_*.ipk
+opkg install --force-reinstall /tmp/enigma2-plugin-extensions-online4techpanel_all.ipk
 ```
 
-## ازاي البلجنات "الأحدث" بتتجاب؟
+## الأقسام (من قواعد بيانات Online4Tech)
 
-* **فيد الصورة (opkg):** البانل بيقرا `opkg list` مباشرة، فبيعرض اللي متاح فعلاً لصورتك ونسخته الحالية (محتاج `opkg update` من الزر الأزرق مرة).
-* **مختارات Online4Tech:** ملف [`catalog.json`](catalog.json) على GitHub. عدّله وارفعه والبانل بيعمل مزامنة تلقائية عند فتحه (او زر الأصفر). كل عنصر:
+الكتالوج `catalog.json` (627 عنصر) متجمّع من ملفات JSON اللي في حساب online4tech، ومقسّم زي تقسيمها الأصلي:
 
-```json
-{ "type": "plugin|skin", "name": "...", "version": "...", "desc": "...",
-  "install": { "method": "feed|ipk|tar", "pkg": "اسم الحزمة", "url": "https://..." } }
+* **Plugins:** Panels, Plugins, Media, IPTV, Audio, EPG, Tools, System, Settings, Translation, Ciefp, Novaler, Multiboot, Dependencies, Community
+* **Skins (حسب نوع الصورة):** OpenATV, OpenBH, Egami, OpenPLi Py3, OpenPLi Py2, OpenSPA, OpenVIX, PurE2, TeamNitro, Display (LCD), XStreamity, Community Skins + Bootlogos, Spinners, Picons
+* **Image feed (opkg):** اول عنصر في كل قسم، بيقرا فيد صورتك مباشرة.
+
+البانل بيكتشف صورتك (OpenATV/OpenBH/...) ويطلّع قسم السكينات المناسب لها اول القايمة، وبيعلّم المثبّت بنجمة `*`، وبيدعم الحذف للعناصر اللي ليها أمر حذف.
+
+### تحديث الكتالوج
+
+```sh
+python3 tools/build_catalog.py            # يسحب المصادر من GitHub ويبني catalog.json
+python3 tools/build_catalog.py --local DIR   # من نسخ محلية
+git add catalog.json plugin && git commit -m "update catalog" && git push
 ```
 
-`feed` = اسم حزمة opkg، `ipk` = رابط مباشر لملف ipk، `tar` = رابط tar.gz بيتفك على `/`.
-البانل بيرفض أي اسم حزمة او رابط فيه رموز shell خطرة.
+البانل بيزامن `catalog.json` من GitHub كل ما تفتحه (او الزر الأصفر)، وعنده نسخة داخلية للعمل بدون انترنت.
+
+**الأمان:** اي أمر تثبيت في الكتالوج بيتقبل بس لو بيحمّل من مواقع موثوقة (raw.githubusercontent.com, github.com, gitlab.com, dreambox4u.com, ...) — القايمة في `utils.py` (`TRUSTED_HOSTS`). اوامر الحذف لازم تكون `rm` لمسارات مطلقة غير سطحية او `opkg remove`. اللي مش مطابق بيتشال من الكتالوج.
+اقسام Softcam/CCcam/BISS/DCW والقنوات والباك اب مش مضافة (خارج نطاق بلجنات وسكينات)؛ `--include-softcam` موجود في الأداة لو عايزها.
 
 ## للمطور / Development
 
 ```sh
 python3 tools/make_assets.py     # يعيد توليد الأيقونات والخلفيات الزجاجية (Pillow)
-tools/set_repo.sh USER/REPO      # يغيّر مكان GitHub في كل الملفات
-./build_ipk.sh
+python3 tools/build_catalog.py   # يعيد بناء catalog.json
+./build_ipk.sh                   # ينتج release/enigma2-plugin-extensions-online4techpanel_all.ipk
 ```
+مكان GitHub متسجل في `plugin/.../version.py` و `install.sh` (REPO / BRANCH).
 
 الهيكل:
 
 ```
 plugin/usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel/
   plugin.py  screens.py  skin.py  catalog.py  i18n.py  utils.py  version.py
-  assets/{fhd,hd}/   data/catalog.json
+  assets/{fhd,hd}/   data/catalog.json (نسخة offline)
 ```
 
 الكود مكتوب بدون f-strings / type hints عشان يشتغل على Python 2.7 و 3.x.

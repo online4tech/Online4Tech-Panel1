@@ -10,7 +10,25 @@ try:
 except ImportError:  # Python 2
     from pipes import quote as shquote
 
+try:
+    from urllib.parse import urlparse
+except ImportError:  # Python 2
+    from urlparse import urlparse
+
 PY3 = sys.version_info[0] >= 3
+
+# Install commands may only download from these hosts (defence in depth: the
+# catalog is fetched from the internet and its commands run as root).
+TRUSTED_HOSTS = frozenset([
+    "raw.githubusercontent.com", "github.com", "codeload.github.com",
+    "objects.githubusercontent.com", "gitlab.com", "dreambox4u.com",
+    "www.dreambox4u.com", "xfayez95.github.io", "download.blue-panel.com",
+    "feeds2.mynonpublic.com", "updates.mynonpublic.com",
+])
+_URL_RE = re.compile(r"https?://[^\s\"'|;&<>()]+")
+_PM = r"(opkg|apt-get) (install|remove|update|upgrade)( [A-Za-z0-9._+-]+)*"
+_OPKG_RE = re.compile(r"^" + _PM + r"( && " + _PM + r")?$")
+_RM_RE = re.compile(r"^rm -(rf|f|r) ((\'/[^\']+\'|/[^\s;|&<>$`]+) ?)+( && opkg update)?$")
 _PKG_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.+_-]*$")
 
 
@@ -67,3 +85,46 @@ def parse_opkg_list(text):
             out.append({"pkg": parts[0].strip(), "version": parts[1].strip(),
                         "desc": parts[2].strip() if len(parts) > 2 else ""})
     return out
+
+
+def cmd_hosts(cmd):
+    return set(urlparse(u).netloc.lower() for u in _URL_RE.findall(cmd or ""))
+
+
+def safe_cmd(cmd):
+    """An install command is accepted when it only talks to trusted hosts."""
+    if not cmd or len(cmd) > 3000 or "\n" in cmd or "\x00" in cmd:
+        return False
+    hosts = cmd_hosts(cmd)
+    if not hosts:
+        return bool(_OPKG_RE.match(cmd)) or cmd == "rm -rf /var/cache/opkg/* && opkg update"
+    return all(h in TRUSTED_HOSTS for h in hosts)
+
+
+def safe_remove(cmd):
+    """Only plain `rm` of absolute, non-shallow paths (or `opkg remove`)."""
+    if not cmd or len(cmd) > 1500 or "\n" in cmd:
+        return False
+    if _OPKG_RE.match(cmd):
+        return True
+    if not _RM_RE.match(cmd):
+        return False
+    for path in re.findall(r"\'(/[^\']+)\'|(?<![\w'])(/[^\s;|&<>$`']+)", cmd.split(" && ")[0]):
+        p = path[0] or path[1]
+        if len([c for c in p.split("/") if c]) < 3 or ".." in p:
+            return False
+    return True
+
+
+def detect_image_group():
+    """Skin category that best matches this receiver's image."""
+    blob = (read_file("/etc/image-version") + read_file("/etc/issue") +
+            read_file("/etc/os-release")).lower()
+    for key, cat in (("openatv", "OpenATV"), ("openbh", "OpenBH"), ("egami", "Egami"),
+                     ("openspa", "OpenSPA"), ("openvix", "OpenVIX"), ("pure2", "PurE2"),
+                     ("nitro", "TeamNitro")):
+        if key in blob:
+            return cat
+    if "openpli" in blob or "pli" in blob:
+        return "OpenPLi Py3" if PY3 else "OpenPLi Py2"
+    return ""

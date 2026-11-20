@@ -1,10 +1,10 @@
 #!/bin/bash
-# Build enigma2-plugin-extensions-online4techpanel_<ver>_all.ipk  (needs: ar, tar, gzip)
+# Build release/enigma2-plugin-extensions-online4techpanel_all.ipk  (needs: ar, tar, gzip)
 set -e
 cd "$(dirname "$0")"
 VER="$(tr -d ' \n' < version.txt)"
 PKG="enigma2-plugin-extensions-online4techpanel"
-OUT="dist"
+OUT="release"
 W="$(mktemp -d)"
 trap 'rm -rf "$W"' EXIT
 
@@ -19,7 +19,7 @@ Architecture: all
 Maintainer: Online4Tech
 Section: extra
 Priority: optional
-Homepage: https://github.com/YOUR_GITHUB_USER/Online4Tech-Panel
+Homepage: https://github.com/online4tech/Online4Tech-Panel1/tree/panel-v2
 Description: Online4Tech Panel - latest plugins and skins panel for Enigma2 (Python 2/3)
 CTL
 cat > "$W/control/postinst" <<'SH'
@@ -37,5 +37,5 @@ chmod 755 "$W/control/postinst" "$W/control/postrm"
 echo "2.0" > "$W/debian-binary"
 (cd "$W/data" && tar --owner=0 --group=0 -czf "$W/data.tar.gz" .)
 (cd "$W/control" && tar --owner=0 --group=0 -czf "$W/control.tar.gz" .)
-(cd "$W" && ar -r "$OLDPWD/$OUT/${PKG}_${VER}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
-echo "built $OUT/${PKG}_${VER}_all.ipk"
+(cd "$W" && ar -r "$OLDPWD/$OUT/${PKG}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
+echo "built $OUT/${PKG}_all.ipk"

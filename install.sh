@@ -1,47 +1,55 @@
 #!/bin/sh
 # Online4Tech Panel - Telnet / SSH installer
 #
-#   wget -q --no-check-certificate -O - https://raw.githubusercontent.com/YOUR_GITHUB_USER/Online4Tech-Panel/main/install.sh | sh
+#   wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh
 #
-REPO="YOUR_GITHUB_USER/Online4Tech-Panel"
-BRANCH="main"
-NAME="Online4TechPanel"
-DEST="/usr/lib/enigma2/python/Plugins/Extensions/$NAME"
-TMP="/tmp/o4t_install"
-URL="https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz"
+REPO="online4tech/Online4Tech-Panel1"
+BRANCH="panel-v2"
+RAW="https://raw.githubusercontent.com/$REPO/$BRANCH"
+IPK_URL="$RAW/release/enigma2-plugin-extensions-online4techpanel_all.ipk"
+IPK="/tmp/o4t_panel.ipk"
+WORK="/tmp/o4t_panel_x"
 
 say() { echo "[Online4Tech] $*"; }
-fail() { say "ERROR: $*"; rm -rf "$TMP" /tmp/o4t_install.tar.gz; exit 1; }
+cleanup() { rm -rf "$IPK" "$WORK"; }
+fail() { say "ERROR: $*"; cleanup; exit 1; }
 
 [ "$(id -u)" = "0" ] || fail "run as root"
 [ -d /usr/lib/enigma2/python/Plugins/Extensions ] || fail "this does not look like an Enigma2 receiver"
 
-say "Downloading..."
-rm -rf "$TMP" /tmp/o4t_install.tar.gz
-mkdir -p "$TMP" || fail "cannot create $TMP"
+cleanup
+say "Downloading Online4Tech Panel..."
 if command -v wget >/dev/null 2>&1; then
-    wget -q --no-check-certificate -O /tmp/o4t_install.tar.gz "$URL" || fail "download failed (check internet)"
+    wget -q --no-check-certificate -O "$IPK" "$IPK_URL" || fail "download failed (check the internet connection)"
 elif command -v curl >/dev/null 2>&1; then
-    curl -fsSLk -o /tmp/o4t_install.tar.gz "$URL" || fail "download failed (check internet)"
+    curl -fsSLk -o "$IPK" "$IPK_URL" || fail "download failed (check the internet connection)"
 else
     fail "wget/curl not found"
 fi
+[ -s "$IPK" ] || fail "downloaded file is empty"
 
-say "Extracting..."
-tar -xzf /tmp/o4t_install.tar.gz -C "$TMP" || fail "archive is corrupt"
-SRC=$(ls -d "$TMP"/*/plugin/usr/lib/enigma2/python/Plugins/Extensions/$NAME 2>/dev/null | head -n 1)
-[ -n "$SRC" ] && [ -f "$SRC/plugin.py" ] || fail "plugin files not found in archive"
-
-say "Installing to $DEST"
-rm -rf "$DEST"
-cp -r "$SRC" "$DEST" || fail "copy failed"
+say "Installing..."
+if command -v opkg >/dev/null 2>&1 && opkg install --force-reinstall --force-overwrite "$IPK" >/tmp/o4t_opkg.log 2>&1; then
+    :
+else
+    say "opkg failed, extracting manually"
+    mkdir -p "$WORK" && cd "$WORK" || fail "cannot create $WORK"
+    ar x "$IPK" 2>/dev/null || tar -xf "$IPK" 2>/dev/null || fail "invalid package"
+    [ -f data.tar.gz ] || fail "invalid package (no data.tar.gz)"
+    tar -xzf data.tar.gz -C / || fail "extract failed"
+    cd /
+fi
+DEST="/usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel"
+[ -f "$DEST/plugin.py" ] || fail "installation failed (see /tmp/o4t_opkg.log)"
 chmod -R 755 "$DEST"
-find "$DEST" -name '*.pyc' -delete 2>/dev/null
-find "$DEST" -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null
-
-rm -rf "$TMP" /tmp/o4t_install.tar.gz
+find "$DEST" \( -name '*.pyc' -o -name '__pycache__' \) -prune -exec rm -rf {} + 2>/dev/null
+cleanup
 sync
-say "Installed Online4Tech Panel OK"
+say "Online4Tech Panel installed OK."
+
+if [ "$O4T_NO_RESTART" = "1" ]; then
+    exit 0
+fi
 say "Restarting Enigma2 in 3 seconds..."
 sleep 3
 if command -v systemctl >/dev/null 2>&1 && systemctl list-units --type=service 2>/dev/null | grep -q enigma2; then
