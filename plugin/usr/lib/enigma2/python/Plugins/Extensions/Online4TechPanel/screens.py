@@ -20,9 +20,11 @@ from Tools.LoadPixmap import LoadPixmap
 
 from . import catalog
 from .i18n import T
-from .skin import MAIN_POS, metrics, skin_list, skin_main, skin_text
-from .utils import (cmd_hosts, detect_image_group, parse_opkg_list, pretty_name,
-                    read_file, shquote, txt, valid_pkg, valid_url, version_tuple)
+from .skin import MAIN_POS, metrics, skin_list, skin_main, skin_text, theme
+from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_setting,
+                    detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
+                    pretty_name, read_file, save_favs, shquote, txt, valid_pkg, valid_url,
+                    version_tuple)
 from .version import (HOME_URL, INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
                       VERSION_URL)
 
@@ -204,9 +206,20 @@ class O4TListBase(Screen):
     def set_status(self, text):
         self["status"].setText(text)
 
-    def set_items(self, items, empty_text=None):
+    def set_items(self, items, empty_text=None, keep=False):
+        idx = 0
+        if keep:
+            try:
+                idx = self["list"].getSelectionIndex()
+            except Exception:
+                idx = 0
         self.items = items
         self["list"].setList([self.label_for(i) for i in items])
+        if keep and items:
+            try:
+                self["list"].moveToIndex(min(idx, len(items) - 1))
+            except Exception:
+                pass
         self.set_status("" if items else (empty_text or T("empty")))
         self.sel_changed()
 
@@ -228,18 +241,24 @@ class O4TListBase(Screen):
 # Plugins / Skins browser
 # =====================================================================
 class O4TPackages(O4TListBase):
-    """Category list -> item list. Works for plugins and skins."""
+    """Category list -> item list (plugins or skins) with favourites and compat filter."""
     FEED = "__feed__"
+    FAV = "__fav__"
 
     def __init__(self, session, kind):
         self.kind = kind
         self.TITLE = "m_plugins" if kind == "plugin" else "m_skins"
         self.cat = None          # None = category list
         self.filter = ""
+        self.show_all = False    # show items for the other Python generation too
         self.installed = {}
-        self.feed_items = []
+        self.favs = load_favs()
         self.recommended = detect_image_group() if kind == "skin" else ""
         O4TListBase.__init__(self, session)
+        self["nums"] = NumberActionMap(
+            ["NumberActions"],
+            {"1": lambda *a: self.toggle_fav(), "2": lambda *a: self.toggle_compat(),
+             "3": lambda *a: self.install_favs()}, -1)
         self["key_blue"].setText(T("k_sync"))
         self.set_keys()
 
@@ -258,6 +277,8 @@ class O4TPackages(O4TListBase):
             return "%s - %s" % (base, T("search_all"))
         if self.cat == self.FEED:
             return "%s - %s" % (base, T("cat_feed"))
+        if self.cat == self.FAV:
+            return "%s - %s" % (base, T("cat_fav"))
         return "%s - %s" % (base, self.cat) if self.cat else base
 
     def go_back(self):
@@ -276,33 +297,46 @@ class O4TPackages(O4TListBase):
         self.installed = dict((p["pkg"], p["version"]) for p in parse_opkg_list(data))
         self.show()
 
-    def show(self):
+    def visible(self):
+        items = catalog.items(self.kind)
+        return items if self.show_all else [i for i in items if compatible(i)]
+
+    def show(self, keep=False):
         self.set_keys()
         if self.cat == self.FEED:
             self.load_feed()
         elif self.in_cats():
-            self.show_cats()
+            self.show_cats(keep)
         else:
-            self.show_items()
+            self.show_items(keep)
 
-    def show_cats(self):
-        entries = [{"_cat": self.FEED, "name": T("cat_feed"), "count": None}]
-        for cat, n in catalog.categories(self.kind):
-            entries.append({"_cat": cat, "name": cat, "count": n})
+    def show_cats(self, keep=False):
+        cats = catalog.categories(self.kind, self.visible())
         if self.recommended:
-            entries.sort(key=lambda e: 0 if e["_cat"] == self.recommended else 1)
-            entries.sort(key=lambda e: 0 if e["_cat"] == self.FEED else 1)  # feed always first
-        self.set_items(entries)
+            cats.sort(key=lambda c: 0 if c[0] == self.recommended else 1)
+        entries = [{"_cat": self.FEED, "name": T("cat_feed"), "count": None}]
+        favs = self.fav_items()
+        if favs:
+            entries.append({"_cat": self.FAV, "name": T("cat_fav"), "count": len(favs)})
+        entries += [{"_cat": c, "name": c, "count": n} for c, n in cats]
+        self.set_items(entries, keep=keep)
 
     def match(self, it):
         f = self.filter.lower()
         return not f or f in it["name"].lower() or f in it.get("desc", "").lower() \
             or f in it.get("pkg", "").lower()
 
-    def show_items(self):
-        out = [i for i in catalog.items(self.kind)
+    def fav_items(self):
+        return [i for i in catalog.items(self.kind) if item_key(i) in self.favs]
+
+    def show_items(self, keep=False):
+        if self.cat == self.FAV:
+            out = [i for i in self.fav_items() if self.match(i)]
+            self.set_items(out, T("fav_empty"), keep=keep)
+            return
+        out = [i for i in self.visible()
                if (self.cat is None or i["category"] == self.cat) and self.match(i)]
-        self.set_items(out)
+        self.set_items(out, keep=keep)
 
     def load_feed(self):
         self.set_items([])
@@ -313,12 +347,11 @@ class O4TPackages(O4TListBase):
     def got_feed(self, data, retval):
         items = []
         for p in parse_opkg_list(data):
-            p.update({"name": pretty_name(p["pkg"]), "method": "feed", "category": T("cat_feed")})
+            p.update({"name": pretty_name(p["pkg"]), "method": "feed", "category": T("cat_feed"),
+                      "type": self.kind})
             items.append(p)
         items.sort(key=lambda i: i["name"].lower())
-        self.feed_items = items
-        self.set_items([i for i in items if self.match(i)],
-                       T("empty_feed"))
+        self.set_items([i for i in items if self.match(i)], T("empty_feed"))
 
     # ---- rendering
     def is_installed(self, it):
@@ -329,36 +362,82 @@ class O4TPackages(O4TListBase):
     def label_for(self, it):
         if "_cat" in it:
             label = it["name"] if it["count"] is None else "%s   (%d)" % (it["name"], it["count"])
-            if it["_cat"] == self.recommended and self.recommended:
+            if self.recommended and it["_cat"] == self.recommended:
                 label += "   - " + T("recommended")
             return label
-        return ("* " if self.is_installed(it) else "   ") + it["name"]
+        return ("*" if self.is_installed(it) else " ") + ("+" if item_key(it) in self.favs else " ") \
+            + " " + it["name"]
 
     def detail_for(self, it):
         if "_cat" in it:
             if it["_cat"] == self.FEED:
                 return "%s\n\n%s" % (it["name"], T("feed_hint"))
+            if it["_cat"] == self.FAV:
+                return "%s\n\n%d %s\n\n%s" % (it["name"], it["count"], T("n_items"), T("fav_hint"))
             lines = [it["name"], "", "%d %s" % (it["count"], T("n_items")), "", T("cat_hint")]
-            if it["_cat"] == self.recommended and self.recommended:
+            if self.recommended and it["_cat"] == self.recommended:
                 lines += ["", T("recommended")]
             return "\n".join(lines)
         lines = [it["name"], "",
                  "%s: %s" % (T("status"), T("installed_yes") if self.is_installed(it)
                              else T("installed_no")),
                  "%s: %s" % (T("category"), it.get("category", ""))]
+        if item_key(it) in self.favs:
+            lines.append("+ " + T("is_fav"))
+        if not compatible(it):
+            lines.append("! " + T("not_compat"))
         if it.get("version"):
             lines.append("%s: %s" % (T("version"), it["version"]))
         if it.get("pkg"):
             lines.append("%s: %s" % (T("package"), it["pkg"]))
-        src = it.get("url") or it.get("cmd") or ""
-        hosts = sorted(cmd_hosts(src))
+        hosts = sorted(cmd_hosts(it.get("url") or it.get("cmd") or ""))
         if hosts:
             lines.append("%s: %s" % (T("dl_from"), ", ".join(hosts)))
         if it.get("images"):
             lines.append("%s: %s" % (T("images"), ", ".join(it["images"])))
         if it.get("desc"):
             lines += ["", it["desc"]]
+        lines += ["", T("hint_items")]
         return "\n".join(lines)
+
+    # ---- favourites / compat (number keys)
+    def toggle_fav(self):
+        it = self.current()
+        if not it or "_cat" in it or "method" not in it or it.get("method") == "feed":
+            return
+        key = item_key(it)
+        if key in self.favs:
+            self.favs.discard(key)
+            msg = T("fav_removed")
+        else:
+            self.favs.add(key)
+            msg = T("fav_added")
+        save_favs(self.favs)
+        self.session.open(MessageBox, "%s\n%s" % (msg, it["name"]), MessageBox.TYPE_INFO,
+                          timeout=1)
+        self.show(keep=True)
+
+    def toggle_compat(self):
+        self.show_all = not self.show_all
+        self.session.open(MessageBox, T("compat_shown") if self.show_all else T("compat_hidden"),
+                          MessageBox.TYPE_INFO, timeout=2)
+        self.show(keep=True)
+
+    def install_favs(self):
+        cmds = []
+        for it in self.fav_items():
+            c = self.install_cmd(it)
+            if c:
+                cmds.append(c)
+        if not cmds:
+            self.session.open(MessageBox, T("fav_empty"), MessageBox.TYPE_INFO, timeout=3)
+            return
+
+        def go():
+            log("install favourites: %d items" % len(cmds))
+            self.session.openWithCallback(self.after_change, ConsoleScreen,
+                                          title=T("cat_fav"), cmdlist=cmds)
+        _confirm(self, T("confirm_fav_all"), go)
 
     # ---- actions
     def key_green(self):
@@ -371,6 +450,7 @@ class O4TPackages(O4TListBase):
             return
         cmd = self.install_cmd(it)
         if cmd:
+            log("install: %s | %s" % (it["name"], cmd))
             self.session.openWithCallback(self.after_change, ConsoleScreen, title=it["name"],
                                           cmdlist=[cmd])
 
@@ -396,9 +476,12 @@ class O4TPackages(O4TListBase):
             cmd = "opkg remove %s" % shquote(it["pkg"])
         else:
             return
-        _confirm(self, "%s\n\n%s" % (T("confirm_remove"), it["name"]),
-                 lambda: self.session.openWithCallback(self.after_change, ConsoleScreen,
-                                                       title=it["name"], cmdlist=[cmd]))
+
+        def go():
+            log("remove: %s | %s" % (it["name"], cmd))
+            self.session.openWithCallback(self.after_change, ConsoleScreen, title=it["name"],
+                                          cmdlist=[cmd])
+        _confirm(self, "%s\n\n%s" % (T("confirm_remove"), it["name"]), go)
 
     def key_blue(self):
         if self.cat == self.FEED:
@@ -583,7 +666,12 @@ class O4TTools(O4TListBase):
             {"id": "tmp", "name": T("t_tmp"), "desc": T("d_tmp")},
             {"id": "feed", "name": T("t_feed"), "desc": T("d_feed")},
             {"id": "df", "name": T("t_df"), "desc": T("d_df")},
-        ])
+            {"id": "theme", "name": "%s: %s" % (T("t_theme"), T("th_" + theme())),
+             "desc": T("d_theme")},
+            {"id": "lang", "name": "%s: %s" % (T("t_lang"), T("v_" + get_setting("lang", "auto"))),
+             "desc": T("d_lang")},
+            {"id": "diag", "name": T("t_diag"), "desc": T("d_diag")},
+        ], keep=True)
 
     def detail_for(self, item):
         return "%s\n\n%s" % (item["name"], item["desc"])
@@ -605,6 +693,16 @@ class O4TTools(O4TListBase):
             self.session.open(ConsoleScreen, title="opkg update", cmdlist=["opkg update"])
         elif k == "df":
             self.session.open(ConsoleScreen, title=item["name"], cmdlist=["df -h"])
+        elif k == "theme":
+            cycle_setting("theme", THEMES, "cyan")
+            self.reload()
+            self.session.open(MessageBox, T("reopen"), MessageBox.TYPE_INFO, timeout=3)
+        elif k == "lang":
+            cycle_setting("lang", LANGS, "auto")
+            self.reload()
+            self.session.open(MessageBox, T("reopen"), MessageBox.TYPE_INFO, timeout=3)
+        elif k == "diag":
+            self.session.open(O4TDiag)
 
     def finished(self, data, retval):
         self.session.open(MessageBox, T("done"), MessageBox.TYPE_INFO, timeout=3)
@@ -674,6 +772,46 @@ class O4TInfo(O4TTextBase):
                  "Python: " + sys.version.split()[0], "Panel: v" + VERSION, "",
                  "## Image"] + image + ["", data.strip()]
         self["detail"].setText("\n".join(lines))
+
+
+class O4TDiag(O4TTextBase):
+    """Support report: everything needed to debug a problem on a real receiver."""
+    TITLE = "t_diag"
+
+    def start(self):
+        self["detail"].setText(T("loading"))
+        cmd = ("df -h / /tmp 2>/dev/null; echo '@@CRASH@@'; "
+               "ls -t /home/root/logs/enigma2_crash_*.log /media/hdd/enigma2_crash_*.log 2>/dev/null | head -n 3")
+        _run(self.console, cmd, self.build)
+
+    def build(self, data, retval):
+        m = metrics()
+        src, updated, total = catalog.info()
+        disk, _s, crash = data.partition("@@CRASH@@")
+        counts = []
+        for kind in ("plugin", "skin"):
+            allv = catalog.items(kind)
+            counts.append("%s: %d (%d compatible)" % (kind, len(allv),
+                                                      len([i for i in allv if compatible(i)])))
+        image = [l for l in read_file("/etc/image-version").splitlines() if l.strip()][:6]
+        log_tail = read_file(LOG_FILE).splitlines()[-25:]
+        lines = ["## Panel", "Version: v" + VERSION, "Python: %s (%s)" % (sys.version.split()[0],
+                                                                         "py3" if PY3 else "py2"),
+                 "Screen: %dx%d  assets: %s" % (m.W, m.H, m.assets),
+                 "Theme: %s   Language: %s" % (theme(), get_setting("lang", "auto")),
+                 "Favourites: %d" % len(load_favs()),
+                 "", "## Catalog", "Source: %s  updated: %s  items: %d" % (src, updated, total)] + counts + \
+                ["Detected image group: %s" % (detect_image_group() or "-"), "", "## Image"] + image + \
+                ["", "## Disk", disk.strip(), "", "## Crash logs"] + (crash.split() or ["-"]) + \
+                ["", "## Panel log (last lines)"] + (log_tail or ["-"]) + \
+                ["", "Saved to /tmp/o4t_report.txt"]
+        text = "\n".join(lines)
+        self["detail"].setText(text)
+        try:
+            with open("/tmp/o4t_report.txt", "w") as fh:
+                fh.write(text if not PY3 else text)
+        except Exception:
+            pass
 
 
 class O4TAbout(O4TTextBase):

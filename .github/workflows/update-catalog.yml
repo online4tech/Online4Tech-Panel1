@@ -1,0 +1,33 @@
+name: Update catalog
+
+# Rebuilds catalog.json from the Online4Tech JSON databases every day and, only when
+# something changed, rebuilds the IPK (it embeds an offline copy) and commits both.
+# NOTE: GitHub runs scheduled workflows only from the repository's default branch.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild catalog
+        run: python3 tools/build_catalog.py
+      - name: Rebuild IPK and commit if changed
+        run: |
+          if git diff --quiet -- catalog.json; then
+            echo "catalog unchanged"
+            exit 0
+          fi
+          ./build_ipk.sh
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add catalog.json plugin release
+          git commit -m "Update catalog (automatic)"
+          git push

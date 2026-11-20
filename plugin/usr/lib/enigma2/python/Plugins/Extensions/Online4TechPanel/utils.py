@@ -2,8 +2,11 @@
 """Small Python 2/3 compatibility helpers."""
 from __future__ import absolute_import, print_function
 import io
+import json
+import os
 import re
 import sys
+import time
 
 try:
     from shlex import quote as shquote
@@ -128,3 +131,95 @@ def detect_image_group():
     if "openpli" in blob or "pli" in blob:
         return "OpenPLi Py3" if PY3 else "OpenPLi Py2"
     return ""
+
+
+# ---------------------------------------------------------------- settings
+SETTINGS_FILE = "/etc/enigma2/o4t_settings.json"
+FAV_FILE = "/etc/enigma2/o4t_favorites.json"
+LOG_FILE = "/tmp/o4t_panel.log"
+THEMES = ["cyan", "violet", "green", "orange", "pink"]
+LANGS = ["auto", "ar", "en"]
+
+
+def _native(o):
+    """json on py2 gives unicode: convert to native str recursively."""
+    if isinstance(o, dict):
+        return dict((_native(k), _native(v)) for k, v in o.items())
+    if isinstance(o, list):
+        return [_native(v) for v in o]
+    return txt(o) if not isinstance(o, (int, float, bool, type(None))) else o
+
+
+def load_json(path, default):
+    try:
+        with io.open(path, "r", encoding="utf-8") as fh:
+            return _native(json.load(fh))
+    except Exception:
+        return default
+
+
+def save_json(path, data):
+    try:
+        tmp = path + ".tmp"
+        with io.open(tmp, "w", encoding="utf-8") as fh:
+            fh.write(type(u"")(json.dumps(data, ensure_ascii=True)))
+        os.rename(tmp, path)
+        return True
+    except Exception:
+        return False
+
+
+def get_setting(key, default):
+    data = load_json(SETTINGS_FILE, {})
+    return data.get(key, default) if isinstance(data, dict) else default
+
+
+def set_setting(key, value):
+    data = load_json(SETTINGS_FILE, {})
+    if not isinstance(data, dict):
+        data = {}
+    data[key] = value
+    return save_json(SETTINGS_FILE, data)
+
+
+def cycle_setting(key, values, default):
+    cur = get_setting(key, default)
+    nxt = values[(values.index(cur) + 1) % len(values)] if cur in values else values[0]
+    set_setting(key, nxt)
+    return nxt
+
+
+# ---------------------------------------------------------------- favourites
+def item_key(it):
+    return "%s|%s|%s" % (it.get("type", ""), it.get("category", ""), it.get("name", ""))
+
+
+def load_favs():
+    data = load_json(FAV_FILE, [])
+    return set(k for k in data if isinstance(k, str)) if isinstance(data, list) else set()
+
+
+def save_favs(favs):
+    return save_json(FAV_FILE, sorted(favs))
+
+
+# ---------------------------------------------------------------- misc
+def compatible(it):
+    """False when the item needs the other Python generation."""
+    py = it.get("py")
+    if py == "py3" and not PY3:
+        return False
+    if py == "py2" and PY3:
+        return False
+    return True
+
+
+def log(msg):
+    """Append a line to /tmp/o4t_panel.log (kept small)."""
+    try:
+        if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 200000:
+            os.remove(LOG_FILE)
+        with io.open(LOG_FILE, "a", encoding="utf-8") as fh:
+            fh.write(type(u"")("%s  %s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), txt(msg))))
+    except Exception:
+        pass

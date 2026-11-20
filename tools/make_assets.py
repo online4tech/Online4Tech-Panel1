@@ -208,7 +208,9 @@ def build(name, k):
 
     background(s(1920), s(1080)).save(os.path.join(out, "bg.png"), optimize=True)
     glass(s(360), s(300), s(38)).save(os.path.join(out, "tile.png"), optimize=True)
-    selector(s(392), s(332), s(48)).save(os.path.join(out, "sel.png"), optimize=True)
+    for tname, tcol in THEMES.items():
+        selector(s(392), s(332), s(48), tcol).save(os.path.join(out, "sel_%s.png" % tname),
+                                                  optimize=True)
     glass(s(1060), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_l.png"), optimize=True)
     glass(s(670), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_r.png"), optimize=True)
     glass(s(1760), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_f.png"), optimize=True)
@@ -217,6 +219,10 @@ def build(name, k):
         pill(s(250), s(56), col).save(os.path.join(out, "btn_%s.png" % nm), optimize=True)
     for i, col in enumerate(ICON_COLORS):
         draw_icon(i, s(128), col).save(os.path.join(out, "ic%d.png" % i), optimize=True)
+
+
+THEMES = {"cyan": (56, 189, 248), "violet": (167, 139, 250), "green": (74, 222, 128),
+          "orange": (251, 146, 60), "pink": (244, 114, 182)}
 
 
 def main():

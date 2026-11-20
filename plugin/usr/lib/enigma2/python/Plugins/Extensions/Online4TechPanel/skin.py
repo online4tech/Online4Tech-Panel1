@@ -8,11 +8,23 @@ try:
 except Exception:  # pragma: no cover
     getDesktop = None
 
+from .utils import THEMES, get_setting
 from .version import PLUGIN_DIR
 
 TEXT = "#FFFFFF"
 MUTED = "#9FB3D1"
 ACCENT = "#38BDF8"
+THEME_COLORS = {"cyan": "#38BDF8", "violet": "#A78BFA", "green": "#4ADE80",
+                "orange": "#FB923C", "pink": "#F472B6"}
+
+
+def theme():
+    t = get_setting("theme", "cyan")
+    return t if t in THEMES else "cyan"
+
+
+def accent():
+    return THEME_COLORS[theme()]
 SOFT = "#E5EDFF"
 
 _cache = {}
@@ -73,7 +85,7 @@ def _header(m, title_size=46):
         '<convert type="ClockToText">Format:%%H:%%M</convert></widget>\n'
         % (m.pix("bg"), m.W, m.H,
            m.rect(80, 36, 1000, 64), m.font(title_size), TEXT,
-           m.rect(80, 94, 1000, 36), m.font(26), ACCENT,
+           m.rect(80, 94, 1000, 36), m.font(26), accent(),
            m.rect(1560, 40, 280, 64), m.font(44), TEXT))
 
 
@@ -113,7 +125,7 @@ def skin_main():
                  'halign="center" valign="center" zPosition="3" />\n'
                  % (i, m.rect(tx + 10, ty + 234, 340, 36), m.font(23), MUTED))
     x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" zPosition="2" />\n'
-             % (m.pix("sel"), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, 392, 332)))
+             % (m.pix("sel_" + theme()), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, 392, 332)))
     x.append('<widget name="hint" %s font="%s" foregroundColor="%s" transparent="1" '
              'halign="center" valign="center" zPosition="3" />\n'
              % (m.rect(180, 896, 1560, 56), m.font(28), SOFT))
@@ -131,8 +143,8 @@ def skin_list(name):
              % (m.pix("panel_r"), m.rect(1170, 140, 670, 790)))
     x.append('<widget name="list" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
              'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
-             'backgroundColorSelected="#4438BDF8" zPosition="2" />\n'
-             % (m.rect(106, 166, 1008, 738), m.font(30), m.S(54), TEXT))
+             'backgroundColorSelected="#44%s" zPosition="2" />\n'
+             % (m.rect(106, 166, 1008, 738), m.font(30), m.S(54), TEXT, accent()[1:]))
     x.append('<widget name="status" %s font="%s" foregroundColor="%s" transparent="1" '
              'halign="center" valign="center" zPosition="3" />\n'
              % (m.rect(106, 166, 1008, 738), m.font(32), MUTED))

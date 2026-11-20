@@ -9,7 +9,7 @@ import io
 import json
 import os
 
-from .utils import safe_cmd, safe_remove, txt, valid_pkg, valid_url, cmd_hosts, TRUSTED_HOSTS
+from .utils import log, safe_cmd, safe_remove, txt, valid_pkg, valid_url, cmd_hosts, TRUSTED_HOSTS
 from .version import PLUGIN_DIR, CATALOG_URL, TMP_CATALOG
 
 BUNDLED = os.path.join(PLUGIN_DIR, "data", "catalog.json")
@@ -29,8 +29,9 @@ def _load(path):
             data = json.load(fh)
         if isinstance(data, dict) and data.get("schema") == 2 and isinstance(data.get("items"), list):
             return data
-    except Exception:
-        pass
+    except Exception as exc:
+        if os.path.exists(path):
+            log("catalog load failed %s: %s" % (path, exc))
     return None
 
 
@@ -62,9 +63,24 @@ def _clean(raw):
             it["path"] = ""
         if it["remove"] and not safe_remove(it["remove"]):
             it["remove"] = ""
+        _keep_py(raw, it)
         return it
     except Exception:
         return None
+
+
+def info():
+    """(source, updated, total_items)"""
+    data = _load(TMP_CATALOG)
+    src = "GitHub (synced)"
+    if not data:
+        data, src = _load(BUNDLED) or {"items": []}, "built-in"
+    return src, data.get("updated", "-"), len(data["items"])
+
+
+def _keep_py(raw, it):
+    if raw.get("py") in ("py2", "py3"):
+        it["py"] = raw["py"]
 
 
 def items(kind):

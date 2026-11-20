@@ -9,6 +9,15 @@ except Exception:  # pragma: no cover
 
 def is_ar():
     try:
+        from .utils import get_setting
+        forced = get_setting("lang", "auto")
+        if forced == "ar":
+            return True
+        if forced == "en":
+            return False
+    except Exception:
+        pass
+    try:
         return language.getLanguage()[:2] == "ar"
     except Exception:
         return False
@@ -75,6 +84,37 @@ STR = {
     "search_all": ("Search results", "نتائج البحث"),
     "feed_hint": ("Packages available in your image's own feed, always the newest for your box.",
                   "الحزم المتاحة في فيد صورتك نفسها، دايما الاحدث لجهازك."),
+    "cat_fav": ("Favourites", "المفضلة"),
+    "fav_hint": ("Your favourite items. Press 3 to install all of them at once.",
+                 "العناصر المفضلة عندك. اضغط 3 لتثبيتها كلها مرة واحدة."),
+    "hint_items": ("1: favourite   2: incompatible items   3: install favourites",
+                   "1: مفضلة   2: غير المتوافق   3: تثبيت المفضلة"),
+    "is_fav": ("Favourite", "مفضلة"),
+    "not_compat": ("Not compatible with this receiver's Python version",
+                   "مش متوافق مع نسخة بايثون في الجهاز"),
+    "compat_shown": ("Showing incompatible items too", "بيعرض العناصر غير المتوافقة كمان"),
+    "compat_hidden": ("Incompatible items hidden", "العناصر غير المتوافقة مخفية"),
+    "fav_added": ("Added to favourites", "اتضافت للمفضلة"),
+    "fav_removed": ("Removed from favourites", "اتشالت من المفضلة"),
+    "fav_empty": ("No favourites yet. Press 1 on any item to add it.",
+                  "مفيش مفضلة لسه. اضغط 1 على اي عنصر لاضافته."),
+    "confirm_fav_all": ("Install ALL favourites one after another?",
+                        "تثبّت كل المفضلة ورا بعض؟"),
+    "t_theme": ("Theme colour", "لون الواجهة"),
+    "d_theme": ("Changes the highlight colour. Reopen the panel to apply.",
+                "بيغيّر لون التحديد. اقفل البانل وافتحه تاني للتطبيق."),
+    "t_lang": ("Language", "اللغة"),
+    "d_lang": ("Auto follows the receiver language. Reopen the panel to apply.",
+               "تلقائي = لغة الجهاز. اقفل البانل وافتحه تاني للتطبيق."),
+    "t_diag": ("Support report", "تقرير الدعم"),
+    "d_diag": ("Shows system, catalog and log details and saves them to /tmp/o4t_report.txt.",
+               "بيعرض بيانات الجهاز والكتالوج واللوج ويحفظها في /tmp/o4t_report.txt."),
+    "reopen": ("Saved. Close and reopen the panel to apply.", "اتحفظ. اقفل البانل وافتحه تاني للتطبيق."),
+    "v_auto": ("Auto", "تلقائي"),
+    "v_ar": ("Arabic", "عربي"),
+    "v_en": ("English", "English"),
+    "th_cyan": ("Cyan", "سماوي"), "th_violet": ("Violet", "بنفسجي"), "th_green": ("Green", "اخضر"),
+    "th_orange": ("Orange", "برتقالي"), "th_pink": ("Pink", "وردي"),
     # generic
     "loading": ("Loading...", "جاري التحميل..."),
     "empty": ("Nothing to show here.", "مفيش حاجة تتعرض هنا."),
