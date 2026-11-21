@@ -9,11 +9,11 @@
     "commands": 824,
     "removeCommands": 457,
     "urls": 818,
-    "uniqueUrls": 658,
+    "uniqueUrls": 659,
     "http": 69,
     "tlsBypass": 136,
     "pipeShell": 816,
-    "quarantined": 104,
+    "quarantined": 103,
     "removeWildcards": 5,
     "thirdParty": 320,
     "firstParty": 498
@@ -54,6 +54,12 @@
       "id": "third-party-sources",
       "count": 320,
       "action": "Kept original third-party URLs and attribution metadata. No third-party content was copied without verified redistribution permission."
+    },
+    {
+      "id": "KLLL_PRO_RESTORED",
+      "severity": "info",
+      "title": "Klll-Pro-FHD restored with item-specific installer",
+      "detail": "The Klll-Pro-FHD entry now uses scripts/install_klll_pro.sh. The wrapper validates the upstream archive, uses verified HTTPS, does not pre-delete the installed skin, and credits Biko-73. The other 103 shared-installer entries remain quarantined pending individual verification."
     }
   ],
   "entries": [
@@ -10851,18 +10857,22 @@
       "name": "Klll-Pro-FHD",
       "path": "/usr/share/enigma2/Klll-Pro",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_klll_pro.sh\" | /bin/sh",
       "remove_cmd": "rm -rf '/usr/share/enigma2/Klll-Pro'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_klll_pro.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_payload_retained",
+        "verified_https",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "static_path_command"
+      "remove_review": "static_path_command",
+      "payload_source_url": "https://raw.githubusercontent.com/biko-73/zelda77/main/klll-pro-v.3.3.tar.gz",
+      "source_attribution": "Original Klll-Pro skin/payload by Biko-73; Online4Tech maintains the item-specific installer wrapper."
     },
     {
       "section": "openbh_skins",
