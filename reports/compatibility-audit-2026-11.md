@@ -82,3 +82,12 @@ Restored entries now include Klll-Pro-FHD, KeyAdder, Levi45 Emulator, EPGImport-
 - Test each restored third-party installer individually and preserve original author attribution.
 
 **No live receiver commands were executed during this audit. CI confirms source syntax and package structure, not runtime behavior on a real Enigma2 receiver. Individual plugin payloads and receiver-specific behavior still require device testing.**
+
+### First-party source files requiring recovery
+
+The expanded source-file check found two URLs still used by active database commands whose target files are absent from both `main` and the maintenance branch:
+
+- `install_o4t_emu.sh` — Online4Tech Web Panel installer.
+- `scripts/channel-romeh_installer.sh` — Ahmed Romeh Channels installer.
+
+Both database entries remain present and enabled. No replacement or guessed installer was substituted, and neither item was disabled. The original source files must be restored before these two actions can be considered operational.
