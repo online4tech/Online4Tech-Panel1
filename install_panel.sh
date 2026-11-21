@@ -1,16 +1,30 @@
 #!/bin/sh
-# Online4Tech Panel Direct Installer from GitHub Source
-PLUGIN_DIR="/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
-BASE_URL="https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
+# Compatibility entry point. The canonical installer handles package detection,
+# archive validation, safe installation, and a graceful Enigma2 restart.
+set -eu
 
-echo "[Online4Tech] Installing / Updating Online4Tech Panel..."
-mkdir -p "$PLUGIN_DIR"
+INSTALLER_URL="https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/install.sh"
+TMP_INSTALLER="/tmp/o4t-panel-installer.$$"
 
-for FILE in __init__.py plugin.py o4t_store.py; do
-    wget --no-check-certificate -qO "$PLUGIN_DIR/$FILE" "$BASE_URL/$FILE"
-done
+cleanup() {
+    rm -f "$TMP_INSTALLER"
+}
+trap cleanup 0 HUP INT TERM
 
-chmod -R 755 "$PLUGIN_DIR"
-echo "[SUCCESS] Online4Tech Panel Installed! Restarting Enigma2 GUI..."
-sleep 2
-killall -9 enigma2
+echo "[Online4Tech] Starting the official 7.5 package installer..."
+
+if command -v wget >/dev/null 2>&1; then
+    wget -qO "$TMP_INSTALLER" "$INSTALLER_URL"
+elif command -v curl >/dev/null 2>&1; then
+    curl -fLsS "$INSTALLER_URL" -o "$TMP_INSTALLER"
+else
+    echo "[ERROR] Neither wget nor curl is available."
+    exit 1
+fi
+
+if [ ! -s "$TMP_INSTALLER" ]; then
+    echo "[ERROR] Could not download the official installer."
+    exit 1
+fi
+
+/bin/sh "$TMP_INSTALLER"
