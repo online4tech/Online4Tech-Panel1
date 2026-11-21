@@ -21,7 +21,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 from . import catalog
 from .i18n import T
-from .skin import (DESIGNS, FONT_SCALES, MAIN_POS, design, font_scale, is_flat, main_rows_pos,
+from .skin import (MAIN_COLS, DESIGNS, FONT_SCALES, MAIN_POS, design, font_scale, is_flat, main_rows_pos,
                    metrics, skin_list, skin_main, skin_text, theme, uses_rows)
 from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_setting,
                     detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
@@ -185,7 +185,9 @@ def _confirm(screen, text, fn):
 # =====================================================================
 @guarded
 class O4TMain(Screen):
-    MENU = ["plugins", "skins", "updates", "installed", "tools", "info", "selfupdate", "about"]
+    MENU = ["plugins", "skins", "installed", "updates", "tools", "info"]
+    # icon file index per entry (ic0..ic7 were drawn in this order)
+    ICON_OF = {"plugins": 0, "skins": 1, "updates": 2, "installed": 3, "tools": 4, "info": 5}
 
     def __init__(self, session):
         mark_opening("main")
@@ -214,17 +216,17 @@ class O4TMain(Screen):
         self["key_red"] = Label(T("k_exit"))
         self["key_green"] = Label(T("k_open"))
         self["key_yellow"] = Label(T("k_catalog"))
-        self["key_blue"] = Label(T("k_about"))
+        self["key_blue"] = Label(T("k_settings"))
         actions = {
             "ok": self.open_current, "cancel": self.close, "red": self.close,
             "green": self.open_current, "yellow": self.sync_catalog,
-            "blue": lambda: self.session.open(O4TAbout),
+            "blue": self.open_settings,
             "left": lambda: self.move(-1), "right": lambda: self.move(1),
-            "up": lambda: self.move(-1 if self.rowsmode else -4),
-            "down": lambda: self.move(1 if self.rowsmode else 4),
+            "up": lambda: self.move(-1 if self.rowsmode else -MAIN_COLS),
+            "down": lambda: self.move(1 if self.rowsmode else MAIN_COLS),
             "menu": self.open_settings,
         }
-        for n in range(1, 9):
+        for n in range(1, len(self.MENU) + 1):
             actions[str(n)] = (lambda n=n: self.pick(n - 1))
         self["actions"] = NumberActionMap(
             ["OkCancelActions", "ColorActions", "DirectionActions", "NumberActions",
@@ -261,7 +263,8 @@ class O4TMain(Screen):
         for i in range(0 if self.flat else len(self.MENU)):
             try:
                 self["ic%d" % i].instance.setPixmap(
-                    LoadPixmap(m.icon("ic%d" % i, 52) if self.rowsmode else m.pix("ic%d" % i)))
+                    LoadPixmap(m.icon("ic%d" % self.ICON_OF[self.MENU[i]], 52) if self.rowsmode
+                               else m.pix("ic%d" % self.ICON_OF[self.MENU[i]])))
             except Exception:
                 pass
         self.update_sel()
@@ -310,10 +313,6 @@ class O4TMain(Screen):
             self.session.open(O4TTools)
         elif key == "info":
             self.session.open(O4TInfo)
-        elif key == "selfupdate":
-            self.session.open(O4TSelfUpdate)
-        else:
-            self.session.open(O4TAbout)
 
 
 # =====================================================================
@@ -843,6 +842,7 @@ class O4TTools(O4TListBase):
     def reload(self):
         self.set_items([
             {"id": "settings", "name": T("m_settings"), "desc": T("h_settings_tip")},
+            {"id": "selfupdate", "name": T("m_selfupdate"), "desc": T("h_selfupdate")},
             {"id": "restart_gui", "name": T("t_restart_gui"), "desc": T("d_restart_gui")},
             {"id": "reboot", "name": T("t_reboot"), "desc": T("d_reboot")},
             {"id": "standby", "name": T("t_standby"), "desc": T("d_standby")},
@@ -868,6 +868,8 @@ class O4TTools(O4TListBase):
         k = item["id"]
         if k == "settings":
             self.session.open(O4TSettings)
+        elif k == "selfupdate":
+            self.session.open(O4TSelfUpdate)
         elif k in ("restart_gui", "reboot", "standby"):
             mode = {"restart_gui": 3, "reboot": 2, "standby": 1}[k]
             _confirm(self, "%s\n\n%s" % (T("confirm"), item["name"]),

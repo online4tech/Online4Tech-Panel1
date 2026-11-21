@@ -142,6 +142,7 @@ STR = {
     "dev_ip": ("Receiver IP", "عنوان IP للجهاز"),
     "dev_web": ("Web page", "صفحة الويب"),
     "web_off": ("off", "متوقف"),
+    "k_settings": ("Settings", "الاعدادات"),
     "m_settings": ("Settings", "الاعدادات"),
     "t_design": ("Design", "التصميم"),
     "d_design": ("Glass: glowing cards. Console: gold list. Flame: orange store. Lite: flat colours, no pictures (fastest on weak receivers).",

@@ -94,7 +94,7 @@ class O4TStore(Screen):
             self["cp%d" % i] = box()
             self["cl%d" % i] = Label("")
         self["di"] = Pixmap()
-        for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1", "db2"):
+        for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1"):
             self[nm] = Label("")
         self["key_red"] = Label(T("k_back"))
         self["key_green"] = Label(T("k_install"))
@@ -110,7 +110,7 @@ class O4TStore(Screen):
             "green": self.do_install, "yellow": self.do_remove, "blue": self.do_sync,
             "menu": self.do_search,
             "left": self.go_left, "right": self.go_right, "up": self.go_up, "down": self.go_down,
-            "1": self.do_fav, "2": self.do_compat, "7": self.page_prev, "9": self.page_next,
+            "2": self.do_compat, "7": self.page_prev, "9": self.page_next,
         }
         self["actions"] = NumberActionMap(
             ["OkCancelActions", "ColorActions", "DirectionActions", "MenuActions",
@@ -135,21 +135,17 @@ class O4TStore(Screen):
 
     def build_cats(self):
         cats = catalog.categories(self.kind, self.visible())
-        entries = [(FAV, "%s (%d)" % (T("cat_fav"), len(self.fav_items()))),
-                   (FEED, T("cat_feed"))]
+        entries = [(FEED, T("cat_feed"))]
         entries += [(c, "%s (%d)" % (c, n)) for c, n in cats]
         self.cat_keys = [e[0] for e in entries]
         self["cats"].setList([e[1] for e in entries])
-        start = 2 if len(entries) > 2 else 0
+        start = 1 if len(entries) > 1 else 0
         self.cat_idx = start
         try:
             self["cats"].moveToIndex(start)
         except Exception:
             pass
         self.load_category()
-
-    def fav_items(self):
-        return [i for i in catalog.items(self.kind) if item_key(i) in self.favs]
 
     # ------------------------------------------------------------ data
     def side_changed(self):
@@ -174,8 +170,6 @@ class O4TStore(Screen):
             q = self.o4_query.lower()
             self.rows = [i for i in self.visible() if q in i["name"].lower()
                          or q in i.get("desc", "").lower() or q in i.get("pkg", "").lower()]
-        elif cat == FAV:
-            self.rows = self.fav_items()
         elif cat == FEED:
             self.rows = []
             self.o4_loading = True
@@ -231,7 +225,7 @@ class O4TStore(Screen):
             self["title"].setText("%s - %s" % (base, T("search_all")))
             self["search"].setText(self.o4_query)
         else:
-            name = {FAV: T("cat_fav"), FEED: T("cat_feed")}.get(cat, cat or "")
+            name = {FEED: T("cat_feed")}.get(cat, cat or "")
             self["title"].setText(base if (not name or name == base) else "%s - %s" % (base, name))
             self["search"].setText(T("search_hint"))
         for i in range(self.per):
@@ -283,7 +277,7 @@ class O4TStore(Screen):
     def draw_detail(self):
         it = self.current()
         if not it:
-            for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1", "db2"):
+            for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1"):
                 self[nm].setText("")
             return
         self["dn"].setText(clip(it["name"], 26))
@@ -297,7 +291,6 @@ class O4TStore(Screen):
         self["dr"].setText(clip(str(it.get("version") or "-"), 30))
         self["db0"].setText(T("k_reinstall") if self.is_installed(it) else T("k_install_now"))
         self["db1"].setText(T("k_remove"))
-        self["db2"].setText(T("k_fav_del") if item_key(it) in self.favs else T("k_fav_add"))
         if not self.flat:
             try:
                 self["di"].instance.setPixmap(self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
@@ -415,25 +408,10 @@ class O4TStore(Screen):
         _run(self.console, OPKG_INSTALLED, self.got_installed)
         _ask_restart(self)
 
-    def do_fav(self):
-        it = self.current()
-        if not it or it.get("method") == "feed":
-            return
-        key = item_key(it)
-        if key in self.favs:
-            self.favs.discard(key)
-        else:
-            self.favs.add(key)
-        save_favs(self.favs)
-        cat = self.current_cat()
-        if cat == FAV:
-            self.rows = self.fav_items()
-        self.build_labels_only()
-
     def build_labels_only(self):
         keep = self.cat_idx
         cats = catalog.categories(self.kind, self.visible())
-        entries = [(FAV, "%s (%d)" % (T("cat_fav"), len(self.fav_items()))), (FEED, T("cat_feed"))]
+        entries = [(FEED, T("cat_feed"))]
         entries += [(c, "%s (%d)" % (c, n)) for c, n in cats]
         self["cats"].setList([e[1] for e in entries])
         try:

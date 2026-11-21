@@ -155,8 +155,10 @@ def _footer(m):
 
 # ---------------------------------------------------------------- screens
 MAIN_POS = []
-for _i in range(8):
-    MAIN_POS.append((40 + (_i % 4) * 333, 215 + (_i // 4) * 282))
+MAIN_N = 6                      # menu entries (screens.O4TMain.MENU)
+MAIN_COLS = 3
+for _i in range(MAIN_N):
+    MAIN_POS.append((40 + (_i % MAIN_COLS) * 446, 215 + (_i // MAIN_COLS) * 330))
 GLASS_TILE = (300, 250)
 CARD = (1384, 196, 496, 700)      # device card on the main screen (glass)
 
@@ -299,8 +301,8 @@ def _glass_store(name):
     lab("dc", 1464, 556, 416, 40, 20, SOFT, "left", valign="top")
     lab("drt", 1464, 612, 416, 30, 22, accent(), "left")
     lab("dr", 1464, 642, 416, 40, 20, SOFT, "left", valign="top")
-    for j, nm in enumerate(("green", "red", "blue")):
-        yy = 744 + j * 68
+    for j, nm in enumerate(("green", "red")):
+        yy = 790 + j * 76
         pix("wpill_" + nm, 1472, yy, 400, 50, 2)
         lab("db%d" % j, 1472, yy, 400, 50, 24, TEXT)
     # footer
@@ -320,6 +322,7 @@ def _glass_store(name):
 ROW_W, ROW_H, ROW_STEP = 940, 76, 84
 ROWS_PER_PAGE = 8
 ROW_X, ROW_Y = 460, 262
+ROWS_Y0, ROWS_STEP = 214, 118       # main menu rows (6 entries)
 
 
 STATIC = {}      # widget name -> fixed text (tx*) of the screen being built
@@ -420,12 +423,12 @@ def _rows_main():
     b.header(title=False)
     console = b.m.design == "console"
     if console:
-        for i in range(8):
-            x, y = 40, 196 + i * 88
+        for i in range(MAIN_N):
+            x, y = 40, ROWS_Y0 + i * ROWS_STEP
             b.box("rowm", x, y, 520, ROW_H, 1, st.get("row"))
             b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
             b.lab("tt%d" % i, x + 84, y, 420, ROW_H, 30, st["text"])
-        b.wbox("sel", "rowm_sel", 40 - 12, 196 - 12, 544, 100, 2, st["accent"])
+        b.wbox("sel", "rowm_sel", 40 - 12, ROWS_Y0 - 12, 544, 100, 2, st["accent"])
         b.box("logo_big", 700, 196, 620, 207, 1)
         b.lab("ht", 600, 440, 760, 70, 52, st["accent"], "center")
         b.lab("hint", 620, 530, 720, 150, 30, st["soft"], "center", valign="top")
@@ -439,13 +442,13 @@ def _rows_main():
         if b.flat:
             b.static("Online4Tech", 60, 224, 340, 60, 40, st["accent"], "center")
         _contact_lines(b, 64, 380, 336)
-        for i in range(8):
-            x, y = ROW_X, 196 + i * 88
+        for i in range(MAIN_N):
+            x, y = ROW_X, ROWS_Y0 + i * ROWS_STEP
             b.box("row", x, y, ROW_W, ROW_H, 1, st.get("row"))
             b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
             b.lab("tt%d" % i, x + 84, y, 330, ROW_H, 30, st["text"])
             b.lab("ts%d" % i, x + 420, y, 500, ROW_H, 21, st["muted"])
-        b.wbox("sel", "row_sel", ROW_X - 12, 196 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
+        b.wbox("sel", "row_sel", ROW_X - 12, ROWS_Y0 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
         b.lab("hint", ROW_X, 906, ROW_W, 48, 24, st["soft"], "center")
     b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
     b.x.append(_devcard_labels(b.m, 1440, 196, 440, st["text"], st["muted"], st["accent"]))
@@ -455,8 +458,8 @@ def _rows_main():
 
 def main_rows_pos(i):
     if design() == "console":
-        return 40, 196 + i * 88
-    return ROW_X, 196 + i * 88
+        return 40, ROWS_Y0 + i * ROWS_STEP
+    return ROW_X, ROWS_Y0 + i * ROWS_STEP
 
 
 def _rows_list(name):
@@ -526,10 +529,10 @@ def _rows_store(name):
                                      ("drt", 612, 30, 22, st["accent"], "left"),
                                      ("dr", 642, 40, 20, st["soft"], "left")):
         b.lab(nm, 1456, yy, 408, h, size, col, al, valign="top" if nm in ("dp", "dc", "dr") else "center")
-    for j, nm in enumerate(("green", "red", "blue")):
-        yy = 744 + j * 68
+    for j, nm in enumerate(("green", "red")):
+        yy = 790 + j * 76
         b.box("wpill_" + nm, 1464, yy, 388, 50, 2,
-              {"green": st["accent"], "red": "#B3303A", "blue": "#3B4A63"}[nm])
+              {"green": st["accent"], "red": "#B3303A"}[nm])
         b.lab("db%d" % j, 1464, yy, 388, 50, 24, st["pilltext"] if nm == "green" else "#FFFFFF", "center")
     b.footer()
     return b.done()
