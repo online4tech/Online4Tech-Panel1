@@ -137,13 +137,29 @@ else
     exit 1
 fi
 
-# Preserve common user-managed data files before updating plugin code.
+# Prefer the explicitly requested plugin path, but keep using an already
+# installed lib/lib64 location when the receiver has the plugin there.
 PRESERVE_DIR="$STAGE/o4t-preserved-user-data"
+INSTALL_PLUGIN_PATH="$PLUGIN_PATH"
 EXISTING_PLUGIN_PATH=""
-if [ -d "/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
-    EXISTING_PLUGIN_PATH="/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME"
-elif [ -d "/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
-    EXISTING_PLUGIN_PATH="/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME"
+if [ -d "$PLUGIN_PATH" ]; then
+    EXISTING_PLUGIN_PATH="$PLUGIN_PATH"
+else
+    case "$PLUGIN_PATH" in
+        /usr/lib/enigma2/*)
+            ALT_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib/#/usr/lib64/#')"
+            ;;
+        /usr/lib64/enigma2/*)
+            ALT_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib64/#/usr/lib/#')"
+            ;;
+        *)
+            ALT_PLUGIN_PATH=""
+            ;;
+    esac
+    if [ -n "$ALT_PLUGIN_PATH" ] && [ -d "$ALT_PLUGIN_PATH" ]; then
+        INSTALL_PLUGIN_PATH="$ALT_PLUGIN_PATH"
+        EXISTING_PLUGIN_PATH="$ALT_PLUGIN_PATH"
+    fi
 fi
 
 if [ -n "$EXISTING_PLUGIN_PATH" ]; then
@@ -161,22 +177,29 @@ if [ -n "$EXISTING_PLUGIN_PATH" ]; then
     done
 fi
 
-# Resolve the exact plugin folder in the downloaded source tree. The 39
-# maintained Ciefp repositories were checked individually: their usr/ payloads
-# are contained in their own Enigma2 Extensions plugin directory.
-INSTALL_PLUGIN_PATH="$PLUGIN_PATH"
+# Resolve the source folder independently from the destination. A source
+# archive may use lib64 while this receiver already has the plugin under lib,
+# or vice versa; never split the update and preserved user data across both.
 SOURCE_PLUGIN="$STAGE/$ARCHIVE_ROOT$PLUGIN_PATH"
 
 if [ ! -d "$SOURCE_PLUGIN" ]; then
     case "$PLUGIN_PATH" in
         /usr/lib/enigma2/*)
-            INSTALL_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib/#/usr/lib64/#')"
+            ALT_SOURCE_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib/#/usr/lib64/#')"
             ;;
         /usr/lib64/enigma2/*)
-            INSTALL_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib64/#/usr/lib/#')"
+            ALT_SOURCE_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib64/#/usr/lib/#')"
+            ;;
+        *)
+            ALT_SOURCE_PATH=""
             ;;
     esac
-    SOURCE_PLUGIN="$STAGE/$ARCHIVE_ROOT$INSTALL_PLUGIN_PATH"
+    if [ -n "$ALT_SOURCE_PATH" ]; then
+        SOURCE_PLUGIN="$STAGE/$ARCHIVE_ROOT$ALT_SOURCE_PATH"
+        if [ -d "$SOURCE_PLUGIN" ] && [ -z "$EXISTING_PLUGIN_PATH" ]; then
+            INSTALL_PLUGIN_PATH="$ALT_SOURCE_PATH"
+        fi
+    fi
 fi
 
 if [ ! -d "$SOURCE_PLUGIN" ]; then
@@ -190,7 +213,7 @@ cp -a "$SOURCE_PLUGIN/." "$INSTALL_PLUGIN_PATH/"
 
 # Restore user-managed files over packaged defaults, when they existed before.
 if [ -n "$EXISTING_PLUGIN_PATH" ] && [ -d "$PRESERVE_DIR" ]; then
-    cp -a "$PRESERVE_DIR/." "$EXISTING_PLUGIN_PATH/"
+    cp -a "$PRESERVE_DIR/." "$INSTALL_PLUGIN_PATH/"
 fi
 sync
 
