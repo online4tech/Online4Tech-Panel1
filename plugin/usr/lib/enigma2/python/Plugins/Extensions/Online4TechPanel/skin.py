@@ -404,25 +404,58 @@ def row_xy(i):
     return ROW_X, ROW_Y + i * ROW_STEP
 
 
+def _contact_lines(b, x, y, w):
+    st = b.st
+    for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"),
+                                    ("Facebook", "fb.com/online4tech0"))):
+        b.static(cap, x, y + k * 92, w, 30, 21, st["accent"])
+        b.static(val, x, y + 30 + k * 92, w, 42, 26, st["text"])
+
+
 def _rows_main():
+    """flame / lite: list in the middle, brand panel on the left, device card on the right.
+    console: slim menu on the left, big logo + selected item in the middle."""
     b = _B("O4TMain")
     st = b.st
     b.header(title=False)
-    for i in range(8):
-        x, y = ROW_X, 196 + i * 88
-        b.box("row", x, y, ROW_W, ROW_H, 1, st.get("row"))
-        b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
-        b.lab("tt%d" % i, x + 84, y, 330, ROW_H, 30, st["text"])
-        b.lab("ts%d" % i, x + 420, y, 500, ROW_H, 21, st["muted"])
-    b.wbox("sel", "row_sel", ROW_X - 12, 196 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
-    b.box("panel_d", 1440, 196, 440, 700, 0, st.get("panel"))
+    console = b.m.design == "console"
+    if console:
+        for i in range(8):
+            x, y = 40, 196 + i * 88
+            b.box("rowm", x, y, 520, ROW_H, 1, st.get("row"))
+            b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
+            b.lab("tt%d" % i, x + 84, y, 420, ROW_H, 30, st["text"])
+        b.wbox("sel", "rowm_sel", 40 - 12, 196 - 12, 544, 100, 2, st["accent"])
+        b.box("logo_big", 700, 196, 620, 207, 1)
+        b.lab("ht", 600, 440, 760, 70, 52, st["accent"], "center")
+        b.lab("hint", 620, 530, 720, 150, 30, st["soft"], "center", valign="top")
+        for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"),
+                                        ("Facebook", "fb.com/online4tech0"))):
+            b.static(cap, 600 + k * 260, 760, 250, 30, 21, st["accent"], "center")
+            b.static(val, 600 + k * 260, 792, 250, 42, 22, st["text"], "center")
+    else:
+        b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
+        b.box("logo", 60, 214, 340, 113, 1)
+        if b.flat:
+            b.static("Online4Tech", 60, 224, 340, 60, 40, st["accent"], "center")
+        _contact_lines(b, 64, 380, 336)
+        for i in range(8):
+            x, y = ROW_X, 196 + i * 88
+            b.box("row", x, y, ROW_W, ROW_H, 1, st.get("row"))
+            b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
+            b.lab("tt%d" % i, x + 84, y, 330, ROW_H, 30, st["text"])
+            b.lab("ts%d" % i, x + 420, y, 500, ROW_H, 21, st["muted"])
+        b.wbox("sel", "row_sel", ROW_X - 12, 196 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
+        b.lab("hint", ROW_X, 906, ROW_W, 48, 24, st["soft"], "center")
+    b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
     b.x.append(_devcard_labels(b.m, 1440, 196, 440, st["text"], st["muted"], st["accent"]))
-    b.lab("hint", ROW_X, 906, ROW_W, 48, 24, st["soft"], "center")
     b.footer()
     return b.done()
 
 
 def main_rows_pos(i):
+    if design() == "console":
+        return 40, 196 + i * 88
     return ROW_X, 196 + i * 88
 
 

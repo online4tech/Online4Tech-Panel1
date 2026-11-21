@@ -200,6 +200,7 @@ class O4TMain(Screen):
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
         self["hint"] = Label("")
+        self["ht"] = Label("")
         self["clock"] = Label("")
         self["dct"] = Label(T("dev_title"))
         for k, key in enumerate(("dev_name", "dev_img", "dev_panel", "dev_ip", "dev_web")):
@@ -279,6 +280,7 @@ class O4TMain(Screen):
         except Exception:
             pass
         self["hint"].setText(T("h_" + self.MENU[self.idx]))
+        self["ht"].setText(T("m_" + self.MENU[self.idx]))
 
     def move(self, step):
         self.idx = (self.idx + step) % len(self.MENU)
