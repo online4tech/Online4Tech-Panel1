@@ -46,6 +46,49 @@ jobs:
             sh -n "$file"
           done
 
+      - name: Check every database command syntax
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+
+          with open("o4t_database.json", encoding="utf-8") as handle:
+              database = json.load(handle)
+
+          records = []
+          def walk(value):
+              if isinstance(value, list):
+                  for item in value:
+                      walk(item)
+              elif isinstance(value, dict):
+                  if any(key in value for key in ("cmd", "remove_cmd", "legacy_cmd")):
+                      records.append(value)
+                  for key, item in value.items():
+                      if key not in ("cmd", "remove_cmd", "legacy_cmd"):
+                          walk(item)
+
+          walk(database)
+          checked = 0
+          failures = []
+          for index, record in enumerate(records):
+              for field in ("cmd", "remove_cmd", "legacy_cmd"):
+                  command = record.get(field)
+                  if not isinstance(command, str) or not command.strip():
+                      continue
+                  checked += 1
+                  result = subprocess.run(
+                      ["sh", "-n"], input=command, text=True,
+                      stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                  )
+                  if result.returncode:
+                      failures.append((index, record.get("name", "<unnamed>"), field, result.stderr.strip()))
+          if failures:
+              for index, name, field, error in failures:
+                  print("Shell syntax error: record=%d name=%r field=%s: %s" % (index, name, field, error))
+              raise SystemExit(1)
+          print("Shell syntax passed for %d install/removal/legacy command strings across %d records." % (checked, len(records)))
+          PY
+
       - name: Validate database, audit, and source manifest
         run: |
           python - <<'PY'
