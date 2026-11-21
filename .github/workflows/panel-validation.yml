@@ -91,6 +91,43 @@ jobs:
           print("Shell syntax passed for %d install/removal/legacy command strings across %d records." % (checked, len(records)))
           PY
 
+      - name: Verify all first-party command source files
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from urllib.parse import unquote
+
+          prefix = "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/"
+          with open("sources/source-manifest.json", encoding="utf-8") as handle:
+              manifest = json.load(handle)
+
+          checked = 0
+          missing = []
+          empty = []
+          for source in manifest["sources"]:
+              if source.get("mirror_status") != "already_hosted_in_online4tech_repo":
+                  continue
+              url = source.get("url", "")
+              if not url.startswith(prefix):
+                  missing.append("Unexpected first-party URL: " + url)
+                  continue
+              path = unquote(url[len(prefix):])
+              checked += 1
+              if not os.path.isfile(path):
+                  missing.append(path)
+              elif os.path.getsize(path) == 0:
+                  empty.append(path)
+
+          if missing or empty:
+              for path in missing:
+                  print("Missing source: " + path)
+              for path in empty:
+                  print("Empty source: " + path)
+              raise SystemExit(1)
+          print("Verified %d first-party source files exist and are non-empty in this repository checkout." % checked)
+          PY
+
       - name: Validate database, audit, and source manifest
         run: |
           python - <<'PY'
