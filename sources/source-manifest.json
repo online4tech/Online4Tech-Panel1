@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generated_from": "o4t_database.json",
   "generated_at": "2026-11-21",
-  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream.",
+  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream. KeyAdder and Levi45 Emulator now use first-party safe wrappers; their original third-party sources and credits are recorded under nested_sources and remain upstream.",
   "sources": [
     {
       "url": "http://dreambox4u.com/emilnabil237/plugins/ajpanel/installer.sh",
@@ -6082,14 +6082,6 @@
       "mirror_status": "already_hosted_in_online4tech_repo",
       "items": [
         {
-          "section": "favourites",
-          "name": "KeyAdder (مفاتيح الشفرات)"
-        },
-        {
-          "section": "favourites",
-          "name": "Oscam By Levi45"
-        },
-        {
           "section": "panels",
           "name": "linuxsat-panel (لوحة تحميل الإضافات)"
         },
@@ -6148,10 +6140,6 @@
         {
           "section": "plugins",
           "name": "Foreca1"
-        },
-        {
-          "section": "plugins",
-          "name": "KeyAdder (مفاتيح الشفرات)"
         },
         {
           "section": "plugins",
@@ -6476,10 +6464,6 @@
         {
           "section": "multiboot",
           "name": "OpenMultiboot 1.3"
-        },
-        {
-          "section": "softcams",
-          "name": "Oscam By Levi45"
         },
         {
           "section": "openatv_skins",
@@ -9206,6 +9190,40 @@
           "name": "Klll-Pro-FHD"
         }
       ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh",
+      "host": "raw.githubusercontent.com",
+      "repository": "online4tech/Online4Tech-Panel1",
+      "source_type": "first_party",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "items": [
+        {
+          "section": "favourites",
+          "name": "KeyAdder (مفاتيح الشفرات)"
+        },
+        {
+          "section": "plugins",
+          "name": "KeyAdder (مفاتيح الشفرات)"
+        }
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh",
+      "host": "raw.githubusercontent.com",
+      "repository": "online4tech/Online4Tech-Panel1",
+      "source_type": "first_party",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "items": [
+        {
+          "section": "favourites",
+          "name": "Oscam By Levi45"
+        },
+        {
+          "section": "softcams",
+          "name": "Oscam By Levi45"
+        }
+      ]
     }
   ],
   "nested_sources": [
@@ -9223,6 +9241,63 @@
         }
       ],
       "note": "Fetched by the Online4Tech item-specific wrapper over verified HTTPS; not copied into this repository."
+    },
+    {
+      "url": "https://github.com/fairbird/KeyAdder/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "fairbird/KeyAdder",
+      "source_type": "third_party_source_archive",
+      "attribution": "RAED (fairbird), GPL-3.0",
+      "items": [
+        {
+          "section": "favourites",
+          "name": "KeyAdder (مفاتيح الشفرات)"
+        },
+        {
+          "section": "plugins",
+          "name": "KeyAdder (مفاتيح الشفرات)"
+        }
+      ],
+      "mirror_status": "upstream_archive_not_mirrored",
+      "note": "Staged and copied by the Online4Tech wrapper without pre-deleting existing plugin folders."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.ipk",
+      "host": "raw.githubusercontent.com",
+      "repository": "emilnabil/download-plugins",
+      "source_type": "third_party_package",
+      "attribution": "Levi45 Emulator package distributed by Emil Nabil",
+      "items": [
+        {
+          "section": "favourites",
+          "name": "Oscam By Levi45"
+        },
+        {
+          "section": "softcams",
+          "name": "Oscam By Levi45"
+        }
+      ],
+      "mirror_status": "upstream_package_not_mirrored",
+      "note": "Selected on opkg receivers."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.deb",
+      "host": "raw.githubusercontent.com",
+      "repository": "emilnabil/download-plugins",
+      "source_type": "third_party_package",
+      "attribution": "Levi45 Emulator package distributed by Emil Nabil",
+      "items": [
+        {
+          "section": "favourites",
+          "name": "Oscam By Levi45"
+        },
+        {
+          "section": "softcams",
+          "name": "Oscam By Levi45"
+        }
+      ],
+      "mirror_status": "upstream_package_not_mirrored",
+      "note": "Selected on dpkg/DreamOS receivers."
     }
   ]
 }
