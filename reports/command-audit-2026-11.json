@@ -9,11 +9,11 @@
     "commands": 824,
     "removeCommands": 457,
     "urls": 818,
-    "uniqueUrls": 661,
+    "uniqueUrls": 662,
     "http": 69,
     "tlsBypass": 136,
     "pipeShell": 816,
-    "quarantined": 99,
+    "quarantined": 98,
     "removeWildcards": 5,
     "thirdParty": 320,
     "firstParty": 498
@@ -72,6 +72,12 @@
       "severity": "info",
       "title": "Levi45 Emulator restored with package-manager installer",
       "detail": "The two Levi45 category entries now use scripts/install_levi45_emulator.sh. It downloads the original Emil Nabil IPK/DEB over verified HTTPS, validates the archive header, and installs through opkg/dpkg without manually deleting the old plugin or using force-overwrite."
+    },
+    {
+      "id": "EPGIMPORT_RESTORED",
+      "severity": "info",
+      "title": "EPGImport restored for opkg receivers",
+      "detail": "EPGImport-99 now uses scripts/install_epgimport_safe.sh. It downloads the upstream Emil Nabil IPK over verified HTTPS, validates the archive, and installs with opkg without manually deleting the existing plugin directory. The source currently exposes an IPK only, so the wrapper explicitly reports that dpkg/DreamOS is unsupported."
     }
   ],
   "entries": [
@@ -1975,18 +1981,24 @@
       "name": "EPGImport-99 (دليل القنوات)",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGImport",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_epgimport_safe.sh\" | /bin/sh",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_epgimport_safe.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained_opkg_only",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_ipk_retained",
+        "verified_https",
+        "archive_magic_validated",
+        "opkg_only",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "static_path_command"
+      "remove_review": "static_path_command",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/enigma2-plugin-extensions-epgimport_1.0.ipk",
+      "source_attribution": "EPGImport package distributed by Emil Nabil; Online4Tech maintains the non-destructive opkg wrapper."
     },
     {
       "section": "plugins",
