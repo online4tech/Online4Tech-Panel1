@@ -10,8 +10,8 @@ This registry documents the direct download URLs referenced by `o4t_database.jso
 - An Online4Tech-hosted installer may still fetch a third-party payload internally. The direct command registry does not prove that every nested download inside every shell script has been mirrored; those nested references require a separate script-by-script content review.
 
 ## Safety changes
-- The 98 entries whose original command referenced `scripts/main_installer.sh` remain quarantined. That legacy script downloads and extracts the Klll-Pro skin regardless of the selected entry.
-- The legacy shared installer now fails closed. Klll-Pro-FHD, KeyAdder, Levi45 Emulator, and EPGImport-99 have been restored through item-specific Online4Tech wrappers; their original Biko-73, RAED/fairbird, and Emil Nabil sources remain upstream and attributed.
+- The 59 entries whose original command referenced `scripts/main_installer.sh` remain quarantined. That legacy script downloads and extracts the Klll-Pro skin regardless of the selected entry.
+- The legacy shared installer now fails closed. Klll-Pro-FHD, KeyAdder, Levi45 Emulator, EPGImport-99, and 39 Ciefp-family entries have been restored through Online4Tech wrappers; their original Biko-73, RAED/fairbird, Emil Nabil, and ciefp sources remain upstream and attributed. CiefpYouTube and CiefpRottenTomatoes remain paused pending their extra binary/dependency review.
 - Four feed removal commands that used broad wildcard deletion have been disabled. Pure2 feed removal is scoped to `/etc/opkg/external-extra-feed.conf`.
 - The store refuses to run entries marked `enabled: false`.
 
