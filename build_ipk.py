@@ -1,111 +1,113 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Online4Tech Enigma2 IPK Package Builder
-Builds enigma2-plugin-extensions-online4tech_7.0_all.ipk natively on Windows/Linux
-without requiring dpkg-deb or ar binaries.
-"""
-import os
-import io
-import time
-import tarfile
+"""Online4Tech Panel 7.5 Gold IPK builder.
 
-VERSION = "7.0"
+Builds from the authoritative installed plugin tree, not the legacy top-level
+plugin/ directory. All UI icons and branding assets are included.
+"""
+import io
+import os
+import stat
+import tarfile
+import time
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+VERSION = "7.5"
 PKG_NAME = "enigma2-plugin-extensions-online4tech"
-IPK_FILENAME = f"{PKG_NAME}_{VERSION}_all.ipk"
-PLUGIN_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plugin")
+IPK_FILENAME = "%s_%s_all.ipk" % (PKG_NAME, VERSION)
+PLUGIN_RELATIVE_DIR = os.path.join("usr", "lib", "enigma2", "python", "Plugins", "Extensions", "Online4Tech")
+PLUGIN_SOURCE_DIR = os.path.join(ROOT_DIR, PLUGIN_RELATIVE_DIR)
+TARGET_PREFIX = "./" + PLUGIN_RELATIVE_DIR.replace(os.sep, "/")
+REQUIRED_FILES = ("__init__.py", "plugin.py", "o4t_store.py", "plugin.png", "logo.png")
 
 
 def add_tar_bytes(tar, arcname, data_bytes, mode=0o644):
-    ti = tarfile.TarInfo(name=arcname)
-    ti.size = len(data_bytes)
-    ti.mode = mode
-    ti.uid = 0
-    ti.gid = 0
-    ti.uname = "root"
-    ti.gname = "root"
-    ti.mtime = int(time.time())
-    tar.addfile(ti, io.BytesIO(data_bytes))
+    info = tarfile.TarInfo(name=arcname)
+    info.size = len(data_bytes)
+    info.mode = mode
+    info.uid = 0
+    info.gid = 0
+    info.uname = "root"
+    info.gname = "root"
+    info.mtime = int(time.time())
+    tar.addfile(info, io.BytesIO(data_bytes))
+
+
+def add_source_tree(tar):
+    added = []
+    for current_dir, dirnames, filenames in os.walk(PLUGIN_SOURCE_DIR):
+        dirnames[:] = sorted(name for name in dirnames if name != "__pycache__")
+        for filename in sorted(filenames):
+            if filename.endswith((".pyc", ".pyo")):
+                continue
+            source_path = os.path.join(current_dir, filename)
+            if not os.path.isfile(source_path):
+                continue
+            relative = os.path.relpath(source_path, PLUGIN_SOURCE_DIR)
+            archive_name = TARGET_PREFIX + "/" + relative.replace(os.sep, "/")
+            with open(source_path, "rb") as handle:
+                payload = handle.read()
+            mode = stat.S_IMODE(os.stat(source_path).st_mode) or 0o644
+            add_tar_bytes(tar, archive_name, payload, mode)
+            added.append(relative)
+    return added
 
 
 def make_ar_member(name, data, mode=0o100644):
-    mtime = int(time.time())
-    header = (
-        f"{name:<16}"
-        f"{mtime:<12}"
-        f"{0:<6}"
-        f"{0:<6}"
-        f"{oct(mode)[2:]:<8}"
-        f"{len(data):<10}"
-        "`\n"
-    ).encode("ascii")
-    out = header + data
-    if len(data) % 2 == 1:
-        out += b"\n"
-    return out
+    timestamp = int(time.time())
+    header = ("%-16s%-12d%-6d%-6d%-8s%-10d" % (
+        name, timestamp, 0, 0, oct(mode)[2:], len(data)
+    )).encode("ascii") + bytes([96]) + b"\n"
+    result = header + data
+    if len(data) % 2:
+        result += b"\n"
+    return result
 
 
 def build():
-    plugin_py_path = os.path.join(PLUGIN_DIR, "plugin.py")
-    icon_png_path = os.path.join(PLUGIN_DIR, "icon.png")
+    if not os.path.isdir(PLUGIN_SOURCE_DIR):
+        raise FileNotFoundError("Missing authoritative plugin source: %s" % PLUGIN_SOURCE_DIR)
+    missing = [name for name in REQUIRED_FILES
+               if not os.path.isfile(os.path.join(PLUGIN_SOURCE_DIR, name))]
+    if missing:
+        raise FileNotFoundError("Missing required Online4Tech files: %s" % ", ".join(missing))
 
-    if not os.path.exists(plugin_py_path):
-        raise FileNotFoundError(f"Missing {plugin_py_path}")
+    control = (
+        "Package: %s\nVersion: %s\n"
+        "Description: Online4Tech Panel & Store - Gold Edition\n"
+        "Section: extra\nPriority: optional\nMaintainer: Online4Tech\n"
+        "Architecture: all\n"
+        "Homepage: https://github.com/online4tech/Online4Tech-Panel1\n"
+        % (PKG_NAME, VERSION)
+    ).encode("utf-8")
 
-    with open(plugin_py_path, "rb") as f:
-        plugin_bytes = f.read()
+    postinst = b"#!/bin/sh\necho \"Online4Tech Panel 7.5 Gold installed.\"\necho \"Restart Enigma2 GUI to load the updated panel.\"\nexit 0\n"
+    prerm = b"#!/bin/sh\n# Keep user data and plugin files intact during package transitions.\nexit 0\n"
+    postrm = b"#!/bin/sh\n# Package manager removes only files owned by this package.\n# Never recursively delete the plugin directory or unowned user files.\nexit 0\n"
 
-    icon_bytes = b""
-    if os.path.exists(icon_png_path):
-        with open(icon_png_path, "rb") as f:
-            icon_bytes = f.read()
-
-    control_content = f"""Package: {PKG_NAME}
-Version: {VERSION}
-Description: Online4Tech Command Dashboard & Enigma2 Control Suite
-Section: extra
-Priority: optional
-Maintainer: Online4Tech <support@online4tech.com>
-Architecture: all
-Homepage: https://github.com/online4tech/Online4Tech-Panel1
-""".encode("utf-8")
-
-    postinst = b"""#!/bin/sh
-echo "Online4Tech Command Dashboard installed! Please restart Enigma2 GUI."
-exit 0
-"""
-    prerm = b"""#!/bin/sh
-rm -rf /usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/__pycache__
-rm -f /usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/*.pyc
-exit 0
-"""
-    postrm = b"""#!/bin/sh
-rm -rf /usr/lib/enigma2/python/Plugins/Extensions/Online4Tech
-exit 0
-"""
-
-    control_buf = io.BytesIO()
-    with tarfile.open(fileobj=control_buf, mode="w:gz", format=tarfile.GNU_FORMAT) as tar:
-        add_tar_bytes(tar, "./control", control_content, 0o644)
+    control_buffer = io.BytesIO()
+    with tarfile.open(fileobj=control_buffer, mode="w:gz", format=tarfile.GNU_FORMAT) as tar:
+        add_tar_bytes(tar, "./control", control, 0o644)
         add_tar_bytes(tar, "./postinst", postinst, 0o755)
         add_tar_bytes(tar, "./prerm", prerm, 0o755)
         add_tar_bytes(tar, "./postrm", postrm, 0o755)
 
-    data_buf = io.BytesIO()
-    with tarfile.open(fileobj=data_buf, mode="w:gz", format=tarfile.GNU_FORMAT) as tar:
-        base = "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech"
-        add_tar_bytes(tar, base + "/__init__.py", b"# Online4Tech Panel\n", 0o644)
-        add_tar_bytes(tar, base + "/plugin.py", plugin_bytes, 0o644)
-        if icon_bytes:
-            add_tar_bytes(tar, base + "/icon.png", icon_bytes, 0o644)
+    data_buffer = io.BytesIO()
+    with tarfile.open(fileobj=data_buffer, mode="w:gz", format=tarfile.GNU_FORMAT) as tar:
+        included = add_source_tree(tar)
+    if len(included) < 60:
+        raise RuntimeError("Only %d plugin files found; refusing to build an incomplete package." % len(included))
 
-    with open(IPK_FILENAME, "wb") as f:
-        f.write(b"!<arch>\n")
-        f.write(make_ar_member("debian-binary", b"2.0\n"))
-        f.write(make_ar_member("control.tar.gz", control_buf.getvalue()))
-        f.write(make_ar_member("data.tar.gz", data_buf.getvalue()))
+    output_path = os.path.join(ROOT_DIR, IPK_FILENAME)
+    with open(output_path, "wb") as output:
+        output.write(b"!<arch>\n")
+        output.write(make_ar_member("debian-binary", b"2.0\n"))
+        output.write(make_ar_member("control.tar.gz", control_buffer.getvalue()))
+        output.write(make_ar_member("data.tar.gz", data_buffer.getvalue()))
 
-    print(f"Successfully built {IPK_FILENAME} ({os.path.getsize(IPK_FILENAME)} bytes)")
+    print("Built %s" % output_path)
+    print("Version: %s | Files included: %d | Size: %d bytes" %
+          (VERSION, len(included), os.path.getsize(output_path)))
 
 
 if __name__ == "__main__":
