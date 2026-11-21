@@ -45,6 +45,8 @@ jobs:
           do
             sh -n "$file"
           done
+          # Syntax-check the full maintained script library as well.
+          find scripts -type f -name '*.sh' -exec sh -n {} +
 
       - name: Check every database command syntax
         run: |
