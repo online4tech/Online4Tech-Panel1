@@ -13,7 +13,7 @@
     "http": 69,
     "tlsBypass": 136,
     "pipeShell": 816,
-    "quarantined": 59,
+    "quarantined": 58,
     "removeWildcards": 5,
     "thirdParty": 320,
     "firstParty": 498
@@ -84,6 +84,12 @@
       "severity": "info",
       "title": "39 Ciefp-family entries restored through a shared safe wrapper",
       "detail": "Thirty-nine Ciefp-related entries now use scripts/install_ciefp_plugin.sh. The wrapper downloads each verified ciefp repository archive over HTTPS, validates paths, checks Python/image requirements, installs the dependencies used by the upstream installers, and copies the usr tree in place without pre-deleting plugin folders. CiefpYouTube and CiefpRottenTomatoes remain paused because their installers require additional binaries/dependencies that need separate review."
+    },
+    {
+      "id": "ABERTIS_RESTORED",
+      "severity": "info",
+      "title": "Abertis Auto Switcher PRO restored with a pinned, checksum-verified package wrapper",
+      "detail": "The Abertis entry now uses scripts/install_abertis_auto_switcher.sh. It pins upstream release v1.9.24, verifies the official IPK/DEB SHA-256 digest, uses the native package manager without force-overwrite, and does not pre-delete the plugin directory or automatically restart Enigma2. Original package author prof-abdo is credited."
     }
   ],
   "entries": [
@@ -968,18 +974,25 @@
       "name": "Abertis-Auto-Switcher (تشغيل باقة ابيرنس المالتي ستريم علي الهسباسات)",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
-      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/maintenance/restore-quarantine-batch1-2026-11-21/scripts/install_abertis_auto_switcher.sh\" | /bin/sh",
+      "remove_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/maintenance/restore-quarantine-batch1-2026-11-21/scripts/install_abertis_auto_switcher.sh\" | /bin/sh -s -- --remove",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/maintenance/restore-quarantine-batch1-2026-11-21/scripts/install_abertis_auto_switcher.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_pinned_package_wrapper",
+        "sha256_verified",
+        "verified_https",
+        "no_predelete",
+        "no_force_overwrite",
+        "package_manager_remove",
+        "third_party_payload_retained"
       ],
-      "remove_review": "static_path_command"
+      "remove_review": "package_manager_action",
+      "payload_source_url": "https://github.com/prof-abdo/Abertis-Auto-Switcher-PRO/releases/tag/v1.9.24",
+      "source_attribution": "Original Abertis Auto Switcher PRO package by prof-abdo; Online4Tech maintains the pinned checksum-verifying wrapper."
     },
     {
       "section": "plugins",
