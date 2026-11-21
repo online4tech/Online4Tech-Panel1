@@ -1,0 +1,178 @@
+name: Online4Tech Panel validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - maintenance/audit-sources-2026-11
+
+permissions:
+  contents: read
+
+jobs:
+  validate-panel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile build_ipk.py
+          python -m py_compile usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.py
+          python -m py_compile usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py
+
+      - name: Check maintained shell scripts
+        run: |
+          set -eu
+          for file in \
+            install.sh \
+            install_panel.sh \
+            scripts/main_installer.sh \
+            scripts/install_klll_pro.sh \
+            scripts/install_keyadder_safe.sh \
+            scripts/install_levi45_emulator.sh \
+            scripts/install_epgimport_safe.sh \
+            scripts/install_ciefp_plugin.sh
+          do
+            sh -n "$file"
+          done
+
+      - name: Validate database, audit, and source manifest
+        run: |
+          python - <<'PY'
+          import json
+          import re
+
+          with open("o4t_database.json", encoding="utf-8") as handle:
+              database = json.load(handle)
+          with open("reports/command-audit-2026-11.json", encoding="utf-8") as handle:
+              audit = json.load(handle)
+          with open("sources/source-manifest.json", encoding="utf-8") as handle:
+              manifest = json.load(handle)
+
+          records = []
+          def walk(value):
+              if isinstance(value, list):
+                  for item in value:
+                      walk(item)
+              elif isinstance(value, dict):
+                  if "cmd" in value or "remove_cmd" in value:
+                      records.append(value)
+                  for key, item in value.items():
+                      if key not in ("cmd", "remove_cmd"):
+                          walk(item)
+
+          walk(database)
+          quarantined = [x for x in records if x.get("audit_status") == "quarantined"]
+          restored = [x for x in records if x.get("audit_status") == "restored_item_specific_wrapper"]
+          legacy = [x for x in records if x.get("legacy_cmd")]
+          active_main = [x for x in records if "scripts/main_installer.sh" in str(x.get("cmd", ""))]
+          active_wildcards = [x for x in records if re.search(r"rm\s+-rf\s+[^;\n]*\*", str(x.get("remove_cmd", "")))]
+
+          assert len(records) == 824, "Unexpected database record count: %d" % len(records)
+          assert len(quarantined) == 59, "Unexpected quarantine count: %d" % len(quarantined)
+          assert len(restored) == 45, "Unexpected restored count: %d" % len(restored)
+          assert len(legacy) == 104, "Original legacy commands were not all preserved"
+          assert not active_main, "An active command still points to main_installer.sh"
+          assert not active_wildcards, "An active wildcard removal command remains"
+          assert len(database["ciefp"]) == 41, "Unexpected Ciefp item count"
+          assert sum(1 for x in database["ciefp"] if x.get("audit_status") == "restored_item_specific_wrapper") == 39
+          assert len(audit["entries"]) == 824
+          assert audit["summary"]["quarantined"] == 59
+          assert len(manifest["sources"]) == 663
+          assert len(manifest["nested_sources"]) == 44
+          print("Database/audit/manifest checks passed.")
+          PY
+
+      - name: Inspect current 7.5 package artifacts
+        run: |
+          python - <<'PY'
+          import io
+          import tarfile
+
+          def ar_members(path):
+              data = open(path, "rb").read()
+              assert data.startswith(b"!<arch!>") is False
+              assert data.startswith(b"!<arch>\n"), "%s is not an ar package" % path
+              result = {}
+              offset = 8
+              while offset < len(data):
+                  header = data[offset:offset + 60]
+                  assert len(header) == 60, "Invalid ar header in %s" % path
+                  name = header[:16].decode("ascii").strip().rstrip("/")
+                  size = int(header[48:58].decode("ascii").strip())
+                  payload = data[offset + 60:offset + 60 + size]
+                  result[name] = payload
+                  offset += 60 + size + (size % 2)
+              return result
+
+          required = {
+              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.py",
+              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
+              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.png",
+              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/logo.png",
+          }
+          for package in (
+              "enigma2-plugin-extensions-online4tech_7.5_all.ipk",
+              "enigma2-plugin-extensions-online4tech_7.5_all.deb",
+          ):
+              members = ar_members(package)
+              data_name = next((name for name in members if name.startswith("data.tar")), None)
+              assert data_name, "%s has no data archive" % package
+              with tarfile.open(fileobj=io.BytesIO(members[data_name]), mode="r:*") as archive:
+                  names = set(archive.getnames())
+              missing = required - names
+              assert not missing, "%s is missing: %s" % (package, sorted(missing))
+              assert len(names) >= 60, "%s contains too few files: %d" % (package, len(names))
+              print("%s: %d files" % (package, len(names)))
+          PY
+
+      - name: Build fresh 7.5 IPK and DEB packages
+        run: python build_ipk.py
+
+      - name: Verify freshly built packages
+        run: |
+          python - <<'PY'
+          import io
+          import tarfile
+
+          for package in (
+              "enigma2-plugin-extensions-online4tech_7.5_all.ipk",
+              "enigma2-plugin-extensions-online4tech_7.5_all.deb",
+          ):
+              data = open(package, "rb").read()
+              assert data.startswith(b"!<arch>\n"), "%s is not a valid ar archive" % package
+              offset = 8
+              members = {}
+              while offset < len(data):
+                  header = data[offset:offset + 60]
+                  name = header[:16].decode("ascii").strip().rstrip("/")
+                  size = int(header[48:58].decode("ascii").strip())
+                  members[name] = data[offset + 60:offset + 60 + size]
+                  offset += 60 + size + (size % 2)
+              with tarfile.open(fileobj=io.BytesIO(members["data.tar.gz"]), mode="r:gz") as archive:
+                  names = archive.getnames()
+                  assert len(names) >= 60
+                  assert any(name.endswith("/logo.png") for name in names)
+                  assert any(name.endswith("/plugin.png") for name in names)
+              with tarfile.open(fileobj=io.BytesIO(members["control.tar.gz"]), mode="r:gz") as archive:
+                  postrm = archive.extractfile("./postrm").read().decode("utf-8")
+                  assert "rm -rf" not in postrm
+              print("%s: build verified (%d files)" % (package, len(names)))
+          PY
+
+      - name: Upload built packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: online4tech-panel-7.5-packages
+          path: |
+            enigma2-plugin-extensions-online4tech_7.5_all.ipk
+            enigma2-plugin-extensions-online4tech_7.5_all.deb
+          if-no-files-found: error
