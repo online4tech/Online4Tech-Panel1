@@ -282,17 +282,15 @@ class O4TStore(Screen):
             for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1", "db2"):
                 self[nm].setText("")
             return
-        inst = catalog.install_cmd(it) or "-"
-        rem = catalog.remove_cmd(it) or "-"
         self["dn"].setText(clip(it["name"], 26))
         self["dd"].setText(clip(it.get("desc", ""), 90))
         self["dpt"].setText(T("s_path"))
         path = it.get("path") or "-"
         self["dp"].setText(path if len(path) <= 44 else "..." + path[-41:])
-        self["dct"].setText(T("s_icmd"))
-        self["dc"].setText(clip(inst, 120))
-        self["drt"].setText(T("s_rcmd"))
-        self["dr"].setText(clip(rem, 90))
+        self["dct"].setText(T("category"))
+        self["dc"].setText(clip(it.get("category", "") or "-", 30))
+        self["drt"].setText(T("version"))
+        self["dr"].setText(clip(str(it.get("version") or "-"), 30))
         self["db0"].setText(T("k_reinstall") if self.is_installed(it) else T("k_install_now"))
         self["db1"].setText(T("k_remove"))
         self["db2"].setText(T("k_fav_del") if item_key(it) in self.favs else T("k_fav_add"))

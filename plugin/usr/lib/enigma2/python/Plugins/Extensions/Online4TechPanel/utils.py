@@ -120,6 +120,75 @@ def safe_remove(cmd):
     return True
 
 
+VU = {"duo4k": "Duo 4K", "duo4kse": "Duo 4K SE", "uno4k": "Uno 4K", "uno4kse": "Uno 4K SE",
+      "ultimo4k": "Ultimo 4K", "solo4k": "Solo 4K", "zero4k": "Zero 4K", "duo2": "Duo2",
+      "solo2": "Solo2", "solose": "Solo SE", "solose v2": "Solo SE V2", "ultimo": "Ultimo",
+      "uno": "Uno", "zero": "Zero", "duo": "Duo", "solo": "Solo"}
+OTHER = {"dm900": "Dreambox DM900", "dm920": "Dreambox DM920", "dreamone": "Dreambox One",
+         "dreamtwo": "Dreambox Two", "dm525": "Dreambox DM525", "hd51": "AX HD51",
+         "h7": "Zgemma H7", "h9": "Zgemma H9", "gbquad4k": "GigaBlue Quad 4K",
+         "gbue4k": "GigaBlue UE 4K", "osmio4k": "Edision OSmio4K", "osmio4kplus": "Edision OSmio4K Plus"}
+
+
+def device_name():
+    """Human readable receiver name, e.g. 'Vu+ Duo 4K' (best effort)."""
+    def first(*paths):
+        for path in paths:
+            val = read_file(path).strip()
+            if val:
+                return val
+        return ""
+    vu = first("/proc/stb/info/vumodel").lower()
+    raw = first("/proc/stb/info/boxtype", "/proc/stb/info/model", "/proc/stb/info/hwmodel")
+    host = read_file("/etc/hostname").strip().lower()
+    for key in (vu, raw.lower(), host):
+        k = key.replace("vu+", "").replace("vu", "", 1) if key.startswith("vu") else key
+        if key.startswith("vu") and k in VU:
+            return "Vu+ " + VU[k]
+        if key in VU and (vu or host.startswith("vu")):
+            return "Vu+ " + VU[key]
+        if key in OTHER:
+            return OTHER[key]
+    return (first("/proc/stb/info/model") or raw or host or "-").upper() if (raw or host) else "-"
+
+
+def image_info():
+    """(name, version) of the running image, e.g. ('EGAMI', '11.0 (build 123)')."""
+    name = ver = ""
+    try:
+        from boxbranding import getImageDistro, getImageVersion, getImageBuild
+        name, ver = getImageDistro(), getImageVersion()
+        b = getImageBuild()
+        if b and b not in ("", "0"):
+            ver = "%s.%s" % (ver, b)
+    except Exception:
+        pass
+    if not name:
+        data = {}
+        for path in ("/etc/image-version", "/etc/os-release"):
+            for line in read_file(path).splitlines():
+                if "=" in line:
+                    k, v = line.split("=", 1)
+                    data.setdefault(k.strip().lower(), v.strip().strip('"'))
+        name = data.get("distro") or data.get("creator") or data.get("name") or data.get("id") or ""
+        ver = data.get("imageversion") or data.get("version") or data.get("version_id") or ""
+        if not ver and data.get("build"):
+            ver = data["build"]
+    return (name or "-"), (ver or "-")
+
+
+def local_ip():
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("10.255.255.255", 1))     # no packet is sent; just picks the route
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "-"
+
+
 def detect_image_group():
     """Skin category that best matches this receiver's image."""
     blob = (read_file("/etc/image-version") + read_file("/etc/issue") +

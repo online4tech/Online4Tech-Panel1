@@ -147,31 +147,51 @@ def _footer(m):
 # ---------------------------------------------------------------- screens
 MAIN_POS = []
 for _i in range(8):
-    MAIN_POS.append((180 + (_i % 4) * 400, 215 + (_i // 4) * 330))
+    MAIN_POS.append((40 + (_i % 4) * 333, 215 + (_i // 4) * 282))
+GLASS_TILE = (300, 250)
+CARD = (1384, 196, 496, 700)      # device card on the main screen (glass)
 
 
 def _glass_main():
     m = metrics()
     x = [_screen_open(m, "O4TMain"), _header(m)]
+    tw, th = GLASS_TILE
     for i, (tx, ty) in enumerate(MAIN_POS):
-        x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
-                 % (m.pix("tile"), m.rect(tx, ty, 360, 300)))
-        x.append('<widget name="ic%d" %s alphatest="blend" zPosition="3" />\n'
-                 % (i, m.rect(tx + 116, ty + 36, 128, 128)))
+        x.append('<ePixmap pixmap="%s" %s alphatest="blend" scale="1" zPosition="1" />\n'
+                 % (m.pix("tile"), m.rect(tx, ty, tw, th)))
+        x.append('<widget name="ic%d" %s alphatest="blend" scale="1" zPosition="3" />\n'
+                 % (i, m.rect(tx + 94, ty + 26, 112, 112)))
         x.append('<widget name="tt%d" %s font="%s" foregroundColor="%s" transparent="1" '
                  'halign="center" valign="center" zPosition="3" />\n'
-                 % (i, m.rect(tx + 10, ty + 184, 340, 48), m.font(36), TEXT))
+                 % (i, m.rect(tx + 8, ty + 142, tw - 16, 44), m.font(31), TEXT))
         x.append('<widget name="ts%d" %s font="%s" foregroundColor="%s" transparent="1" '
                  'halign="center" valign="center" zPosition="3" />\n'
-                 % (i, m.rect(tx + 10, ty + 234, 340, 36), m.font(23), MUTED))
-    x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" zPosition="2" />\n'
-             % (m.pix("sel_" + theme()), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, 392, 332)))
+                 % (i, m.rect(tx + 8, ty + 190, tw - 16, 34), m.font(21), MUTED))
+    x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" scale="1" zPosition="2" />\n'
+             % (m.pix("sel_" + theme()), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, tw + 32, th + 32)))
+    cx, cy, cw, ch = CARD
+    x.append('<ePixmap pixmap="%s" %s alphatest="blend" scale="1" zPosition="1" />\n'
+             % (m.pix("panel_d"), m.rect(cx, cy, cw, ch)))
+    x.append(_devcard_labels(m, cx, cy, cw, TEXT, MUTED, THEME_COLORS[theme()]))
     x.append('<widget name="hint" %s font="%s" foregroundColor="%s" transparent="1" '
              'halign="center" valign="center" zPosition="3" />\n'
-             % (m.rect(180, 880, 1560, 56), m.font(28), SOFT))
+             % (m.rect(40, 800, 1300, 56), m.font(28), SOFT))
     x.append(_footer(m))
     x.append("</screen>")
     return "".join(x)
+
+
+def _devcard_labels(m, cx, cy, cw, text, muted, accent):
+    """Device card text: 5 blocks, each a small caption (dcN) over a value (dvN)."""
+    out = ['<widget name="dct" %s font="%s" foregroundColor="%s" transparent="1" halign="center" '
+           'valign="center" zPosition="3" />\n' % (m.rect(cx + 16, cy + 18, cw - 32, 50), m.font(32), accent)]
+    for k in range(5):
+        yy = cy + 90 + k * 118
+        out.append('<widget name="dc%d" %s font="%s" foregroundColor="%s" transparent="1" halign="left" '
+                   'valign="center" zPosition="3" />\n' % (k, m.rect(cx + 28, yy, cw - 56, 30), m.font(21), accent))
+        out.append('<widget name="dv%d" %s font="%s" foregroundColor="%s" transparent="1" halign="left" '
+                   'valign="top" zPosition="3" />\n' % (k, m.rect(cx + 28, yy + 32, cw - 56, 70), m.font(27), text))
+    return "".join(out)
 
 
 def _glass_list(name):
@@ -267,9 +287,9 @@ def _glass_store(name):
     lab("dpt", 1464, 442, 416, 30, 22, accent(), "left")
     lab("dp", 1464, 472, 416, 50, 18, SOFT, "left", valign="top")
     lab("dct", 1464, 526, 416, 30, 22, accent(), "left")
-    lab("dc", 1464, 556, 416, 72, 17, SOFT, "left", valign="top")
-    lab("drt", 1464, 632, 416, 30, 22, accent(), "left")
-    lab("dr", 1464, 662, 416, 54, 17, SOFT, "left", valign="top")
+    lab("dc", 1464, 556, 416, 40, 20, SOFT, "left", valign="top")
+    lab("drt", 1464, 612, 416, 30, 22, accent(), "left")
+    lab("dr", 1464, 642, 416, 40, 20, SOFT, "left", valign="top")
     for j, nm in enumerate(("green", "red", "blue")):
         yy = 744 + j * 68
         pix("wpill_" + nm, 1472, yy, 400, 50, 2)
@@ -378,6 +398,8 @@ def _rows_main():
         b.lab("tt%d" % i, x + 84, y, 330, ROW_H, 30, st["text"])
         b.lab("ts%d" % i, x + 420, y, 500, ROW_H, 21, st["muted"])
     b.wbox("sel", "row_sel", ROW_X - 12, 196 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
+    b.box("panel_d", 1440, 196, 440, 700, 0, st.get("panel"))
+    b.x.append(_devcard_labels(b.m, 1440, 196, 440, st["text"], st["muted"], st["accent"]))
     b.lab("hint", ROW_X, 906, ROW_W, 48, 24, st["soft"], "center")
     b.footer()
     return b.done()
@@ -450,9 +472,9 @@ def _rows_store(name):
     for nm, yy, h, size, col, al in (("dpt", 442, 30, 22, st["accent"], "left"),
                                      ("dp", 472, 50, 18, st["soft"], "left"),
                                      ("dct", 526, 30, 22, st["accent"], "left"),
-                                     ("dc", 556, 72, 17, st["soft"], "left"),
-                                     ("drt", 632, 30, 22, st["accent"], "left"),
-                                     ("dr", 662, 54, 17, st["soft"], "left")):
+                                     ("dc", 556, 40, 20, st["soft"], "left"),
+                                     ("drt", 612, 30, 22, st["accent"], "left"),
+                                     ("dr", 642, 40, 20, st["soft"], "left")):
         b.lab(nm, 1456, yy, 408, h, size, col, al, valign="top" if nm in ("dp", "dc", "dr") else "center")
     for j, nm in enumerate(("green", "red", "blue")):
         yy = 744 + j * 68

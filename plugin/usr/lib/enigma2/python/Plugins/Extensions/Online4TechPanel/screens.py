@@ -39,7 +39,7 @@ GUARDED = ("layout_done", "open_current", "sync_catalog", "reload", "got_install
            "refresh_view", "loaded", "apply", "finished", "start", "build", "show_info",
            "got_version", "after", "after_change", "got_filter", "key_green", "key_yellow",
            "key_blue", "key_menu", "toggle_fav", "toggle_compat", "install_favs", "show_cats",
-           "show_items", "load_feed", "go_back", "child_closed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick", "tick", "settings_closed")
+           "show_items", "load_feed", "go_back", "child_closed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick", "tick", "settings_closed", "fill_device")
 
 
 def _guard(fn):
@@ -149,6 +149,10 @@ class O4TMain(Screen):
         self["ver"] = Label("v" + VERSION)
         self["hint"] = Label("")
         self["clock"] = Label("")
+        self["dct"] = Label(T("dev_title"))
+        for k, key in enumerate(("dev_name", "dev_img", "dev_panel", "dev_ip", "dev_web")):
+            self["dc%d" % k] = Label(T(key))
+            self["dv%d" % k] = Label("")
         self["sel"] = Label() if self.flat else Pixmap()
         for i, key in enumerate(self.MENU):
             self["ic%d" % i] = Pixmap()
@@ -182,7 +186,23 @@ class O4TMain(Screen):
         if changed:
             self.close("reopen")
 
+    def fill_device(self):
+        try:
+            from .utils import device_name, image_info, local_ip
+            img, ver = image_info()
+            ip = local_ip()
+            if get_setting("web_enabled", True):
+                web = "http://%s:%s" % (ip, get_setting("web_port", 8080))
+            else:
+                web = T("web_off")
+            vals = [device_name(), "%s  %s" % (img, ver), "v" + VERSION, ip, web]
+        except Exception:
+            vals = ["-"] * 5
+        for k, v in enumerate(vals):
+            self["dv%d" % k].setText(v)
+
     def layout_done(self):
+        self.fill_device()
         m = metrics()
         for i in range(0 if self.flat else len(self.MENU)):
             try:
