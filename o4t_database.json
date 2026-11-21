@@ -1553,18 +1553,19 @@
     },
     {
       "name": "EPGImport-99 (دليل القنوات)",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_epgimport_safe.sh\" | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/EPGImport",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_epgimport_safe.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained_opkg_only",
+      "source_attribution": "EPGImport package distributed by Emil Nabil; Online4Tech maintains the non-destructive opkg wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة التثبيت عبر أمر مخصص آمن. المصدر الأصلي يوفر حزمة IPK فقط؛ لذلك يعمل هذا المثبت على الصور التي تستخدم opkg، دون حذف مجلد البلجن يدويًا.",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/enigma2-plugin-extensions-epgimport_1.0.ipk"
     },
     {
       "name": "EPGTranslator (مترجم دليل القنوات)",
