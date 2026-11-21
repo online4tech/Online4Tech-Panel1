@@ -99,7 +99,6 @@ jobs:
 
           def ar_members(path):
               data = open(path, "rb").read()
-              assert data.startswith(b"!<arch!>") is False
               assert data.startswith(b"!<arch>\n"), "%s is not an ar package" % path
               result = {}
               offset = 8
@@ -114,10 +113,10 @@ jobs:
               return result
 
           required = {
-              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.py",
-              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
-              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.png",
-              "./usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/logo.png",
+              "usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.py",
+              "usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/o4t_store.py",
+              "usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/plugin.png",
+              "usr/lib/enigma2/python/Plugins/Extensions/Online4Tech/logo.png",
           }
           for package in (
               "enigma2-plugin-extensions-online4tech_7.5_all.ipk",
@@ -127,7 +126,7 @@ jobs:
               data_name = next((name for name in members if name.startswith("data.tar")), None)
               assert data_name, "%s has no data archive" % package
               with tarfile.open(fileobj=io.BytesIO(members[data_name]), mode="r:*") as archive:
-                  names = set(archive.getnames())
+                  names = {name.lstrip("./") for name in archive.getnames()}
               missing = required - names
               assert not missing, "%s is missing: %s" % (package, sorted(missing))
               assert len(names) >= 60, "%s contains too few files: %d" % (package, len(names))
