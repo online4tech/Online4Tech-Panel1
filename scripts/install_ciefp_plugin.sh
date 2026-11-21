@@ -137,9 +137,38 @@ else
     exit 1
 fi
 
-echo "[Online4Tech] Updating plugin files in place; existing files are not pre-deleted..."
+# Preserve common user-managed data files before updating plugin code.
+PRESERVE_DIR="$STAGE/o4t-preserved-user-data"
+EXISTING_PLUGIN_PATH=""
+if [ -d "/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
+    EXISTING_PLUGIN_PATH="/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME"
+elif [ -d "/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
+    EXISTING_PLUGIN_PATH="/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME"
+fi
+
+if [ -n "$EXISTING_PLUGIN_PATH" ]; then
+    mkdir -p "$PRESERVE_DIR"
+    find "$EXISTING_PLUGIN_PATH" -type f \(
+        -name "*.conf" -o -name "*.cfg" -o -name "*.ini" -o -name "*.json" \
+        -o -name "*.db" -o -name "*.sqlite" -o -name "*.key" -o -name "SoftCam.Key" \
+        -o -name "*.m3u" -o -name "*.m3u8" -o -name "*.txt" -o -name "*.list" \
+        -o -name "*.dat" -o -name "*.xml" -o -name "*.yaml" -o -name "*.yml" \
+    \) -print | while IFS= read -r USER_FILE; do
+        RELATIVE_FILE="$(printf '%s\n' "$USER_FILE" | sed "s#^$EXISTING_PLUGIN_PATH/##")"
+        DEST_FILE="$PRESERVE_DIR/$RELATIVE_FILE"
+        mkdir -p "$(dirname "$DEST_FILE")"
+        cp -p "$USER_FILE" "$DEST_FILE"
+    done
+fi
+
+echo "[Online4Tech] Updating plugin files in place; existing plugin folders are not deleted..."
 mkdir -p /usr
 cp -a "$SOURCE_USR/." /usr/
+
+# Restore user-managed files over packaged defaults, when they existed before.
+if [ -n "$EXISTING_PLUGIN_PATH" ] && [ -d "$PRESERVE_DIR" ]; then
+    cp -a "$PRESERVE_DIR/." "$EXISTING_PLUGIN_PATH/"
+fi
 sync
 
 if [ ! -d "/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ] && [ ! -d "/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
