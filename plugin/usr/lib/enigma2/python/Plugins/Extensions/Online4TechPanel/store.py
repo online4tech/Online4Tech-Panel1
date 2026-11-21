@@ -16,7 +16,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 from . import catalog
 from .i18n import T
-from .screens import (_start_clock, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
+from .screens import (_start_clock, mark_opening, mark_shown, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
                       _guard, _run, _watch_close)
 from .skin import is_flat, metrics, skin_store, store_geometry, uses_rows
 from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, pretty_name,
@@ -59,6 +59,7 @@ def guard_all(cls):
 class O4TStore(Screen):
     def __init__(self, session, kind):
         self.kind = kind
+        mark_opening("store-" + kind)
         self.cols, self.per, self.xy, self.off = store_geometry()
         self.flat = is_flat()
         self.rowsmode = uses_rows()
@@ -119,6 +120,7 @@ class O4TStore(Screen):
 
     # ------------------------------------------------------------ setup
     def layout_done(self):
+        mark_shown()
         self.build_cats()
         self.set_focus("side")
         _run(self.console, OPKG_INSTALLED, self.got_installed)

@@ -6,7 +6,8 @@ from .version import PLUGIN_NAME
 
 
 def main(session, **kwargs):
-    from .screens import O4TMain
+    from .screens import O4TMain, recover_if_crashed
+    recover_if_crashed()
 
     def again(result=None):
         if result == "reopen":     # design/language changed: rebuild the panel with the new skin

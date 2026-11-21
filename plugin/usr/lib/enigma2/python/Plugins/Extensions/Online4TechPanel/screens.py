@@ -70,6 +70,8 @@ def guarded(cls):
 def _start_clock(screen):
     """Keeps screen['clock'] showing HH:MM (only designs with a header clock define it)."""
     import time
+    if 'name="clock"' not in getattr(screen, "skin", ""):
+        return                      # this design has no header clock: no timer needed
     timer = eTimer()
 
     def tick():
@@ -94,6 +96,41 @@ def _start_clock(screen):
             pass
     screen.onClose.append(stop)
     screen.onLayoutFinish.append(tick)
+
+
+OPEN_MARK = "/tmp/o4t_opening"
+
+
+def mark_opening(what):
+    """Written before a screen is built, removed once it is shown. If it is still there at the
+    next start, the previous attempt killed enigma2 -> plugin.main() falls back to safe settings."""
+    try:
+        with open(OPEN_MARK, "w") as fh:
+            fh.write("%s design=%s font=%s\n" % (what, design(), font_scale()))
+    except Exception:
+        pass
+
+
+def mark_shown():
+    try:
+        os.remove(OPEN_MARK)
+    except Exception:
+        pass
+
+
+def recover_if_crashed():
+    """True when the last open crashed; resets design/size to the safe defaults."""
+    try:
+        if not os.path.exists(OPEN_MARK):
+            return False
+        log("previous open crashed: %s" % open(OPEN_MARK).read().strip())
+        os.remove(OPEN_MARK)
+        from .utils import set_setting
+        set_setting("design", "glass")
+        set_setting("font_scale", 100)
+        return True
+    except Exception:
+        return False
 
 
 def _run(console, cmd, cb):
@@ -137,6 +174,7 @@ class O4TMain(Screen):
     MENU = ["plugins", "skins", "updates", "installed", "tools", "info", "selfupdate", "about"]
 
     def __init__(self, session):
+        mark_opening("main")
         self.skin = skin_main()
         Screen.__init__(self, session)
         self.console = Console()
@@ -202,6 +240,7 @@ class O4TMain(Screen):
             self["dv%d" % k].setText(v)
 
     def layout_done(self):
+        mark_shown()
         self.fill_device()
         m = metrics()
         for i in range(0 if self.flat else len(self.MENU)):
