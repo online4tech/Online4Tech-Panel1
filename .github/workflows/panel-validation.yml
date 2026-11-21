@@ -91,7 +91,7 @@ jobs:
           print("Shell syntax passed for %d install/removal/legacy command strings across %d records." % (checked, len(records)))
           PY
 
-      - name: Verify all first-party command source files
+      - name: Verify first-party command sources and report known gaps
         run: |
           python - <<'PY'
           import json
@@ -99,6 +99,10 @@ jobs:
           from urllib.parse import unquote
 
           prefix = "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/"
+          expected_missing = {
+              "install_o4t_emu.sh",
+              "scripts/channel-romeh_installer.sh",
+          }
           with open("sources/source-manifest.json", encoding="utf-8") as handle:
               manifest = json.load(handle)
 
@@ -106,26 +110,36 @@ jobs:
           missing = []
           empty = []
           for source in manifest["sources"]:
-              if source.get("mirror_status") != "already_hosted_in_online4tech_repo":
+              status = source.get("mirror_status")
+              if status not in (
+                  "already_hosted_in_online4tech_repo",
+                  "missing_in_online4tech_repo_restore_required",
+              ):
                   continue
               url = source.get("url", "")
               if not url.startswith(prefix):
-                  missing.append("Unexpected first-party URL: " + url)
-                  continue
+                  raise SystemExit("Unexpected first-party URL: " + url)
               path = unquote(url[len(prefix):])
-              checked += 1
-              if not os.path.isfile(path):
+              exists = os.path.isfile(path)
+              if status == "already_hosted_in_online4tech_repo":
+                  checked += 1
+                  if not exists:
+                      missing.append(path)
+                  elif os.path.getsize(path) == 0:
+                      empty.append(path)
+              else:
+                  if exists:
+                      raise SystemExit("Source was restored; update its manifest status: " + path)
                   missing.append(path)
-              elif os.path.getsize(path) == 0:
-                  empty.append(path)
 
-          if missing or empty:
+          if empty or set(missing) != expected_missing:
               for path in missing:
                   print("Missing source: " + path)
               for path in empty:
                   print("Empty source: " + path)
               raise SystemExit(1)
-          print("Verified %d first-party source files exist and are non-empty in this repository checkout." % checked)
+          print("Verified %d first-party source files exist and are non-empty." % checked)
+          print("Two active commands still require original-source recovery: " + ", ".join(sorted(expected_missing)))
           PY
 
       - name: Validate database, audit, and source manifest
