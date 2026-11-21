@@ -1651,8 +1651,12 @@ class Online4TechStoreScreen(Screen):
             sub_icon = item.get("icon") or (sub_key + ".png")
             self.open_section(sub_key, sub_title, icon_name=sub_icon, push_history=True)
         else:
-            cmd = item.get("cmd", "")
             clean_title, _ = parse_item_name(item.get("name", "Package"))
+            if item.get("enabled", True) is False:
+                reason = item.get("audit_reason") or "هذا العنصر موقوف مؤقتًا لحين مراجعة مصدر التثبيت."
+                self.session.open(MessageBox, reason, MessageBox.TYPE_INFO, timeout=8)
+                return
+            cmd = item.get("cmd", "")
             if cmd:
                 self.session.open(Console, title="Online4Tech - %s" % clean_title, cmdlist=[cmd], closeOnSuccess=False)
 
