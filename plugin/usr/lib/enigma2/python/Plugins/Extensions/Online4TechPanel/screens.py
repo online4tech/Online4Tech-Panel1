@@ -112,7 +112,7 @@ class O4TMain(Screen):
         self.console = Console()
         _watch_close(self)
         self.idx = 0
-        self["title"] = Label("Online4Tech Panel")
+        self["title"] = Label("")
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
         self["hint"] = Label("")
@@ -174,10 +174,9 @@ class O4TMain(Screen):
 
     def open_current(self):
         key = self.MENU[self.idx]
-        if key == "plugins":
-            self.session.open(O4TPackages, "plugin")
-        elif key == "skins":
-            self.session.open(O4TPackages, "skin")
+        if key in ("plugins", "skins"):
+            from .store import O4TStore
+            self.session.open(O4TStore, "plugin" if key == "plugins" else "skin")
         elif key == "updates":
             self.session.open(O4TUpdates)
         elif key == "installed":

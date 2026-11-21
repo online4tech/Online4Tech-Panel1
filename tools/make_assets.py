@@ -107,7 +107,8 @@ def pill(w, h, color):
 
 
 def background(w, h):
-    img = vgrad(w, h, (8, 13, 28, 255), (14, 22, 46, 255)).convert("RGB")
+    """Deep navy sky + the Online4Tech banner (tools/src/header.png) faded into the top."""
+    img = vgrad(w, h, (0, 14, 52, 255), (1, 7, 28, 255)).convert("RGB")
 
     def blob(cx, cy, scale, color, alpha):
         bw, bh = int(w * scale), int(h * scale * 1.4)
@@ -116,9 +117,21 @@ def background(w, h):
         layer = Image.new("RGB", (bw, bh), color)
         img.paste(layer, (int(cx * w - bw / 2), int(cy * h - bh / 2)), m)
 
-    blob(0.12, 0.10, 0.75, (20, 120, 190), 0.55)
-    blob(0.92, 0.95, 0.80, (110, 60, 200), 0.50)
-    blob(0.60, 0.40, 0.45, (20, 90, 150), 0.20)
+    blob(0.10, 0.45, 0.55, (10, 70, 170), 0.35)
+    blob(0.95, 0.80, 0.60, (20, 60, 160), 0.35)
+    blob(0.55, 0.55, 0.50, (10, 50, 120), 0.18)
+    src = os.path.join(ROOT, "tools", "src", "header.png")
+    if os.path.exists(src):
+        hh = int(round(w * 138.0 / 1536))
+        ban = Image.open(src).convert("RGB").resize((w, hh), Image.LANCZOS)
+        fade = Image.new("L", (w, hh), 255)
+        fp = fade.load()
+        fl = max(2, hh // 6)
+        for y in range(hh - fl, hh):
+            v = int(255 * (hh - 1 - y) / float(fl))
+            for x in range(w):
+                fp[x, y] = v
+        img.paste(ban, (0, 0), fade)
     return img
 
 
@@ -185,6 +198,110 @@ def draw_icon(idx, size, color):
     return out.resize((size, size), Image.LANCZOS)
 
 
+# ------------------------------------------------- category icons (store screen)
+CAT_ICONS = {
+    "plug": (56, 189, 248), "palette": (167, 139, 250), "antenna": (45, 212, 191),
+    "image": (96, 165, 250), "cloud": (125, 211, 252), "star": (251, 191, 36),
+    "tv": (244, 114, 182), "gear": (251, 146, 60), "cube": (129, 140, 248),
+    "play": (74, 222, 128), "globe": (56, 189, 248), "grid": (250, 204, 21),
+    "folder": (56, 189, 248), "speaker": (167, 139, 250), "calendar": (96, 165, 250),
+    "download": (74, 222, 128),
+}
+
+
+def cat_icon(key, size):
+    S = 512
+    col = CAT_ICONS[key]
+    img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    c = col + (255,)
+    cx = cy = S // 2
+    sw = 36
+    if key == "plug":
+        d.rounded_rectangle((150, 190, 362, 350), 40, fill=c)
+        d.rounded_rectangle((190, 80, 236, 200), 14, fill=c)
+        d.rounded_rectangle((276, 80, 322, 200), 14, fill=c)
+        d.rounded_rectangle((226, 340, 286, 440), 20, fill=c)
+    elif key == "palette":
+        d.ellipse((70, 90, 442, 420), fill=c)
+        for (x, y, r) in ((160, 200, 28), (250, 150, 28), (345, 190, 28), (150, 305, 28)):
+            d.ellipse((x - r, y - r, x + r, y + r), fill=(0, 0, 0, 0))
+        d.ellipse((310, 300, 420, 410), fill=(0, 0, 0, 0))
+    elif key == "antenna":
+        d.arc((90, 90, 422, 422), 200, 340, fill=c, width=sw)
+        d.arc((150, 150, 362, 362), 205, 335, fill=c, width=sw)
+        d.ellipse((cx - 34, cy - 14, cx + 34, cy + 54), fill=c)
+        d.rounded_rectangle((cx - 16, cy + 40, cx + 16, 440), 10, fill=c)
+        d.rounded_rectangle((170, 428, 342, 462), 14, fill=c)
+    elif key == "image":
+        d.rounded_rectangle((70, 100, 442, 412), 44, outline=c, width=sw)
+        d.ellipse((150, 160, 214, 224), fill=c)
+        d.polygon([(100, 380), (230, 250), (310, 330), (360, 290), (412, 380)], fill=c)
+    elif key == "cloud":
+        d.ellipse((90, 220, 250, 380), fill=c)
+        d.ellipse((190, 130, 380, 320), fill=c)
+        d.ellipse((300, 220, 450, 370), fill=c)
+        d.rounded_rectangle((170, 280, 370, 380), 40, fill=c)
+    elif key == "star":
+        pts = []
+        for k in range(10):
+            ang = -math.pi / 2 + k * math.pi / 5
+            rad = 200 if k % 2 == 0 else 88
+            pts.append((cx + rad * math.cos(ang), cy + 14 + rad * math.sin(ang)))
+        d.polygon(pts, fill=c)
+    elif key == "tv":
+        d.rounded_rectangle((60, 110, 452, 380), 36, outline=c, width=sw)
+        d.polygon([(220, 200), (220, 290), (300, 245)], fill=c)
+        d.rounded_rectangle((170, 410, 342, 444), 14, fill=c)
+    elif key == "gear":
+        for k in range(8):
+            tooth = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+            ImageDraw.Draw(tooth).rounded_rectangle((cx - 34, 52, cx + 34, 170), 14, fill=c)
+            img.alpha_composite(tooth.rotate(-k * 45, resample=Image.BICUBIC, center=(cx, cy)))
+        d = ImageDraw.Draw(img)
+        d.ellipse((cx - 150, cy - 150, cx + 150, cy + 150), fill=c)
+        d.ellipse((cx - 70, cy - 70, cx + 70, cy + 70), fill=(0, 0, 0, 0))
+    elif key == "cube":
+        d.polygon([(cx, 60), (440, 150), (440, 360), (cx, 452), (72, 360), (72, 150)], outline=c, width=sw)
+        d.line([(72, 150), (cx, 250), (440, 150)], fill=c, width=sw - 8)
+        d.line([(cx, 250), (cx, 452)], fill=c, width=sw - 8)
+    elif key == "play":
+        d.ellipse((60, 60, 452, 452), outline=c, width=sw)
+        d.polygon([(205, 160), (205, 352), (360, 256)], fill=c)
+    elif key == "globe":
+        d.ellipse((70, 70, 442, 442), outline=c, width=sw - 6)
+        d.ellipse((170, 70, 342, 442), outline=c, width=sw - 12)
+        d.line([(70, cx), (442, cx)], fill=c, width=sw - 12)
+    elif key == "grid":
+        for gx in (80, 270):
+            for gy in (80, 270):
+                d.rounded_rectangle((gx, gy, gx + 162, gy + 162), 34, fill=c)
+    elif key == "folder":
+        d.rounded_rectangle((60, 130, 452, 410), 38, fill=c)
+        d.rounded_rectangle((60, 90, 230, 190), 26, fill=c)
+    elif key == "speaker":
+        d.polygon([(90, 200), (180, 200), (290, 110), (290, 402), (180, 312), (90, 312)], fill=c)
+        d.arc((250, 170, 410, 342), 300, 60, fill=c, width=sw - 6)
+        d.arc((290, 120, 460, 392), 305, 55, fill=c, width=sw - 6)
+    elif key == "calendar":
+        d.rounded_rectangle((70, 100, 442, 442), 40, outline=c, width=sw)
+        d.rectangle((70, 100, 442, 190), fill=c)
+        d.rounded_rectangle((150, 60, 180, 140), 10, fill=c)
+        d.rounded_rectangle((332, 60, 362, 140), 10, fill=c)
+        d.rounded_rectangle((130, 240, 230, 300), 12, fill=c)
+        d.rounded_rectangle((282, 240, 382, 300), 12, fill=c)
+        d.rounded_rectangle((130, 340, 230, 400), 12, fill=c)
+    elif key == "download":
+        d.rounded_rectangle((cx - 30, 60, cx + 30, 290), 14, fill=c)
+        d.polygon([(cx - 130, 260), (cx + 130, 260), (cx, 392)], fill=c)
+        d.line([(80, 410), (80, 450), (432, 450), (432, 410)], fill=c, width=sw, joint="curve")
+    glow = img.filter(ImageFilter.GaussianBlur(14))
+    glow = Image.eval(glow.split()[3], lambda v: int(v * 0.6))
+    gi = Image.new("RGBA", (S, S), col + (0,))
+    gi.putalpha(glow)
+    return Image.alpha_composite(gi, img).resize((size, size), Image.LANCZOS)
+
+
 def plugin_icon(w, h):
     img = glass(w * 2, h * 2, 18, tint=(56, 189, 248), strength=1.4, border=160)
     d = ImageDraw.Draw(img)
@@ -211,14 +328,32 @@ def build(name, k):
     for tname, tcol in THEMES.items():
         selector(s(392), s(332), s(48), tcol).save(os.path.join(out, "sel_%s.png" % tname),
                                                   optimize=True)
-    glass(s(1060), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_l.png"), optimize=True)
-    glass(s(670), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_r.png"), optimize=True)
-    glass(s(1760), s(790), s(34), strength=0.8).save(os.path.join(out, "panel_f.png"), optimize=True)
+    glass(s(1060), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_l.png"), optimize=True)
+    glass(s(670), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_r.png"), optimize=True)
+    glass(s(1760), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_f.png"), optimize=True)
     for nm, col in (("red", (225, 29, 72)), ("green", (34, 197, 94)),
                     ("yellow", (234, 179, 8)), ("blue", (59, 130, 246))):
         pill(s(250), s(56), col).save(os.path.join(out, "btn_%s.png" % nm), optimize=True)
     for i, col in enumerate(ICON_COLORS):
         draw_icon(i, s(128), col).save(os.path.join(out, "ic%d.png" % i), optimize=True)
+    # store screen (card grid) pieces
+    glass(s(250), s(196), s(22), strength=1.0).save(os.path.join(out, "card.png"), optimize=True)
+    selector(s(292), s(230), s(30), ACCENT).save(os.path.join(out, "card_sel.png"), optimize=True)
+    for tname, tcol in THEMES.items():
+        selector(s(292), s(230), s(30), tcol).save(os.path.join(out, "card_sel_%s.png" % tname),
+                                                  optimize=True)
+    glass(s(300), s(770), s(26), strength=0.9).save(os.path.join(out, "panel_s.png"), optimize=True)
+    glass(s(1096), s(770), s(26), strength=0.7).save(os.path.join(out, "panel_c.png"), optimize=True)
+    glass(s(448), s(770), s(26), strength=0.9).save(os.path.join(out, "panel_d.png"), optimize=True)
+    glass(s(560), s(54), s(27), strength=0.9, border=150).save(os.path.join(out, "search.png"), optimize=True)
+    pill(s(190), s(38), (37, 99, 235)).save(os.path.join(out, "pill_blue.png"), optimize=True)
+    pill(s(190), s(38), (22, 163, 74)).save(os.path.join(out, "pill_green.png"), optimize=True)
+    pill(s(190), s(38), (220, 38, 38)).save(os.path.join(out, "pill_red.png"), optimize=True)
+    pill(s(400), s(50), (22, 163, 74)).save(os.path.join(out, "wpill_green.png"), optimize=True)
+    pill(s(400), s(50), (220, 38, 38)).save(os.path.join(out, "wpill_red.png"), optimize=True)
+    pill(s(400), s(50), (37, 99, 235)).save(os.path.join(out, "wpill_blue.png"), optimize=True)
+    for key in CAT_ICONS:
+        cat_icon(key, s(128)).save(os.path.join(out, "ci_%s.png" % key), optimize=True)
 
 
 THEMES = {"cyan": (56, 189, 248), "violet": (167, 139, 250), "green": (74, 222, 128),
