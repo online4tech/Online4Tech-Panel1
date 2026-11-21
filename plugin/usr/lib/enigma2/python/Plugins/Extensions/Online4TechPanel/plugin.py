@@ -7,7 +7,11 @@ from .version import PLUGIN_NAME
 
 def main(session, **kwargs):
     from .screens import O4TMain
-    session.open(O4TMain)
+
+    def again(result=None):
+        if result == "reopen":     # design/language changed: rebuild the panel with the new skin
+            session.openWithCallback(again, O4TMain)
+    session.openWithCallback(again, O4TMain)
 
 
 def autostart(reason, **kwargs):

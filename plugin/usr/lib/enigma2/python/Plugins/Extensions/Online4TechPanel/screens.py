@@ -5,7 +5,7 @@ import os
 import sys
 import traceback
 
-from enigma import ePoint
+from enigma import ePoint, eTimer
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Console import Console
 from Components.Label import Label
@@ -21,7 +21,8 @@ from Tools.LoadPixmap import LoadPixmap
 
 from . import catalog
 from .i18n import T
-from .skin import MAIN_POS, metrics, skin_list, skin_main, skin_text, theme
+from .skin import (DESIGNS, FONT_SCALES, MAIN_POS, design, font_scale, is_flat, main_rows_pos,
+                   metrics, skin_list, skin_main, skin_text, theme, uses_rows)
 from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_setting,
                     detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
                     pretty_name, read_file, save_favs, shquote, txt, valid_pkg, valid_url,
@@ -38,7 +39,7 @@ GUARDED = ("layout_done", "open_current", "sync_catalog", "reload", "got_install
            "refresh_view", "loaded", "apply", "finished", "start", "build", "show_info",
            "got_version", "after", "after_change", "got_filter", "key_green", "key_yellow",
            "key_blue", "key_menu", "toggle_fav", "toggle_compat", "install_favs", "show_cats",
-           "show_items", "load_feed", "go_back", "child_closed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick")
+           "show_items", "load_feed", "go_back", "child_closed", "render_info", "key_yellow", "key_blue", "sel_changed", "move", "pick", "tick", "settings_closed")
 
 
 def _guard(fn):
@@ -64,6 +65,35 @@ def guarded(cls):
         if fn is not None and callable(fn):
             setattr(cls, name, _guard(fn))
     return cls
+
+
+def _start_clock(screen):
+    """Keeps screen['clock'] showing HH:MM (only designs with a header clock define it)."""
+    import time
+    timer = eTimer()
+
+    def tick():
+        try:
+            if getattr(screen, "_o4t_dead", False):
+                return
+            screen["clock"].setText(time.strftime("%H:%M"))
+        except Exception:
+            pass
+    try:
+        timer.callback.append(tick)
+    except AttributeError:
+        screen._o4t_clock_conn = timer.timeout.connect(tick)
+    screen._o4t_clock = timer
+    tick()
+    timer.start(20000, False)
+
+    def stop():
+        try:
+            timer.stop()
+        except Exception:
+            pass
+    screen.onClose.append(stop)
+    screen.onLayoutFinish.append(tick)
 
 
 def _run(console, cmd, cb):
@@ -112,11 +142,14 @@ class O4TMain(Screen):
         self.console = Console()
         _watch_close(self)
         self.idx = 0
+        self.rowsmode = uses_rows()
+        self.flat = is_flat()
         self["title"] = Label("")
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
         self["hint"] = Label("")
-        self["sel"] = Pixmap()
+        self["clock"] = Label("")
+        self["sel"] = Label() if self.flat else Pixmap()
         for i, key in enumerate(self.MENU):
             self["ic%d" % i] = Pixmap()
             self["tt%d" % i] = Label(T("m_" + key))
@@ -130,17 +163,28 @@ class O4TMain(Screen):
             "green": self.open_current, "yellow": self.sync_catalog,
             "blue": lambda: self.session.open(O4TAbout),
             "left": lambda: self.move(-1), "right": lambda: self.move(1),
-            "up": lambda: self.move(-4), "down": lambda: self.move(4),
+            "up": lambda: self.move(-1 if self.rowsmode else -4),
+            "down": lambda: self.move(1 if self.rowsmode else 4),
+            "menu": self.open_settings,
         }
         for n in range(1, 9):
             actions[str(n)] = (lambda n=n: self.pick(n - 1))
         self["actions"] = NumberActionMap(
-            ["OkCancelActions", "ColorActions", "DirectionActions", "NumberActions"], actions, -1)
+            ["OkCancelActions", "ColorActions", "DirectionActions", "NumberActions",
+             "MenuActions"], actions, -1)
+        _start_clock(self)
         self.onLayoutFinish.append(self.layout_done)
+
+    def open_settings(self):
+        self.session.openWithCallback(self.settings_closed, O4TSettings)
+
+    def settings_closed(self, changed=False):
+        if changed:
+            self.close("reopen")
 
     def layout_done(self):
         m = metrics()
-        for i in range(len(self.MENU)):
+        for i in range(0 if self.flat else len(self.MENU)):
             try:
                 self["ic%d" % i].instance.setPixmap(LoadPixmap(m.pix("ic%d" % i)))
             except Exception:
@@ -150,9 +194,14 @@ class O4TMain(Screen):
 
     def update_sel(self):
         m = metrics()
-        x, y = MAIN_POS[self.idx]
+        if self.rowsmode:
+            x, y = main_rows_pos(self.idx)
+            dx = dy = -12
+        else:
+            x, y = MAIN_POS[self.idx]
+            dx = dy = -16
         try:
-            self["sel"].instance.move(ePoint(m.S(x - 16), m.S(y - 16)))
+            self["sel"].instance.move(ePoint(m.S(x + dx), m.S(y + dy)))
         except Exception:
             pass
         self["hint"].setText(T("h_" + self.MENU[self.idx]))
@@ -209,6 +258,8 @@ class O4TListBase(Screen):
         self["ver"] = Label("v" + VERSION)
         self["list"] = MenuList([])
         self["status"] = Label("")
+        self["clock"] = Label("")
+        _start_clock(self)
         self["detail"] = ScrollLabel("")
         for c in ("red", "green", "yellow", "blue"):
             self["key_" + c] = Label("")
@@ -715,6 +766,7 @@ class O4TTools(O4TListBase):
 
     def reload(self):
         self.set_items([
+            {"id": "settings", "name": T("m_settings"), "desc": T("h_settings_tip")},
             {"id": "restart_gui", "name": T("t_restart_gui"), "desc": T("d_restart_gui")},
             {"id": "reboot", "name": T("t_reboot"), "desc": T("d_reboot")},
             {"id": "standby", "name": T("t_standby"), "desc": T("d_standby")},
@@ -738,7 +790,9 @@ class O4TTools(O4TListBase):
         if not item:
             return
         k = item["id"]
-        if k in ("restart_gui", "reboot", "standby"):
+        if k == "settings":
+            self.session.open(O4TSettings)
+        elif k in ("restart_gui", "reboot", "standby"):
             mode = {"restart_gui": 3, "reboot": 2, "standby": 1}[k]
             _confirm(self, "%s\n\n%s" % (T("confirm"), item["name"]),
                      lambda: self.session.open(TryQuitMainloop, mode))
@@ -767,6 +821,55 @@ class O4TTools(O4TListBase):
         self.session.open(MessageBox, T("done"), MessageBox.TYPE_INFO, timeout=3)
 
 
+@guarded
+class O4TSettings(O4TListBase):
+    """Design / colour / language / text size. Applies by reopening the panel."""
+    MENU_TITLE = "m_settings"
+
+    def __init__(self, session):
+        O4TListBase.__init__(self, session)
+        self.o4_changed = False
+        self["key_green"].setText(T("k_change"))
+        self["key_yellow"].setText(T("k_apply"))
+
+    def reload(self):
+        self.set_items([
+            {"id": "design", "name": "%s: %s" % (T("t_design"), T("ds_" + design())),
+             "desc": T("d_design")},
+            {"id": "theme", "name": "%s: %s" % (T("t_theme"), T("th_" + theme())),
+             "desc": T("d_theme")},
+            {"id": "lang", "name": "%s: %s" % (T("t_lang"), T("v_" + get_setting("lang", "auto"))),
+             "desc": T("d_lang")},
+            {"id": "font", "name": "%s: %s" % (T("t_font"), T("fs_%d" % font_scale())),
+             "desc": T("d_font")},
+        ], keep=True)
+
+    def detail_for(self, item):
+        return "%s\n\n%s\n\n%s" % (item["name"], item["desc"], T("h_settings_tip"))
+
+    def key_green(self):
+        item = self.current()
+        if not item:
+            return
+        k = item["id"]
+        if k == "design":
+            cycle_setting("design", list(DESIGNS), "glass")
+        elif k == "theme":
+            cycle_setting("theme", THEMES, "cyan")
+        elif k == "lang":
+            cycle_setting("lang", LANGS, "auto")
+        elif k == "font":
+            cycle_setting("font_scale", list(FONT_SCALES), 100)
+        self.o4_changed = True
+        self.reload()
+
+    def key_yellow(self):
+        self.close(self.o4_changed)
+
+    def go_back(self):
+        self.close(self.o4_changed)
+
+
 # =====================================================================
 # Text screens
 # =====================================================================
@@ -782,6 +885,8 @@ class O4TTextBase(Screen):
         self["title"] = Label(T(self.MENU_TITLE))
         self["slogan"] = Label(SLOGAN)
         self["ver"] = Label("v" + VERSION)
+        self["clock"] = Label("")
+        _start_clock(self)
         self["detail"] = ScrollLabel("")
         for c in ("red", "green", "yellow", "blue"):
             self["key_" + c] = Label("")

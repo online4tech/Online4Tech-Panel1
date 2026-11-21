@@ -209,9 +209,9 @@ CAT_ICONS = {
 }
 
 
-def cat_icon(key, size):
+def cat_icon(key, size, color=None):
     S = 512
-    col = CAT_ICONS[key]
+    col = color or CAT_ICONS[key]
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     c = col + (255,)
@@ -360,9 +360,117 @@ THEMES = {"cyan": (56, 189, 248), "violet": (167, 139, 250), "green": (74, 222, 
           "orange": (251, 146, 60), "pink": (244, 114, 182)}
 
 
+# ------------------------------------------------------------ extra designs
+def flat_panel(w, h, r, fill, border, bw=2):
+    W, H, R = w * SS, h * SS, r * SS
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle((0, 0, W - 1, H - 1), R, fill=fill, outline=border, width=SS * bw)
+    return img.resize((w, h), Image.LANCZOS)
+
+
+def ring_sel(w, h, r, color, fill=None, glow=True):
+    W, H, R = w * SS, h * SS, r * SS
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    if glow:
+        g = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ImageDraw.Draw(g).rounded_rectangle((SS * 8, SS * 8, W - SS * 8, H - SS * 8), R,
+                                            outline=color + (190,), width=SS * 6)
+        img = Image.alpha_composite(img, g.filter(ImageFilter.GaussianBlur(SS * 5)))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle((SS * 8, SS * 8, W - SS * 8, H - SS * 8), R,
+                        fill=(fill or (0, 0, 0, 0)), outline=color + (255,), width=SS * 3)
+    return img.resize((w, h), Image.LANCZOS)
+
+
+def dot(size, color, ring=False):
+    S = size * SS
+    img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    if ring:
+        d.ellipse((SS * 2, SS * 2, S - SS * 2, S - SS * 2), outline=color + (255,), width=SS * 4)
+        q = S // 4
+        d.ellipse((q + SS, q + SS, S - q - SS, S - q - SS), fill=color + (255,))
+    else:
+        d.ellipse((SS * 2, SS * 2, S - SS * 2, S - SS * 2), fill=color + (255,))
+    return img.resize((size, size), Image.LANCZOS)
+
+
+def flame_bg(w, h):
+    img = Image.new("RGB", (w, h), (8, 8, 10))
+    arc = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(arc)
+    for k, a in ((0, 70), (14, 40), (30, 22)):
+        d.ellipse((int(w * 0.25) - k, int(h * 0.62) - k, int(w * 1.55) + k, int(h * 2.1) + k),
+                  outline=(255, 138, 42, a), width=3)
+    arc = arc.filter(ImageFilter.GaussianBlur(2))
+    glow = arc.filter(ImageFilter.GaussianBlur(26))
+    img = Image.alpha_composite(img.convert("RGBA"), glow)
+    img = Image.alpha_composite(img, arc)
+    blob = Image.radial_gradient("L").resize((int(w * 0.9), int(h * 0.9)), Image.BICUBIC)
+    blob = Image.eval(blob, lambda v: int(max(0, 255 - v * 1.4143) * 0.10))
+    layer = Image.new("RGBA", blob.size, (255, 120, 30, 255))
+    img.paste(layer, (int(w * 0.55), int(h * 0.15)), blob)
+    return img.convert("RGB")
+
+
+def banner(w, h, title, accent, bg):
+    return None
+
+
+DESIGN_SPECS = {
+    "console": dict(accent=(226, 178, 60), bg=(10, 15, 26), panel=(17, 24, 38, 255),
+                    border=(32, 44, 70, 255), row=(19, 27, 43, 255), pilltop=(236, 196, 90),
+                    ok=(60, 170, 110), bad=(200, 70, 80), info=(70, 110, 220)),
+    "flame": dict(accent=(255, 138, 42), bg=(8, 8, 10), panel=(255, 255, 255, 14),
+                  border=(255, 255, 255, 38), row=(255, 255, 255, 12), pilltop=(255, 150, 60),
+                  ok=(34, 197, 94), bad=(220, 60, 60), info=(90, 100, 120)),
+}
+
+
+def build_design(name, k_name, k):
+    sp = DESIGN_SPECS[name]
+    out = os.path.join(OUT, name, k_name)
+    os.makedirs(out, exist_ok=True)
+
+    def s(v):
+        return int(round(v * k))
+
+    def save(img, fname):
+        img.save(os.path.join(out, fname + ".png"), optimize=True)
+
+    if name == "flame":
+        save(flame_bg(s(1920), s(1080)), "bg")
+    else:
+        save(vgrad(s(1920), s(1080), sp["bg"] + (255,), (8, 12, 20, 255)).convert("RGB"), "bg")
+    acc = sp["accent"]
+    for pn, (w, h) in {"panel_s": (380, 770), "panel_c": (980, 770), "panel_d": (440, 770),
+                       "panel_l": (1060, 700), "panel_r": (670, 700), "panel_f": (1760, 700),
+                       "bar": (1840, 72)}.items():
+        save(flat_panel(s(w), s(h), s(26), sp["panel"], sp["border"]), pn)
+    save(flat_panel(s(940), s(76), s(14), sp["row"], sp["border"], 1), "row")
+    save(ring_sel(s(964), s(100), s(18), acc, fill=acc + (22,)), "row_sel")
+    save(flat_panel(s(560), s(54), s(27), sp["panel"], sp["border"]), "search")
+    save(pill(s(150), s(40), sp["pilltop"]) if name == "console"
+         else flat_panel(s(150), s(40), s(20), (0, 0, 0, 0), (255, 255, 255, 150), 2), "pill")
+    for nm, col in (("green", acc if name == "flame" else sp["ok"]), ("red", sp["bad"]),
+                    ("blue", sp["info"])):
+        save(pill(s(388), s(50), col), "wpill_" + nm)
+    for nm, col in (("red", (239, 68, 68)), ("green", (34, 197, 94)),
+                    ("yellow", (234, 179, 8)), ("blue", (59, 130, 246))):
+        save(dot(s(28), col, ring=(name == "flame")), "dot_" + nm)
+    for i in range(8):
+        save(draw_icon(i, s(128), acc), "ic%d" % i)
+    for key in CAT_ICONS:
+        save(cat_icon(key, s(128), acc), "ci_%s" % key)
+
+
 def main():
     build("fhd", 1.0)
     build("hd", 2.0 / 3.0)
+    for dn in DESIGN_SPECS:
+        build_design(dn, "fhd", 1.0)
+        build_design(dn, "hd", 2.0 / 3.0)
     plugin_icon(120, 60).save(os.path.join(OUT, "..", "plugin.png"), optimize=True)
     print("assets written to", OUT)
 

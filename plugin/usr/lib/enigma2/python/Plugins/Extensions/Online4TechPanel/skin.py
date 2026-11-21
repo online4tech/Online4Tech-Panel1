@@ -30,6 +30,47 @@ SOFT = "#E5EDFF"
 _cache = {}
 
 
+DESIGNS = ("glass", "console", "flame", "lite")
+FONT_SCALES = (90, 100, 115)
+
+
+def design():
+    d = get_setting("design", "glass")
+    return d if d in DESIGNS else "glass"
+
+
+def font_scale():
+    v = get_setting("font_scale", 100)
+    return v if v in FONT_SCALES else 100
+
+
+STYLES = {
+    "glass": dict(text=TEXT, muted=MUTED, soft=SOFT, accent=None, flat=False, rows=False,
+                  pilltext=TEXT, bg="#0A1020"),
+    "console": dict(text="#F1F5F9", muted="#98A6BC", soft="#DDE6F5", accent="#E2B23C", flat=False,
+                    rows=True, pilltext="#1B1405", bg="#0A0F1A"),
+    "flame": dict(text="#FFFFFF", muted="#B7A99A", soft="#F1E6DA", accent="#FF8A2A", flat=False,
+                  rows=True, pilltext="#FFFFFF", bg="#08080A"),
+    "lite": dict(text="#FFFFFF", muted="#9AA7B8", soft="#DDE6F2", accent=None, flat=True,
+                 rows=True, pilltext="#001018", bg="#0B0F14", panel="#141A22", row="#1B232E"),
+}
+
+
+def style():
+    st = dict(STYLES[design()])
+    if not st.get("accent"):
+        st["accent"] = THEME_COLORS[theme()]
+    return st
+
+
+def is_flat():
+    return STYLES[design()]["flat"]
+
+
+def uses_rows():
+    return STYLES[design()]["rows"]
+
+
 class Metrics(object):
     def __init__(self):
         try:
@@ -40,7 +81,11 @@ class Metrics(object):
             self.W, self.H, self.assets, self.k = 1920, 1080, "fhd", 1.0
         else:
             self.W, self.H, self.assets, self.k = 1280, 720, "hd", 2.0 / 3.0
-        self.dir = os.path.join(PLUGIN_DIR, "assets", self.assets)
+        self.design, self.fs = design(), font_scale()
+        base = os.path.join(PLUGIN_DIR, "assets")
+        if self.design != "glass":
+            base = os.path.join(base, self.design)
+        self.dir = os.path.join(base, self.assets)
 
     def S(self, v):
         return int(round(v * self.k))
@@ -55,22 +100,24 @@ class Metrics(object):
         return 'position="%s" size="%s"' % (self.pos(x, y), self.size(w, h))
 
     def font(self, n):
-        return "Regular;%d" % self.S(n)
+        return "Regular;%d" % max(8, int(round(n * self.k * self.fs / 100.0)))
 
     def pix(self, name):
         return os.path.join(self.dir, name + ".png")
 
 
 def metrics():
-    if "m" not in _cache:
-        _cache["m"] = Metrics()
+    key = (design(), font_scale())
+    if _cache.get("key") != key:
+        _cache["m"], _cache["key"] = Metrics(), key
     return _cache["m"]
 
 
 # ---------------------------------------------------------------- pieces
 def _screen_open(m, name):
     return ('<screen name="%s" position="center,center" size="%d,%d" title="Online4Tech Panel" '
-            'flags="wfNoBorder" backgroundColor="#000A1020">\n' % (name, m.W, m.H))
+            'flags="wfNoBorder" backgroundColor="#00%s">\n'
+            % (name, m.W, m.H, STYLES[m.design]["bg"][1:]))
 
 
 def _header(m, title_size=36):
@@ -103,7 +150,7 @@ for _i in range(8):
     MAIN_POS.append((180 + (_i % 4) * 400, 215 + (_i // 4) * 330))
 
 
-def skin_main():
+def _glass_main():
     m = metrics()
     x = [_screen_open(m, "O4TMain"), _header(m)]
     for i, (tx, ty) in enumerate(MAIN_POS):
@@ -127,7 +174,7 @@ def skin_main():
     return "".join(x)
 
 
-def skin_list(name):
+def _glass_list(name):
     m = metrics()
     x = [_screen_open(m, name), _header(m)]
     x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="0" />\n'
@@ -149,7 +196,7 @@ def skin_list(name):
     return "".join(x)
 
 
-def skin_text(name):
+def _glass_text(name):
     m = metrics()
     x = [_screen_open(m, name), _header(m)]
     x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="0" />\n'
@@ -173,7 +220,7 @@ def card_xy(i):
     return GRID_X + col * (CARD_W + CARD_GX), GRID_Y + row * (CARD_H + CARD_GY)
 
 
-def skin_store(name):
+def _glass_store(name):
     m = metrics()
     x = [_screen_open(m, name),
          '<ePixmap pixmap="%s" position="0,0" size="%d,%d" zPosition="-5" />\n' % (m.pix("bg"), m.W, m.H)]
@@ -236,3 +283,205 @@ def skin_store(name):
     lab("ver", 1100, 1030, 796, 40, 18, MUTED, "right")
     x.append("</screen>")
     return "".join(x)
+
+
+# ====================================================================
+# Row based designs: console / flame / lite
+# ====================================================================
+ROW_W, ROW_H, ROW_STEP = 940, 76, 84
+ROWS_PER_PAGE = 8
+ROW_X, ROW_Y = 460, 262
+
+
+class _B(object):
+    """Tiny helper that emits either pixmaps or flat coloured boxes."""
+
+    def __init__(self, name):
+        self.m = metrics()
+        self.st = style()
+        self.flat = self.st["flat"]
+        self.x = [_screen_open(self.m, name)]
+        if not self.flat:
+            self.x.append('<ePixmap pixmap="%s" position="0,0" size="%d,%d" zPosition="-5" />\n'
+                          % (self.m.pix("bg"), self.m.W, self.m.H))
+
+    def box(self, img, x, y, w, h, z=0, color=None):
+        if self.flat:
+            self.x.append('<eLabel %s backgroundColor="%s" zPosition="%d" />\n'
+                          % (self.m.rect(x, y, w, h), color or self.st["panel"], z))
+        else:
+            self.x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="%d" />\n'
+                          % (self.m.pix(img), self.m.rect(x, y, w, h), z))
+
+    def wbox(self, nm, img, x, y, w, h, z=0, color=None, scale=False):
+        """A named, show/hide-able box (pixmap or flat colour)."""
+        if self.flat:
+            self.x.append('<widget name="%s" %s backgroundColor="%s" transparent="0" zPosition="%d" />\n'
+                          % (nm, self.m.rect(x, y, w, h), color or self.st["row"], z))
+        else:
+            self.x.append('<widget name="%s" %s %s alphatest="blend" %szPosition="%d" />\n'
+                          % (nm, ('pixmap="%s"' % self.m.pix(img)) if img else "", self.m.rect(x, y, w, h),
+                             'scale="1" ' if scale else "", z))
+
+    def icon(self, nm, x, y, w, h, z=3):
+        if self.flat:
+            return
+        self.x.append('<widget name="%s" %s alphatest="blend" scale="1" zPosition="%d" />\n'
+                      % (nm, self.m.rect(x, y, w, h), z))
+
+    def lab(self, nm, x, y, w, h, size, color, align="left", z=4, valign="center"):
+        self.x.append('<widget name="%s" %s font="%s" foregroundColor="%s" transparent="1" '
+                      'halign="%s" valign="%s" zPosition="%d" />\n'
+                      % (nm, self.m.rect(x, y, w, h), self.m.font(size), color, align, valign, z))
+
+    def static(self, text, x, y, w, h, size, color, align="left", z=4):
+        self.x.append('<eLabel text="%s" %s font="%s" foregroundColor="%s" transparent="1" '
+                      'halign="%s" valign="center" zPosition="%d" />\n'
+                      % (text, self.m.rect(x, y, w, h), self.m.font(size), color, align, z))
+
+    def header(self, title=True):
+        st = self.st
+        self.static("Online4Tech Panel", 60, 18, 900, 60, 46, st["accent"])
+        self.static("خليك دايما اونلاين", 62, 78, 900, 36, 26, st["muted"])
+        self.lab("clock", 1380, 18, 480, 56, 36, st["text"], "right")
+        if title:
+            self.lab("title", 60, 124, 1200, 46, 34, st["accent"])
+
+    def footer(self, with_ver=True):
+        st = self.st
+        self.box("bar", 40, 978, 1840, 72, 0, st.get("panel"))
+        for k, c in enumerate(("red", "green", "yellow", "blue")):
+            bx = 76 + k * 350
+            col = {"red": "#EF4444", "green": "#22C55E", "yellow": "#EAB308", "blue": "#3B82F6"}[c]
+            self.box("dot_" + c, bx, 1000, 28, 28, 2, col)
+            self.lab("key_" + c, bx + 44, 978, 290, 72, 25, st["text"])
+        if with_ver:
+            self.lab("ver", 1480, 978, 380, 72, 22, st["muted"], "right")
+
+    def done(self):
+        self.x.append("</screen>")
+        return "".join(self.x)
+
+
+def row_xy(i):
+    return ROW_X, ROW_Y + i * ROW_STEP
+
+
+def _rows_main():
+    b = _B("O4TMain")
+    st = b.st
+    b.header(title=False)
+    for i in range(8):
+        x, y = ROW_X, 196 + i * 88
+        b.box("row", x, y, ROW_W, ROW_H, 1, st.get("row"))
+        b.icon("ic%d" % i, x + 14, y + 12, 52, 52)
+        b.lab("tt%d" % i, x + 84, y, 330, ROW_H, 30, st["text"])
+        b.lab("ts%d" % i, x + 420, y, 500, ROW_H, 21, st["muted"])
+    b.wbox("sel", "row_sel", ROW_X - 12, 196 - 12, 964, 100, 0 if b.flat else 2, st["accent"])
+    b.lab("hint", ROW_X, 906, ROW_W, 48, 24, st["soft"], "center")
+    b.footer()
+    return b.done()
+
+
+def main_rows_pos(i):
+    return ROW_X, 196 + i * 88
+
+
+def _rows_list(name):
+    b = _B(name)
+    st = b.st
+    b.header()
+    b.box("panel_l", 80, 190, 1060, 700, 0, st.get("panel"))
+    b.box("panel_r", 1170, 190, 670, 700, 0, st.get("panel"))
+    b.x.append('<widget name="list" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
+               'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
+               'backgroundColorSelected="#55%s" zPosition="2" />\n'
+               % (b.m.rect(106, 212, 1008, 656), b.m.font(30), b.m.S(54), st["text"], st["accent"][1:]))
+    b.lab("status", 106, 212, 1008, 656, 32, st["muted"], "center")
+    b.x.append('<widget name="detail" %s font="%s" foregroundColor="%s" transparent="1" '
+               'scrollbarMode="showOnDemand" zPosition="2" />\n'
+               % (b.m.rect(1200, 216, 610, 640), b.m.font(27), st["soft"]))
+    b.footer()
+    return b.done()
+
+
+def _rows_text(name):
+    b = _B(name)
+    st = b.st
+    b.header()
+    b.box("panel_f", 80, 190, 1760, 700, 0, st.get("panel"))
+    b.x.append('<widget name="detail" %s font="%s" foregroundColor="%s" transparent="1" '
+               'scrollbarMode="showOnDemand" zPosition="2" />\n'
+               % (b.m.rect(120, 224, 1680, 640), b.m.font(30), st["soft"]))
+    b.footer()
+    return b.done()
+
+
+def _rows_store(name):
+    b = _B(name)
+    st = b.st
+    b.header(title=False)
+    b.lab("contact", 900, 78, 960, 36, 22, st["muted"], "right")
+    b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
+    b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
+    b.x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
+               'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
+               'backgroundColorSelected="#55%s" zPosition="2" />\n'
+               % (b.m.rect(54, 206, 352, 738), b.m.font(25), b.m.S(52), st["text"], st["accent"][1:]))
+    b.lab("title", ROW_X, 192, 400, 58, 34, st["accent"])
+    b.box("search", 840, 194, 560, 54, 1, st.get("row"))
+    b.lab("search", 876, 196, 490, 50, 23, st["muted"])
+    for i in range(ROWS_PER_PAGE):
+        x, y = row_xy(i)
+        b.wbox("cbg%d" % i, "row", x, y, ROW_W, ROW_H, 1, st.get("row"))
+        b.icon("ci%d" % i, x + 14, y + 12, 52, 52)
+        b.lab("cn%d" % i, x + 80, y, 320, ROW_H, 27, st["text"])
+        b.lab("cd%d" % i, x + 408, y, 262, ROW_H, 19, st["muted"])
+        b.lab("cv%d" % i, x + 676, y, 90, ROW_H, 21, st["muted"], "right")
+        b.wbox("cp%d" % i, "pill", x + 776, y + 18, 150, 40, 2, st["accent"])
+        b.lab("cl%d" % i, x + 776, y + 18, 150, 40, 20, st["pilltext"], "center")
+    b.wbox("sel", "row_sel", ROW_X - 12, ROW_Y - 12, 964, 100, 0 if b.flat else 5, st["accent"])
+    b.lab("status", ROW_X, 400, ROW_W, 200, 30, st["muted"], "center")
+    b.lab("pager", ROW_X, 934, ROW_W, 34, 22, st["soft"], "center")
+    # details
+    b.icon("di", 1600, 206, 120, 120)
+    b.lab("dn", 1456, 332, 408, 44, 30, st["text"], "center")
+    b.lab("dd", 1456, 376, 408, 52, 20, st["muted"], "center", valign="top")
+    for nm, yy, h, size, col, al in (("dpt", 442, 30, 22, st["accent"], "left"),
+                                     ("dp", 472, 50, 18, st["soft"], "left"),
+                                     ("dct", 526, 30, 22, st["accent"], "left"),
+                                     ("dc", 556, 72, 17, st["soft"], "left"),
+                                     ("drt", 632, 30, 22, st["accent"], "left"),
+                                     ("dr", 662, 54, 17, st["soft"], "left")):
+        b.lab(nm, 1456, yy, 408, h, size, col, al, valign="top" if nm in ("dp", "dc", "dr") else "center")
+    for j, nm in enumerate(("green", "red", "blue")):
+        yy = 744 + j * 68
+        b.box("wpill_" + nm, 1464, yy, 388, 50, 2,
+              {"green": st["accent"], "red": "#B3303A", "blue": "#3B4A63"}[nm])
+        b.lab("db%d" % j, 1464, yy, 388, 50, 24, st["pilltext"] if nm == "green" else "#FFFFFF", "center")
+    b.footer()
+    return b.done()
+
+
+# ------------------------------------------------------------ public entry points
+def skin_main():
+    return _rows_main() if uses_rows() else _glass_main()
+
+
+def skin_list(name):
+    return _rows_list(name) if uses_rows() else _glass_list(name)
+
+
+def skin_text(name):
+    return _rows_text(name) if uses_rows() else _glass_text(name)
+
+
+def skin_store(name):
+    return _rows_store(name) if uses_rows() else _glass_store(name)
+
+
+def store_geometry():
+    """(columns, per-page, xy(i)) for the active design."""
+    if uses_rows():
+        return 1, ROWS_PER_PAGE, row_xy, (-12, -12)
+    return STORE_COLS, STORE_COLS * STORE_ROWS, card_xy, (-21, -17)

@@ -16,13 +16,12 @@ from Tools.LoadPixmap import LoadPixmap
 
 from . import catalog
 from .i18n import T
-from .screens import (ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
+from .screens import (_start_clock, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
                       _guard, _run, _watch_close)
-from .skin import STORE_COLS, STORE_ROWS, card_xy, metrics, skin_store
+from .skin import is_flat, metrics, skin_store, store_geometry, uses_rows
 from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, pretty_name,
                     save_favs)
 
-PER = STORE_COLS * STORE_ROWS
 FEED, FAV = "__feed__", "__fav__"
 ICON_RULES = (
     ("iptv", "tv"), ("xtream", "tv"), ("epg", "calendar"), ("media", "play"), ("video", "play"),
@@ -60,6 +59,9 @@ def guard_all(cls):
 class O4TStore(Screen):
     def __init__(self, session, kind):
         self.kind = kind
+        self.cols, self.per, self.xy, self.off = store_geometry()
+        self.flat = is_flat()
+        self.rowsmode = uses_rows()
         self.skin = skin_store("O4TStore")
         Screen.__init__(self, session)
         self.console = Console()
@@ -80,13 +82,15 @@ class O4TStore(Screen):
         self["search"] = Label(T("search_hint"))
         self["status"] = Label("")
         self["pager"] = Label("")
-        self["sel"] = Pixmap()
-        for i in range(PER):
-            self["cbg%d" % i] = Pixmap()
+        box = Label if self.flat else Pixmap     # flat designs draw boxes as coloured labels
+        self["sel"] = box()
+        for i in range(self.per):
+            self["cbg%d" % i] = box()
             self["ci%d" % i] = Pixmap()
             self["cn%d" % i] = Label("")
             self["cd%d" % i] = Label("")
-            self["cp%d" % i] = Pixmap()
+            self["cv%d" % i] = Label("")
+            self["cp%d" % i] = box()
             self["cl%d" % i] = Label("")
         self["di"] = Pixmap()
         for nm in ("dn", "dd", "dpt", "dp", "dct", "dc", "drt", "dr", "db0", "db1", "db2"):
@@ -96,6 +100,8 @@ class O4TStore(Screen):
         self["key_yellow"] = Label(T("k_remove"))
         self["key_blue"] = Label(T("k_sync"))
         self["contact"] = Label(T("contact"))
+        self["clock"] = Label("")
+        _start_clock(self)
         from .version import VERSION
         self["ver"] = Label("v" + VERSION)
         actions = {
@@ -201,10 +207,10 @@ class O4TStore(Screen):
 
     # ------------------------------------------------------------ drawing
     def pages(self):
-        return max(1, (len(self.rows) + PER - 1) // PER)
+        return max(1, (len(self.rows) + self.per - 1) // self.per)
 
     def page_items(self):
-        return self.rows[self.o4_page * PER:(self.o4_page + 1) * PER]
+        return self.rows[self.o4_page * self.per:(self.o4_page + 1) * self.per]
 
     def px(self, name):
         try:
@@ -225,7 +231,7 @@ class O4TStore(Screen):
             name = {FAV: T("cat_fav"), FEED: T("cat_feed")}.get(cat, cat or "")
             self["title"].setText(base if (not name or name == base) else "%s - %s" % (base, name))
             self["search"].setText(T("search_hint"))
-        for i in range(PER):
+        for i in range(self.per):
             has = i < len(items)
             for nm in ("cbg", "ci", "cp"):
                 w = self["%s%d" % (nm, i)]
@@ -234,18 +240,21 @@ class O4TStore(Screen):
                 except Exception:
                     pass
             if not has:
-                for nm in ("cn", "cd", "cl"):
+                for nm in ("cn", "cd", "cl", "cv"):
                     self["%s%d" % (nm, i)].setText("")
                 continue
             it = items[i]
-            self["cn%d" % i].setText(clip(it["name"], 18))
-            self["cd%d" % i].setText(clip(it.get("desc") or it.get("category", ""), 26))
+            self["cn%d" % i].setText(clip(it["name"], 24 if self.rowsmode else 18))
+            self["cd%d" % i].setText(clip(it.get("desc") or it.get("category", ""),
+                                          30 if self.rowsmode else 26))
+            self["cv%d" % i].setText(clip(str(it.get("version") or ""), 9) if self.rowsmode else "")
             self["cl%d" % i].setText(T("k_reinstall") if self.is_installed(it) else T("k_install"))
-            try:
-                self["ci%d" % i].instance.setPixmap(
-                    self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
-            except Exception:
-                pass
+            if not self.flat:
+                try:
+                    self["ci%d" % i].instance.setPixmap(
+                        self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
+                except Exception:
+                    pass
         self["status"].setText("" if (items or self.o4_loading) else T("empty"))
         self["pager"].setText(T("pager") % (self.o4_page + 1, self.pages(), len(self.rows)))
         self.draw_detail()
@@ -254,9 +263,9 @@ class O4TStore(Screen):
     def draw_sel(self):
         try:
             if self.o4_focus == "grid" and self.page_items():
-                x, y = card_xy(self.o4_pos)
+                x, y = self.xy(self.o4_pos)
                 m = metrics()
-                self["sel"].instance.move(ePoint(m.S(x - 21), m.S(y - 17)))
+                self["sel"].instance.move(ePoint(m.S(x + self.off[0]), m.S(y + self.off[1])))
                 self["sel"].show()
             else:
                 self["sel"].hide()
@@ -287,10 +296,11 @@ class O4TStore(Screen):
         self["db0"].setText(T("k_reinstall") if self.is_installed(it) else T("k_install_now"))
         self["db1"].setText(T("k_remove"))
         self["db2"].setText(T("k_fav_del") if item_key(it) in self.favs else T("k_fav_add"))
-        try:
-            self["di"].instance.setPixmap(self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
-        except Exception:
-            pass
+        if not self.flat:
+            try:
+                self["di"].instance.setPixmap(self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
+            except Exception:
+                pass
 
     # ------------------------------------------------------------ focus / keys
     def set_focus(self, where):
@@ -300,7 +310,7 @@ class O4TStore(Screen):
     def go_left(self):
         if self.o4_focus == "side":
             return
-        if self.o4_pos % STORE_COLS == 0:
+        if self.o4_pos % self.cols == 0:
             self.set_focus("side")
         else:
             self.o4_pos -= 1
@@ -313,7 +323,7 @@ class O4TStore(Screen):
                 self.draw_detail()
             return
         n = len(self.page_items())
-        if self.o4_pos % STORE_COLS < STORE_COLS - 1 and self.o4_pos + 1 < n:
+        if self.o4_pos % self.cols < self.cols - 1 and self.o4_pos + 1 < n:
             self.o4_pos += 1
             self.after_move()
 
@@ -321,12 +331,12 @@ class O4TStore(Screen):
         if self.o4_focus == "side":
             self["cats"].up()
             return
-        if self.o4_pos >= STORE_COLS:
-            self.o4_pos -= STORE_COLS
+        if self.o4_pos >= self.cols:
+            self.o4_pos -= self.cols
             self.after_move()
         elif self.o4_page > 0:
             self.o4_page -= 1
-            self.o4_pos = min(len(self.page_items()) - 1, self.o4_pos + PER - STORE_COLS)
+            self.o4_pos = min(len(self.page_items()) - 1, self.o4_pos + self.per - self.cols)
             self.draw_page()
 
     def go_down(self):
@@ -334,12 +344,12 @@ class O4TStore(Screen):
             self["cats"].down()
             return
         n = len(self.page_items())
-        if self.o4_pos + STORE_COLS < n:
-            self.o4_pos += STORE_COLS
+        if self.o4_pos + self.cols < n:
+            self.o4_pos += self.cols
             self.after_move()
-        elif (self.o4_page + 1) * PER < len(self.rows):
+        elif (self.o4_page + 1) * self.per < len(self.rows):
             self.o4_page += 1
-            self.o4_pos = min(self.o4_pos % STORE_COLS, len(self.page_items()) - 1)
+            self.o4_pos = min(self.o4_pos % self.cols, len(self.page_items()) - 1)
             self.draw_page()
 
     def after_move(self):
@@ -353,7 +363,7 @@ class O4TStore(Screen):
             self.draw_page()
 
     def page_next(self):
-        if (self.o4_page + 1) * PER < len(self.rows):
+        if (self.o4_page + 1) * self.per < len(self.rows):
             self.o4_page += 1
             self.o4_pos = 0
             self.draw_page()
