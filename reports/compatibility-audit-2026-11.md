@@ -36,7 +36,7 @@ The builder now:
 - Uses version 7.5 and the matching package filename.
 - No longer has package scripts that recursively delete the whole plugin directory.
 
-**Validation status:** source updated and statically reviewed; the package builder has not yet been executed against a full local checkout in this audit.
+**Validation status:** GitHub Actions run 44891276787 successfully executed the builder against a complete checkout. The existing 7.5 IPK and DEB each contained 69 archive entries and included the plugin entry point, store, plugin icon, and Online4Tech logo. The corrected builder generated both IPK and DEB packages with 66 real source/asset files (excluding three Python cache files), and both generated archives passed structural checks.
 
 ### 2. Installer safety and consistency
 
@@ -75,10 +75,10 @@ Restored entries now include Klll-Pro-FHD, KeyAdder, Levi45 Emulator, EPGImport-
 
 ## Testing still required
 
-- Execute the builder from a complete repository checkout and inspect the generated IPK member/file list.
+- Complete: CI now builds both 7.5 packages from the full repository checkout and verifies their archive members and required branding/plugin files.
 - Install and upgrade on representative Enigma2 images (OpenATV, OpenPLi, DreamOS, and other images explicitly supported by the project).
 - Verify plugin menu registration, category browsing, icon/logo rendering, preferences, database refresh, install/remove actions, and restart behavior.
 - Verify package removal leaves user-created/unowned files untouched.
 - Test each restored third-party installer individually and preserve original author attribution.
 
-**No live receiver commands were executed during this audit. This report does not claim that the package or every plugin has been runtime-tested.**
+**No live receiver commands were executed during this audit. CI confirms source syntax and package structure, not runtime behavior on a real Enigma2 receiver. Individual plugin payloads and receiver-specific behavior still require device testing.**
