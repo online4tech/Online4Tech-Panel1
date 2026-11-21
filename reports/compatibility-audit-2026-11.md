@@ -9,7 +9,7 @@
 This maintenance pass is additive and conservative:
 - No repository file paths are intentionally removed.
 - The original top-level `plugin/` directory is retained; the 7.5 package builder now uses the authoritative installed plugin source tree instead.
-- All existing database entries remain present. The 99 entries that still point to the shared, incorrect installer retain their original command text in `legacy_cmd`; they are paused rather than deleted or silently redirected. Klll-Pro-FHD was restored separately through an item-specific Online4Tech wrapper that credits Biko-73 and leaves the original payload upstream.
+- All existing database entries remain present. The 98 entries that still point to the shared, incorrect installer retain their original command text in `legacy_cmd`; they are paused rather than deleted or silently redirected. Klll-Pro-FHD was restored separately through an item-specific Online4Tech wrapper that credits Biko-73 and leaves the original payload upstream.
 - Online4Tech names, branding assets, category icons, logo, and UI styling are retained.
 
 ## Repository inventory reviewed
@@ -60,9 +60,9 @@ The 7.5 store implementation now:
 
 ## Important outstanding work — no items have been deleted
 
-### 99 entries still need verified, item-specific installers
+### 98 entries still need verified, item-specific installers
 
-The old shared `scripts/main_installer.sh` always downloads and extracts the Klll-Pro skin, regardless of the selected item. The 99 records that still reference it remain visible in the database but their install action is paused. Their previous command is retained as `legacy_cmd` for traceability.
+The old shared `scripts/main_installer.sh` always downloads and extracts the Klll-Pro skin, regardless of the selected item. The 98 records that still reference it remain visible in the database but their install action is paused. Their previous command is retained as `legacy_cmd` for traceability.
 
 These entries must be mapped one by one to a verified, item-specific script or package before their install action is restored. A similarly named script is not sufficient proof.
 
@@ -71,7 +71,7 @@ Examples found during review:
 - The Levi45 emulator installer removes an existing plugin directory and force-restarts Enigma2. It needs a separate safety review before being mapped to any database item.
 - Some other candidate scripts use disabled TLS verification or broad cleanup commands.
 
-Verified exceptions now include Klll-Pro-FHD (`scripts/install_klll_pro.sh`), KeyAdder (`scripts/install_keyadder_safe.sh`), and Levi45 Emulator (`scripts/install_levi45_emulator.sh`). Their wrappers use verified HTTPS, validate downloads, avoid pre-deleting existing plugin directories, and retain the original authors' attribution. No guessed command has been substituted for the remaining items.
+Verified exceptions now include Klll-Pro-FHD (`scripts/install_klll_pro.sh`), KeyAdder (`scripts/install_keyadder_safe.sh`), Levi45 Emulator (`scripts/install_levi45_emulator.sh`), and EPGImport-99 (`scripts/install_epgimport_safe.sh`). Their wrappers use verified HTTPS, validate downloads, avoid pre-deleting existing plugin directories, and retain the original authors' attribution. EPGImport is explicitly IPK/opkg-only because no DEB artifact was found in the referenced upstream listing. No guessed command has been substituted for the remaining items.
 
 ## Testing still required
 
