@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generated_from": "o4t_database.json",
   "generated_at": "2026-11-21",
-  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified.",
+  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream.",
   "sources": [
     {
       "url": "http://dreambox4u.com/emilnabil237/plugins/ajpanel/installer.sh",
@@ -6490,10 +6490,6 @@
           "name": "BoHLALA-FHD"
         },
         {
-          "section": "teamnitro_skins",
-          "name": "Klll-Pro-FHD"
-        },
-        {
           "section": "picons",
           "name": "Picons Other"
         }
@@ -9197,6 +9193,36 @@
           "name": "MohamedStore (لوحة تحميل الإضافات)"
         }
       ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_klll_pro.sh",
+      "host": "raw.githubusercontent.com",
+      "repository": "online4tech/Online4Tech-Panel1",
+      "source_type": "first_party",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "items": [
+        {
+          "section": "teamnitro_skins",
+          "name": "Klll-Pro-FHD"
+        }
+      ]
+    }
+  ],
+  "nested_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/biko-73/zelda77/main/klll-pro-v.3.3.tar.gz",
+      "host": "raw.githubusercontent.com",
+      "repository": "biko-73/zelda77",
+      "source_type": "third_party_payload",
+      "attribution": "Biko-73 (original Klll-Pro skin payload)",
+      "mirror_status": "upstream_payload_not_mirrored",
+      "items": [
+        {
+          "section": "teamnitro_skins",
+          "name": "Klll-Pro-FHD"
+        }
+      ],
+      "note": "Fetched by the Online4Tech item-specific wrapper over verified HTTPS; not copied into this repository."
     }
   ]
 }
