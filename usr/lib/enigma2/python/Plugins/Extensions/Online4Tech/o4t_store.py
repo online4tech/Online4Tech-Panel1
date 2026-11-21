@@ -640,6 +640,21 @@ def build_category_entry(title, count_num, icon_name="", lang="ar"):
     return res
 
 
+def path_is_installed(path):
+    """Check the standard Enigma2 plugin locations on lib and lib64 images."""
+    if not path:
+        return False
+    if os.path.exists(path):
+        return True
+    if path.startswith("/usr/lib/"):
+        alternate = "/usr/lib64/" + path[len("/usr/lib/"):]
+        return os.path.exists(alternate)
+    if path.startswith("/usr/lib64/"):
+        alternate = "/usr/lib/" + path[len("/usr/lib64/"):]
+        return os.path.exists(alternate)
+    return False
+
+
 def build_item_entry(title, subtitle, installed=False, icon_name="", is_folder=False, lang="ar"):
     display_title = truncate_text(title, 36)
     display_sub = truncate_text(subtitle, 44)
@@ -1529,7 +1544,7 @@ class Online4TechStoreScreen(Screen):
             else:
                 clean_title, ar_desc = parse_item_name(it.get("name", "Package"))
                 path = it.get("path", "")
-                installed = bool(path and os.path.exists(path))
+                installed = path_is_installed(path)
                 if self.lang == "ar" and ar_desc:
                     sub_txt = ar_desc
                 else:
@@ -1581,7 +1596,7 @@ class Online4TechStoreScreen(Screen):
         else:
             clean_title, ar_desc = parse_item_name(item.get("name", "Package"))
             path = item.get("path", "")
-            installed = bool(path and os.path.exists(path))
+            installed = path_is_installed(path)
             has_remove = bool(item.get("remove_cmd"))
 
             self["detail_title"].setText(truncate_text(clean_title, 44))
