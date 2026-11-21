@@ -9,7 +9,7 @@
 This maintenance pass is additive and conservative:
 - No repository file paths are intentionally removed.
 - The original top-level `plugin/` directory is retained; the 7.5 package builder now uses the authoritative installed plugin source tree instead.
-- All existing database entries remain present. The 59 entries that still point to the shared, incorrect installer retain their original command text in `legacy_cmd`; they are paused rather than deleted or silently redirected. Klll-Pro-FHD was restored separately through an item-specific Online4Tech wrapper that credits Biko-73 and leaves the original payload upstream.
+- All existing database entries remain present. The 58 entries that still point to the shared, incorrect installer retain their original command text in `legacy_cmd`; they are paused rather than deleted or silently redirected. Klll-Pro-FHD was restored separately through an item-specific Online4Tech wrapper that credits Biko-73 and leaves the original payload upstream.
 - Online4Tech names, branding assets, category icons, logo, and UI styling are retained.
 
 ## Repository inventory reviewed
@@ -60,7 +60,7 @@ The 7.5 store implementation now:
 
 ## Important outstanding work — no items have been deleted
 
-### 59 entries still need verified, item-specific installers
+### 58 entries still need verified, item-specific installers
 
 The old shared `scripts/main_installer.sh` always downloads and extracts the Klll-Pro skin, regardless of the selected item. The 59 records that still reference it remain visible in the database but their install action is paused. Their previous command is retained as `legacy_cmd` for traceability.
 
@@ -71,7 +71,7 @@ Examples found during review:
 - The Levi45 emulator installer removes an existing plugin directory and force-restarts Enigma2. It needs a separate safety review before being mapped to any database item.
 - Some other candidate scripts use disabled TLS verification or broad cleanup commands.
 
-Restored entries now include Klll-Pro-FHD, KeyAdder, Levi45 Emulator, EPGImport-99, and 39 Ciefp-family plugins. Their Online4Tech wrappers use verified HTTPS, validate downloads, avoid pre-deleting existing plugin directories, and retain the original authors' attribution. EPGImport is explicitly IPK/opkg-only. CiefpYouTube and CiefpRottenTomatoes remain paused because their installers require additional binaries/dependencies that need separate review. No guessed command has been substituted for the remaining items.
+Restored entries now include Klll-Pro-FHD, KeyAdder, Levi45 Emulator, EPGImport-99, 39 Ciefp-family plugins, and Abertis Auto Switcher PRO (pinned v1.9.24 package). Their Online4Tech wrappers use verified HTTPS, validate downloads, avoid pre-deleting existing plugin directories, and retain the original authors' attribution. EPGImport is explicitly IPK/opkg-only. CiefpYouTube and CiefpRottenTomatoes remain paused because their installers require additional binaries/dependencies that need separate review. No guessed command has been substituted for the remaining items.
 
 ## Testing still required
 
@@ -94,11 +94,42 @@ Both database entries remain present and enabled. No replacement or guessed inst
 
 ## Expanded command and source checks — 2026-11-21
 
-- The database contains **824** records: **765 active** and **59 retained in quarantine**. No records were deleted.
-- CI checks the shell syntax of every non-empty `cmd`, `remove_cmd`, and preserved `legacy_cmd` string; the latest completed check passed **1,322 command strings** across all 824 records.
+- The database contains **824** records: **766 active** and **58 retained in quarantine**. No records were deleted.
+- CI checks the shell syntax of every non-empty `cmd`, `remove_cmd`, and preserved `legacy_cmd` string; the latest completed check passed **1,323 command strings** across all 824 records.
 - CI also syntax-checks every `*.sh` file under `scripts/`.
 - The active command set still contains **69 HTTP command records**, **87 commands that bypass TLS certificate verification**, and **755 commands that pipe downloaded scripts directly to `/bin/sh`**. These were not silently rewritten because HTTP-to-HTTPS support and older receiver TLS compatibility must be verified per source/image.
 - **302 third-party sources** remain external pending rights and integrity review. Their presence is preserved; they are not represented as verified.
 - The first-party source check found **354 present, non-empty source files** and two explicitly tracked missing source files: `install_o4t_emu.sh` and `scripts/channel-romeh_installer.sh`. Their database entries remain enabled; no guessed replacement or disablement was applied.
 
 These checks validate syntax, repository paths, and package structure. They do not execute arbitrary installers or prove runtime compatibility on a physical receiver.
+
+
+## First isolated recovery batch — Abertis Auto Switcher PRO
+
+- Restored the Abertis Auto Switcher entry through `scripts/install_abertis_auto_switcher.sh`.
+- Pinned the upstream release to v1.9.24 and embedded the official SHA-256 digests for both IPK and DEB assets.
+- The wrapper validates the downloaded package before installation and uses `opkg install` or `dpkg -i` without force-overwrite.
+- Removal uses the package manager rather than recursively deleting the plugin directory.
+- The wrapper does not disable TLS verification or automatically restart Enigma2.
+- 58 other quarantined entries remain untouched pending their own source and installer review.
+- CI syntax and database validation must pass; physical receiver install/upgrade/remove testing is still required.
+
+
+## Additional upstream installer review — 2026-11-21
+
+Four more quarantined entries were matched to their original upstream installer files and reviewed statically. Their database records now retain the exact candidate source and the observed reasons they remain quarantined. **No installer was executed and no plugin was re-enabled.**
+
+| Entry | Upstream source | Observed blocker |
+|---|---|---|
+| CiefpYouTube | https://github.com/ciefp/CiefpYouTube/blob/main/installer.sh | Deletes the installed plugin directory; replaces/removes the global `/usr/bin/yt-dlp`; installs or upgrades system-wide dependencies via opkg/apt/pip; uses TLS verification bypasses and an unpinned branch archive; runs `killall -9 enigma2` by default. |
+| CiefpRottenTomatoes | https://github.com/ciefp/CiefpRottenTomatoes/blob/main/installer.sh | Deletes the installed plugin directory; changes global dependencies and yt-dlp; uses unpinned downloads/archive and a TLS-bypass installer header; runs `killall -9 enigma2` by default. |
+| AdvancedBootLogoSwapper | https://github.com/popking159/abls/blob/main/installer.sh | Deletes the existing plugin directory; downloads an unpinned `main` archive without a SHA-256 check; extracts directly into the receiver root. |
+| Ansite | https://github.com/emil237/ansite/blob/main/installer.sh | Uses `--force-remove`, `--force-depends`, and `--force-reinstall`; performs broad temporary-file cleanup; downloads an IPK without a pinned digest. |
+
+### Disposition
+
+- All four remain `enabled: false` and `audit_status: quarantined`.
+- Their original legacy commands and database records remain preserved.
+- Candidate source URLs, author attribution, and item-specific evidence were added to the database for traceability.
+- Re-enablement requires a separately reviewed wrapper with pinned source/artifact integrity, no pre-delete of installed plugin files, scoped dependency handling, and no forced GUI kill. For Ansite, package contents and dependency metadata must also be inspected before selecting a safe package-manager path.
+- These are static installer findings, not proof that the plugin payload itself is malicious. The quarantine is a preservation and compatibility safeguard.

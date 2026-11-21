@@ -175,15 +175,15 @@ jobs:
           active_wildcards = [x for x in records if re.search(r"rm\s+-rf\s+[^;\n]*\*", str(x.get("remove_cmd", "")))]
 
           assert len(records) == 824, "Unexpected database record count: %d" % len(records)
-          assert len(quarantined) == 59, "Unexpected quarantine count: %d" % len(quarantined)
-          assert len(restored) == 45, "Unexpected restored count: %d" % len(restored)
+          assert len(quarantined) == 58, "Unexpected quarantine count: %d" % len(quarantined)
+          assert len(restored) == 46, "Unexpected restored count: %d" % len(restored)
           assert len(legacy) == 104, "Original legacy commands were not all preserved"
           assert not active_main, "An active command still points to main_installer.sh"
           assert not active_wildcards, "An active wildcard removal command remains"
           assert len(database["ciefp"]) == 41, "Unexpected Ciefp item count"
           assert sum(1 for x in database["ciefp"] if x.get("audit_status") == "restored_item_specific_wrapper") == 39
           assert len(audit["entries"]) == 824
-          assert audit["summary"]["quarantined"] == 59
+          assert audit["summary"]["quarantined"] == 58
           assert len(manifest["sources"]) == 663
           assert len(manifest["nested_sources"]) == 44
           print("Database/audit/manifest checks passed.")

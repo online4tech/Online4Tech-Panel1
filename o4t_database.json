@@ -766,18 +766,21 @@
     },
     {
       "name": "Abertis-Auto-Switcher (تشغيل باقة ابيرنس المالتي ستريم علي الهسباسات)",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_abertis_auto_switcher.sh\" | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher",
-      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/AbertisAutoSwitcher'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "remove_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_abertis_auto_switcher.sh\" | /bin/sh -s -- --remove",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_abertis_auto_switcher.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "Original Abertis Auto Switcher PRO package by prof-abdo; Online4Tech provides a pinned, SHA-256-verified installer wrapper. Package payload remains upstream.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة العنصر عبر مثبت Online4Tech خاص بالإصدار 1.9.24، يتحقق من SHA-256 للحزمة قبل التثبيت، ولا يحذف مجلد البلجن القديم أو يستخدم force-overwrite أو يعيد تشغيل Enigma2 تلقائيًا.",
+      "payload_source_url": "https://github.com/prof-abdo/Abertis-Auto-Switcher-PRO/releases/tag/v1.9.24",
+      "payload_source_host": "github.com",
+      "payload_source_attribution": "prof-abdo (original package author)"
     },
     {
       "name": "AdenChManager (مدير القنوات)",
@@ -831,7 +834,15 @@
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
       "enabled": false,
       "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "audit_reason": "تم العثور على المثبت الأصلي، لكن لم تتم الاستعادة: يحذف مجلد AdvancedBootLogoSwapper قبل التثبيت، ويحمل أرشيف main دون تثبيت commit أو التحقق من SHA-256، ثم يفك الملفات مباشرة إلى جذر النظام. يلزم مثبت يحدّث الملفات دون حذف مسبق مع تثبيت المصدر والتحقق من محتويات الأرشيف.",
+      "candidate_installer_url": "https://github.com/popking159/abls/blob/main/installer.sh",
+      "source_author": "MNASR",
+      "audit_evidence": [
+        "plugin_directory_predelete",
+        "unpinned_branch_archive",
+        "no_archive_checksum",
+        "extracts_to_root"
+      ]
     },
     {
       "name": "Advanced-Screen-Shot (أخذ لقطة للشاشة)",
@@ -911,7 +922,15 @@
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
       "enabled": false,
       "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "audit_reason": "تم العثور على المثبت الأصلي، لكن لم تتم الاستعادة: يزيل الحزمة الحالية باستخدام --force-depends/--force-remove، ويثبت باستخدام --force-reinstall/--force-depends، وينفذ تنظيفًا واسعًا داخل /tmp، ولا يتحقق من بصمة IPK قبل التثبيت. يلزم تثبيت مصدر/إصدار وحزمة محددة وفحص محتوياتها واستبدال أسلوب الإزالة القسري.",
+      "candidate_installer_url": "https://github.com/emil237/ansite/blob/main/installer.sh",
+      "source_author": "aime_jeux (uploaded by Emil Nabil)",
+      "audit_evidence": [
+        "forced_package_removal",
+        "forced_reinstall_and_dependencies",
+        "broad_tmp_cleanup",
+        "no_package_checksum"
+      ]
     },
     {
       "name": "Apod (معلومات عن كوكب الأرض)",
@@ -4455,7 +4474,16 @@
       "legacy_cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
       "enabled": false,
       "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "audit_reason": "تم العثور على المثبت الأصلي، لكن لم تتم الاستعادة: يحذف مجلد البلجن الحالي، يثبت yt-dlp/requests وتبعيات عامة، يستخدم تنزيلات غير مثبتة الإصدار أو بدون تحقق TLS في بعض المسارات، يحمل أرشيف main دون بصمة، وينفذ killall -9 enigma2 افتراضيًا. يلزم مثبت بديل غير هدّام ومراجعة التبعيات قبل التفعيل.",
+      "candidate_installer_url": "https://github.com/ciefp/CiefpRottenTomatoes/blob/main/installer.sh",
+      "source_author": "ciefp",
+      "audit_evidence": [
+        "plugin_directory_predelete",
+        "global_dependency_changes",
+        "tls_verification_disabled_or_unpinned_binary",
+        "unpinned_branch_archive",
+        "forced_enigma2_kill"
+      ]
     },
     {
       "name": "CiefpSatelliteAnalyzer",
@@ -4830,7 +4858,16 @@
       "legacy_cmd": "wget -q --no-check-certificate https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
       "enabled": false,
       "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "audit_reason": "تم العثور على المثبت الأصلي، لكن لم تتم الاستعادة: يزيل مجلد البلجن الحالي قبل التثبيت، يحذف/يستبدل /usr/bin/yt-dlp، يثبت أو يحدّث حزمًا عامة عبر opkg/apt/pip، يستخدم تنزيلات بدون تحقق TLS، يحمل أرشيف main غير مثبت ببصمة، وينفذ killall -9 enigma2 افتراضيًا. يلزم تصميم مثبت محدود النطاق ومراجعة توافق التبعيات قبل التفعيل.",
+      "candidate_installer_url": "https://github.com/ciefp/CiefpYouTube/blob/main/installer.sh",
+      "source_author": "ciefp",
+      "audit_evidence": [
+        "plugin_directory_predelete",
+        "global_dependency_changes",
+        "tls_verification_disabled",
+        "unpinned_branch_archive",
+        "forced_enigma2_kill"
+      ]
     },
     {
       "name": "TitloviBrowser",
