@@ -110,6 +110,10 @@ class Metrics(object):
     def pix(self, name):
         return os.path.join(self.dir, name + ".png")
 
+    def icon(self, name, size):
+        """Pre-sized icon file (name_<size>.png); the skin loader's scale option is not used."""
+        return self.pix("%s_%d" % (name, size))
+
 
 def metrics():
     key = (design(), font_scale())
@@ -274,7 +278,7 @@ def _glass_store(name):
         cx, cy = card_xy(i)
         x.append('<widget name="cbg%d" pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
                  % (i, m.pix("card"), m.rect(cx, cy, CARD_W, CARD_H)))
-        x.append('<widget name="ci%d" %s alphatest="blend" scale="1" zPosition="3" />\n'
+        x.append('<widget name="ci%d" %s alphatest="blend" zPosition="3" />\n'
                  % (i, m.rect(cx + 89, cy + 12, 72, 72)))
         lab("cn%d" % i, cx + 8, cy + 88, CARD_W - 16, 34, 25, TEXT)
         lab("cd%d" % i, cx + 8, cy + 120, CARD_W - 16, 28, 19, MUTED)
@@ -286,7 +290,7 @@ def _glass_store(name):
     lab("status", 376, 400, 1020, 200, 30, MUTED)
     lab("pager", 376, 906, 1020, 44, 24, SOFT)
     # details
-    x.append('<widget name="di" %s alphatest="blend" scale="1" zPosition="3" />\n' % m.rect(1608, 206, 128, 128))
+    x.append('<widget name="di" %s alphatest="blend" zPosition="3" />\n' % m.rect(1608, 206, 128, 128))
     lab("dn", 1464, 340, 416, 44, 32, TEXT)
     lab("dd", 1464, 384, 416, 52, 21, MUTED, valign="top")
     lab("dpt", 1464, 442, 416, 30, 22, accent(), "left")
@@ -344,20 +348,19 @@ class _B(object):
             self.x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="%d" />\n'
                           % (self.m.pix(img), self.m.rect(x, y, w, h), z))
 
-    def wbox(self, nm, img, x, y, w, h, z=0, color=None, scale=False):
+    def wbox(self, nm, img, x, y, w, h, z=0, color=None):
         """A named, show/hide-able box (pixmap or flat colour)."""
         if self.flat:
             self.x.append('<widget name="%s" %s backgroundColor="%s" transparent="0" zPosition="%d" />\n'
                           % (nm, self.m.rect(x, y, w, h), color or self.st["row"], z))
         else:
-            self.x.append('<widget name="%s" %s %s alphatest="blend" %szPosition="%d" />\n'
-                          % (nm, ('pixmap="%s"' % self.m.pix(img)) if img else "", self.m.rect(x, y, w, h),
-                             'scale="1" ' if scale else "", z))
+            self.x.append('<widget name="%s" %s %s alphatest="blend" zPosition="%d" />\n'
+                          % (nm, ('pixmap="%s"' % self.m.pix(img)) if img else "", self.m.rect(x, y, w, h), z))
 
     def icon(self, nm, x, y, w, h, z=3):
         if self.flat:
             return
-        self.x.append('<widget name="%s" %s alphatest="blend" scale="1" zPosition="%d" />\n'
+        self.x.append('<widget name="%s" %s alphatest="blend" zPosition="%d" />\n'
                       % (nm, self.m.rect(x, y, w, h), z))
 
     def lab(self, nm, x, y, w, h, size, color, align="left", z=4, valign="center"):
@@ -480,7 +483,7 @@ def _rows_store(name):
     b.lab("status", ROW_X, 400, ROW_W, 200, 30, st["muted"], "center")
     b.lab("pager", ROW_X, 934, ROW_W, 34, 22, st["soft"], "center")
     # details
-    b.icon("di", 1600, 206, 120, 120)
+    b.icon("di", 1596, 202, 128, 128)
     b.lab("dn", 1456, 332, 408, 44, 30, st["text"], "center")
     b.lab("dd", 1456, 376, 408, 52, 20, st["muted"], "center", valign="top")
     for nm, yy, h, size, col, al in (("dpt", 442, 30, 22, st["accent"], "left"),

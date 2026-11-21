@@ -249,7 +249,8 @@ class O4TMain(Screen):
         m = metrics()
         for i in range(0 if self.flat else len(self.MENU)):
             try:
-                self["ic%d" % i].instance.setPixmap(LoadPixmap(m.pix("ic%d" % i)))
+                self["ic%d" % i].instance.setPixmap(
+                    LoadPixmap(m.icon("ic%d" % i, 52) if self.rowsmode else m.pix("ic%d" % i)))
             except Exception:
                 pass
         self.update_sel()

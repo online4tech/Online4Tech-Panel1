@@ -214,9 +214,10 @@ class O4TStore(Screen):
     def page_items(self):
         return self.rows[self.o4_page * self.per:(self.o4_page + 1) * self.per]
 
-    def px(self, name):
+    def px(self, name, size=None):
         try:
-            return LoadPixmap(metrics().pix(name))
+            m = metrics()
+            return LoadPixmap(m.icon(name, size) if size else m.pix(name))
         except Exception:
             return None
 
@@ -254,7 +255,8 @@ class O4TStore(Screen):
             if not self.flat:
                 try:
                     self["ci%d" % i].instance.setPixmap(
-                        self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
+                        self.px("ci_" + icon_key(self.kind, it.get("category", "")),
+                                52 if self.rowsmode else 72))
                 except Exception:
                     pass
         self["status"].setText("" if (items or self.o4_loading) else T("empty"))
