@@ -34,6 +34,20 @@ if ! tar -tzf "$TMP_ARCHIVE" >/dev/null 2>&1; then
     exit 1
 fi
 
+if ! tar -tzf "$TMP_ARCHIVE" | awk '
+    /^\// { bad = 1 }
+    /(^|\/)\.\.(\/|$)/ { bad = 1 }
+    END { exit bad }
+'; then
+    echo "[ERROR] The archive contains an unsafe absolute or parent path."
+    exit 1
+fi
+
+if ! tar -tzf "$TMP_ARCHIVE" | grep -qi "Klll-Pro"; then
+    echo "[ERROR] The archive does not contain the expected Klll-Pro skin."
+    exit 1
+fi
+
 echo "[Online4Tech] Installing skin files without deleting the existing skin first..."
 tar -xzf "$TMP_ARCHIVE" -C /
 
