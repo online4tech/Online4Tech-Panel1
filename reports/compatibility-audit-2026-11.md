@@ -91,3 +91,14 @@ The expanded source-file check found two URLs still used by active database comm
 - `scripts/channel-romeh_installer.sh` — Ahmed Romeh Channels installer.
 
 Both database entries remain present and enabled. No replacement or guessed installer was substituted, and neither item was disabled. The original source files must be restored before these two actions can be considered operational.
+
+## Expanded command and source checks — 2026-11-21
+
+- The database contains **824** records: **765 active** and **59 retained in quarantine**. No records were deleted.
+- CI checks the shell syntax of every non-empty `cmd`, `remove_cmd`, and preserved `legacy_cmd` string; the latest completed check passed **1,322 command strings** across all 824 records.
+- CI also syntax-checks every `*.sh` file under `scripts/`.
+- The active command set still contains **69 HTTP command records**, **87 commands that bypass TLS certificate verification**, and **755 commands that pipe downloaded scripts directly to `/bin/sh`**. These were not silently rewritten because HTTP-to-HTTPS support and older receiver TLS compatibility must be verified per source/image.
+- **302 third-party sources** remain external pending rights and integrity review. Their presence is preserved; they are not represented as verified.
+- The first-party source check found **354 present, non-empty source files** and two explicitly tracked missing source files: `install_o4t_emu.sh` and `scripts/channel-romeh_installer.sh`. Their database entries remain enabled; no guessed replacement or disablement was applied.
+
+These checks validate syntax, repository paths, and package structure. They do not execute arbitrary installers or prove runtime compatibility on a physical receiver.
