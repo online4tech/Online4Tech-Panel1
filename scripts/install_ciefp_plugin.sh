@@ -58,11 +58,11 @@ fi
 if [ "$PYTHON_MODE" = "auto" ]; then
     if command -v python >/dev/null 2>&1 && python --version 2>&1 | grep -q "^Python 3"; then
         PYTHON_MODE="py3"
+    elif command -v python >/dev/null 2>&1 && python --version 2>&1 | grep -q "^Python 2"; then
+        PYTHON_MODE="py2"
     elif command -v python3 >/dev/null 2>&1; then
         PYTHON_MODE="py3"
     elif command -v python2 >/dev/null 2>&1; then
-        PYTHON_MODE="py2"
-    elif command -v python >/dev/null 2>&1; then
         PYTHON_MODE="py2"
     else
         echo "[ERROR] No Python interpreter was found."
@@ -82,7 +82,7 @@ else
         echo "[ERROR] This plugin variant requires Python 2."
         exit 1
     fi
-    PACKAGES="python-requests python-six"
+    PACKAGES="python-requests"
     if [ "$EXTRA_DEP" = "pillow" ]; then PACKAGES="$PACKAGES python-imaging"; fi
 fi
 
