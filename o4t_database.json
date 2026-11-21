@@ -8210,18 +8210,21 @@
     },
     {
       "name": "Klll-Pro-FHD",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_klll_pro.sh\" | /bin/sh",
       "path": "/usr/share/enigma2/Klll-Pro",
       "remove_cmd": "rm -rf '/usr/share/enigma2/Klll-Pro'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_klll_pro.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "Original Klll-Pro skin/payload by Biko-73; Online4Tech maintains the item-specific installer wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة أمر تثبيت مخصص لهذا السكين. ملف التثبيت مستضاف لدى Online4Tech، بينما ملف السكين الأصلي يظل من مصدر Biko-73 مع الاحتفاظ بنسبة المصدر.",
+      "payload_source_url": "https://raw.githubusercontent.com/biko-73/zelda77/main/klll-pro-v.3.3.tar.gz",
+      "payload_source_host": "raw.githubusercontent.com",
+      "payload_source_attribution": "Biko-73 / zelda77 (original Klll-Pro skin payload)"
     }
   ],
   "openbh_skins": [
