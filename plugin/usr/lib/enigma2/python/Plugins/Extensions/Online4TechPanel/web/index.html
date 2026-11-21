@@ -10,7 +10,7 @@ html{scroll-behavior:smooth}
 body{margin:0;color:var(--txt);background:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;font-size:15px;line-height:1.55;min-height:100vh}
 body:before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(1100px 520px at 90% -12%,rgba(41,224,255,.10),transparent 60%),radial-gradient(900px 600px at -10% 105%,rgba(91,140,255,.10),transparent 60%)}
 .shell{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-aside{position:sticky;top:0;height:100vh;padding:22px 16px;border-inline-end:1px solid var(--edge);background:linear-gradient(180deg,rgba(14,26,46,.9),rgba(8,15,28,.95));display:flex;flex-direction:column;gap:22px}
+aside{position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;padding:20px 16px;border-inline-end:1px solid var(--edge);background:linear-gradient(180deg,rgba(14,26,46,.9),rgba(8,15,28,.95));display:flex;flex-direction:column;gap:22px}
 .brand{display:flex;gap:12px;align-items:center}
 .mark{width:44px;height:44px;border-radius:13px;background:linear-gradient(145deg,#0f3a52,#0a2236);border:1px solid rgba(41,224,255,.5);box-shadow:0 0 22px rgba(41,224,255,.28);display:grid;place-items:center}
 .mark svg{width:26px;height:26px}
@@ -24,19 +24,22 @@ aside{position:sticky;top:0;height:100vh;padding:22px 16px;border-inline-end:1px
 .lang{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--edge);border-radius:999px;padding:3px;background:var(--deep)}
 .lang button{border:0;background:transparent;color:var(--mut);font:inherit;padding:7px;border-radius:999px;cursor:pointer;transition:.18s}
 .lang button.on{color:#02202a;background:linear-gradient(135deg,var(--sig),#7fb2ff);box-shadow:0 0 16px rgba(41,224,255,.5);font-weight:700}
-main{padding:28px clamp(16px,3vw,40px) 90px;max-width:1180px;width:100%}
+main{padding:22px clamp(16px,2.2vw,36px) 90px;width:100%;min-width:0}
 .page{display:none}.page.on{display:block}
-h1{font-size:26px;margin:0 0 4px;font-weight:700}.sub{color:var(--mut);margin:0 0 22px}
-.panel{background:linear-gradient(180deg,rgba(18,32,55,.78),rgba(11,20,36,.82));border:1px solid var(--edge);border-radius:18px;padding:20px}
+h1{font-size:24px;margin:0 0 2px;font-weight:700}.sub{color:var(--mut);margin:0 0 16px}
+.panel{background:linear-gradient(180deg,rgba(18,32,55,.78),rgba(11,20,36,.82));border:1px solid var(--edge);border-radius:18px;padding:18px}
 .panel+.panel{margin-top:18px}
 h2{font-size:16px;margin:0 0 14px;font-weight:600}
-.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.box{width:clamp(150px,16vw,230px);filter:drop-shadow(0 8px 22px rgba(41,224,255,.18))}.box svg{width:100%;display:block}
+.home{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px;align-items:start}.home .panel+.panel{margin-top:0}.home .col{display:grid;gap:18px}
+@media(max-width:1100px){.home{grid-template-columns:1fr}}
 .model{font-size:22px;font-weight:700;direction:ltr;text-align:start;word-break:break-word}.image{color:var(--mut);direction:ltr;text-align:start;margin-top:2px}
 .live{display:inline-flex;align-items:center;gap:8px;margin-top:12px;color:var(--ok);font-size:13px}
 .live i{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok)}
-.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.g{padding:10px 6px}
 .g{display:grid;justify-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:rgba(6,11,20,.55);border:1px solid var(--edge)}
-.ring{position:relative;width:104px;height:104px}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring{position:relative;width:clamp(84px,7.5vw,108px);aspect-ratio:1}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:8;stroke-linecap:round}.ring .bg{stroke:#14243d}
 .ring .fg{stroke:var(--sig);stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1),stroke .3s;filter:drop-shadow(0 0 6px currentColor)}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;direction:ltr}
@@ -44,7 +47,7 @@ h2{font-size:16px;margin:0 0 14px;font-weight:600}
 .mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
 .mini div{padding:12px 14px;border-radius:14px;background:rgba(6,11,20,.55);border:1px solid var(--edge)}
 .mini small{color:var(--mut);display:block}.mini b{display:inline-block;font-size:17px}
-.btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px}.btns .btn{min-height:42px;padding:8px 10px;font-size:14px}
 .btn,button.btn{font:inherit;color:#dff9ff;cursor:pointer;border-radius:12px;padding:12px 16px;border:1px solid rgba(41,224,255,.4);background:linear-gradient(180deg,#0f2a40,#0a1d2f);box-shadow:var(--glow);transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
 .btn:hover{transform:translateY(-1px);border-color:var(--sig);box-shadow:0 0 0 1px rgba(41,224,255,.7) inset,0 0 30px rgba(41,224,255,.45)}
 .btn:active{transform:translateY(0)}
@@ -84,14 +87,14 @@ pre{margin:0;background:#04080f;border:1px solid var(--edge);border-radius:12px;
 .soc svg{width:22px;height:22px;fill:none;stroke:var(--c);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .soc:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--c) inset,0 0 30px color-mix(in srgb,var(--c) 65%,transparent)}
 .soc.whatsapp{--c:#25d366}.soc.messenger{--c:#4c8dff}.soc.page{--c:#6aa5ff}.soc.store{--c:var(--sun)}.soc.site{--c:var(--sig)}
-.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.contact .soc{justify-content:flex-start;padding:0 16px;min-height:50px}
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}.contact .soc{justify-content:flex-start;padding:0 12px;min-height:44px;font-size:14px}
 @media(max-width:860px){
 .shell{display:block}
 aside{position:fixed;z-index:15;inset:auto 0 0 0;top:auto;height:auto;flex-direction:row;padding:8px;border-inline-end:0;border-top:1px solid var(--edge);gap:6px;background:rgba(8,15,28,.97)}
 .brand,.side-foot .links{display:none}.menu{display:flex;flex:1;overflow-x:auto;gap:4px}
 .menu button{flex-direction:column;gap:3px;padding:8px 10px;font-size:11.5px;min-width:64px;justify-content:center;text-align:center}
 .side-foot{margin:0;align-self:center}.side-foot .note{display:none}.lang{width:96px}.lang button{padding:6px 4px;font-size:12px}.menu button{min-width:58px}
-main{padding:18px 14px 110px}.hero{grid-template-columns:1fr}.gauges{gap:10px}.ring{width:84px;height:84px}.ring b{font-size:16px}
+main{padding:18px 14px 110px}.hero{grid-template-columns:1fr;justify-items:center;text-align:center}.gauges{gap:10px}.ring{width:84px;height:84px}.ring b{font-size:16px}
 #drawer{bottom:68px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
@@ -105,10 +108,13 @@ main{padding:18px 14px 110px}.hero{grid-template-columns:1fr}.gauges{gap:10px}.r
 <main>
  <section class="page" id="p-home">
   <h1 data-i="home"></h1><p class="sub" data-i="home_sub"></p>
-  <div class="panel"><div class="hero"><div><div class="model" id="model">-</div><div class="image" id="image"></div><div class="live"><i></i><span data-i="online"></span></div></div></div>
+  <div class="home"><div class="col"><div class="panel"><div class="hero"><div class="box" id="box"></div><div><div class="model" id="model">-</div><div class="image" id="image"></div><div class="live"><i></i><span data-i="online"></span></div></div></div>
    <div class="gauges" id="gauges"></div><div class="mini" id="mini"></div></div>
-  <div class="panel"><h2 data-i="contact"></h2><p class="note" data-i="contact_sub" style="margin:-6px 0 14px"></p><div class="contact" id="contact"></div><p class="note" style="margin:14px 0 0"><a id="phone" href="#" dir="ltr" style="color:var(--sig);text-decoration:none"></a></p></div>
+  </div>
+  <div class="col">
+  <div class="panel"><h2 data-i="contact"></h2><div class="contact" id="contact"></div><p class="note" style="margin:14px 0 0"><a id="phone" href="#" dir="ltr" style="color:var(--sig);text-decoration:none"></a></p></div>
   <div class="panel"><h2 data-i="quick"></h2><div class="btns" id="acts"></div></div>
+  </div></div>
  </section>
  <section class="page" id="p-cat">
   <h1 id="cat-title"></h1><p class="sub" id="cat-sub"></p>
@@ -177,7 +183,16 @@ function gauge(label,pct,sub){var g=el("div","g"),r=el("div","ring"),NS="http://
  var col=pct>=90?"#ff5d73":pct>=75?"#ffb454":"#29e0ff";b.style.stroke=col;b.style.color=col;s.appendChild(a);s.appendChild(b);r.appendChild(s);r.appendChild(el("b","",Math.round(pct)+"%"));
  g.appendChild(r);g.appendChild(el("span","",label));g.appendChild(el("small","",sub));setTimeout(function(){b.style.strokeDashoffset=264-264*Math.min(100,pct)/100},60);return g}
 function mini(l,v){var d=el("div");d.appendChild(el("small","",l));d.appendChild(el("b","",v));return d}
-function renderStatus(s){last=s;$("model").textContent=s.model;$("image").textContent=s.image;var G=$("gauges");G.textContent="";
+function drawBox(name){var b=$("box");if(b.dataset.n==name)return;b.dataset.n=name;
+ var brand=/^vu\+?/i.test(name)?"Vu+":name.split(" ")[0],model=name.replace(/^vu\+?\s*/i,"");
+ b.innerHTML='<svg viewBox="0 0 240 84" role="img" style="direction:ltr"><defs><linearGradient id="bx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2b45"/><stop offset="1" stop-color="#0b1424"/></linearGradient></defs>'+
+ '<rect x="6" y="8" width="228" height="62" rx="9" fill="url(#bx)" stroke="#2c4570"/><rect x="6" y="8" width="228" height="5" rx="3" fill="#29e0ff" opacity=".35"/>'+
+ '<rect x="20" y="26" width="132" height="30" rx="5" fill="#04080f" stroke="#1b2c47"/><text id="bxm" x="86" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="#29e0ff" font-family="Segoe UI,Tahoma,sans-serif"></text>'+
+ '<text id="bxb" x="160" y="42" font-size="11" fill="#7f93b2" font-family="Segoe UI,Tahoma,sans-serif"></text><circle cx="214" cy="26" r="3.5" fill="#3ee6a0"/>'+
+ '<circle cx="176" cy="52" r="4" fill="#12203a" stroke="#2c4570"/><circle cx="192" cy="52" r="4" fill="#12203a" stroke="#2c4570"/><circle cx="208" cy="52" r="4" fill="#12203a" stroke="#2c4570"/>'+
+ '<rect x="26" y="70" width="14" height="6" rx="2" fill="#1b2c47"/><rect x="200" y="70" width="14" height="6" rx="2" fill="#1b2c47"/></svg>';
+ $("bxm").textContent=model.length>11?model.slice(0,11):model;$("bxb").textContent=brand}
+function renderStatus(s){last=s;drawBox(s.model);$("model").textContent=s.model;$("image").textContent=s.image;var G=$("gauges");G.textContent="";
  var ramP=s.ram_total?s.ram_used*100/s.ram_total:0,fu=s.flash_total-s.flash_free,fp=s.flash_total?fu*100/s.flash_total:0;
  G.appendChild(gauge(t("ram"),ramP,s.ram_used+" / "+s.ram_total+" MB"));G.appendChild(gauge(t("flash"),fp,fu.toFixed(1)+" / "+s.flash_total+" GB"));
  G.appendChild(gauge(t("temp"),s.temp==null?0:Math.min(100,s.temp),s.temp==null?"-":s.temp+" °C"));

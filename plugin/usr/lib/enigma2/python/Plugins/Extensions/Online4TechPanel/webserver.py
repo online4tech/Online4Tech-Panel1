@@ -163,6 +163,38 @@ def _temp():
     return None
 
 
+VU = {"duo4k": "Duo 4K", "duo4kse": "Duo 4K SE", "uno4k": "Uno 4K", "uno4kse": "Uno 4K SE",
+      "ultimo4k": "Ultimo 4K", "solo4k": "Solo 4K", "zero4k": "Zero 4K", "duo2": "Duo2",
+      "solo2": "Solo2", "solose": "Solo SE", "solose v2": "Solo SE V2", "ultimo": "Ultimo",
+      "uno": "Uno", "zero": "Zero", "duo": "Duo", "solo": "Solo"}
+OTHER = {"dm900": "Dreambox DM900", "dm920": "Dreambox DM920", "dreamone": "Dreambox One",
+         "dreamtwo": "Dreambox Two", "dm525": "Dreambox DM525", "hd51": "AX HD51",
+         "h7": "Zgemma H7", "h9": "Zgemma H9", "gbquad4k": "GigaBlue Quad 4K",
+         "gbue4k": "GigaBlue UE 4K", "osmio4k": "Edision OSmio4K", "osmio4kplus": "Edision OSmio4K Plus"}
+
+
+def device_name():
+    """Human readable receiver name, e.g. 'Vu+ Duo 4K' (best effort)."""
+    def first(*paths):
+        for path in paths:
+            val = read_file(path).strip()
+            if val:
+                return val
+        return ""
+    vu = first("/proc/stb/info/vumodel").lower()
+    raw = first("/proc/stb/info/boxtype", "/proc/stb/info/model", "/proc/stb/info/hwmodel")
+    host = read_file("/etc/hostname").strip().lower()
+    for key in (vu, raw.lower(), host):
+        k = key.replace("vu+", "").replace("vu", "", 1) if key.startswith("vu") else key
+        if key.startswith("vu") and k in VU:
+            return "Vu+ " + VU[k]
+        if key in VU and (vu or host.startswith("vu")):
+            return "Vu+ " + VU[key]
+        if key in OTHER:
+            return OTHER[key]
+    return (first("/proc/stb/info/model") or raw or host or "-").upper() if (raw or host) else "-"
+
+
 def system_status():
     mem = {}
     for line in read_file("/proc/meminfo").splitlines():
@@ -185,7 +217,7 @@ def system_status():
     return {
         "ram_total": total, "ram_used": max(0, total - free), "uptime": up,
         "flash_total": round(fl_total, 1), "flash_free": round(fl_free, 1),
-        "temp": _temp(), "model": read_file("/proc/stb/info/model").strip() or "-",
+        "temp": _temp(), "model": device_name(),
         "image": image[0] if image else "-", "version": VERSION,
         "shell": bool(get_setting("web_shell", False)), "auth": bool(get_setting("web_auth", False)), "busy": running_job() is not None,
         "links": {"whatsapp": WHATSAPP_URL, "messenger": MESSENGER_URL, "page": PAGE_URL,
