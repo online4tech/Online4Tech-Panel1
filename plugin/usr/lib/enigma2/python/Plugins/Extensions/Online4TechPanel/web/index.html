@@ -97,12 +97,34 @@ aside{position:fixed;z-index:15;inset:auto 0 0 0;top:auto;height:auto;flex-direc
 main{padding:18px 14px 110px}.hero{grid-template-columns:1fr;justify-items:center;text-align:center}.gauges{gap:10px}.ring{width:84px;height:84px}.ring b{font-size:16px}
 #drawer{bottom:68px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---- optional skin: Gold (premium, warm champagne on graphite). Default look is untouched. ---- */
+html[data-skin=gold]{--ink:#0d0c0a;--deep:#14120f;--panel:#1a1713;--edge:#3a3226;--txt:#efe6d4;--mut:#a39880;--sig:#d9b36a;--sig2:#f0d38f;--hot:#e0745f;--sun:#d9b36a;--ok:#8fcf9a;
+--glow:0 0 0 1px rgba(217,179,106,.4) inset,0 0 16px rgba(217,179,106,.16);--r:6px}
+html[data-skin=gold] body{font-family:Georgia,"Noto Naskh Arabic","Segoe UI",Tahoma,serif}
+html[data-skin=gold] body:before{background:radial-gradient(900px 480px at 100% -10%,rgba(217,179,106,.10),transparent 60%),radial-gradient(700px 500px at 0% 110%,rgba(217,179,106,.05),transparent 60%)}
+html[data-skin=gold] aside{background:linear-gradient(180deg,#17140f,#0e0c09);border-inline-end:1px solid var(--edge)}
+html[data-skin=gold] .mark{background:#1d1810;border-color:rgba(217,179,106,.6);box-shadow:0 0 18px rgba(217,179,106,.2);border-radius:6px}
+html[data-skin=gold] .mark svg{stroke:#d9b36a}
+html[data-skin=gold] .menu button{border-radius:4px;letter-spacing:.3px}
+html[data-skin=gold] .menu button:hover{background:rgba(217,179,106,.07)}
+html[data-skin=gold] .menu button.on{color:#f6e7c1;background:linear-gradient(90deg,rgba(217,179,106,.18),rgba(217,179,106,.02));border-color:rgba(217,179,106,.5);box-shadow:none;border-inline-start:3px solid #d9b36a}
+html[data-skin=gold] .lang,html[data-skin=gold] .skinbtn{border-radius:4px}
+html[data-skin=gold] .lang button{border-radius:3px}
+html[data-skin=gold] .lang button.on{color:#1a1409;background:linear-gradient(135deg,#d9b36a,#f0d38f);box-shadow:none}
+html[data-skin=gold] .panel{background:linear-gradient(180deg,#1d1914,#15120e);border-radius:6px;border:1px solid var(--edge);box-shadow:0 1px 0 rgba(240,211,143,.08) inset}
+html[data-skin=gold] h1{font-weight:400;letter-spacing:.6px;font-size:28px;border-bottom:1px solid var(--edge);padding-bottom:10px;margin-bottom:10px}
+html[data-skin=gold] .soc{border-radius:4px;background:rgba(13,12,10,.7);box-shadow:none}
+html[data-skin=gold] button,html[data-skin=gold] input{border-radius:4px}
+.skinbtn{width:100%;border:1px solid var(--edge);background:var(--deep);color:var(--mut);font:inherit;padding:8px;border-radius:999px;cursor:pointer;transition:.18s}
+.skinbtn:hover{color:var(--txt);border-color:var(--sig)}
 </style></head><body>
 <div class="shell">
 <aside>
  <div class="brand"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#29e0ff" stroke-width="1.8" stroke-linecap="round"><path d="M4 18a9 9 0 0 1 16 0"/><path d="M8 18a5 5 0 0 1 8 0"/><circle cx="12" cy="18" r="1.4" fill="#29e0ff"/><path d="M12 4v4M6 6l2 3M18 6l-2 3"/></svg></div><div><b>Online4Tech</b><small id="slog"></small></div></div>
  <nav class="menu" id="menu"></nav>
  <div class="side-foot"><div class="links" id="links"></div>
+ <button class="skinbtn" id="skinbtn" type="button"></button>
  <div class="lang"><button id="l-ar">العربية</button><button id="l-en">English</button></div><small class="note" id="ver"></small></div>
 </aside>
 <main>
@@ -167,12 +189,19 @@ function el(tag,c,x){var e=document.createElement(tag);if(c)e.className=c;if(x!=
 function toast(m){var e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},3800)}
 function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method="POST";o.body=JSON.stringify(body)}
  return fetch(path,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||j.message||r.status);return j})})}
+
+var skin="classic";try{skin=localStorage.getItem("o4t_skin")||"classic"}catch(e){}
+var sq=/[?&]skin=(classic|gold)/.exec(location.search);if(sq)skin=sq[1];
+function applySkin(){document.documentElement.setAttribute("data-skin",skin);try{localStorage.setItem("o4t_skin",skin)}catch(e){}
+ var b=document.getElementById("skinbtn");if(b)b.textContent=(lang=="ar"?"السكين: ":"Skin: ")+(skin=="gold"?(lang=="ar"?"ذهبي":"Gold"):(lang=="ar"?"كلاسيك":"Classic"))}
+document.getElementById("skinbtn").onclick=function(){skin=skin=="gold"?"classic":"gold";applySkin()};
+applySkin();
 function applyLang(){var d=document.documentElement;d.lang=lang;d.dir=lang=="ar"?"rtl":"ltr";
  try{localStorage.setItem("o4t_lang",lang)}catch(e){}
  $("l-ar").className=lang=="ar"?"on":"";$("l-en").className=lang=="en"?"on":"";
  Array.prototype.forEach.call(document.querySelectorAll("[data-i]"),function(n){n.textContent=t(n.dataset.i)});
  Array.prototype.forEach.call(document.querySelectorAll("[data-ph]"),function(n){n.placeholder=t(n.dataset.ph)});
- $("slog").textContent=t("slog");buildMenu();buildActs();if(last)renderStatus(last);if(cur!="home"&&cur!="iptv"&&cur!="term")load();setCatTitle()}
+ applySkin();$("slog").textContent=t("slog");buildMenu();buildActs();if(last)renderStatus(last);if(cur!="home"&&cur!="iptv"&&cur!="term")load();setCatTitle()}
 function buildMenu(){var m=$("menu");m.textContent="";NAV.forEach(function(k){var b=el("button",cur==k?"on":"");b.innerHTML='<svg viewBox="0 0 24 24">'+IC[k]+'</svg>';b.appendChild(el("span","",t(k)));b.onclick=function(){go(k)};m.appendChild(b)})}
 var ACTS=[["self_update","pri"],["restart_gui",""],["sync_catalog",""],["update_feed",""],["clear_ram",""],["clean_tmp",""],["standby","sun"],["reboot","hot"]];
 function buildActs(){var a=$("acts");a.textContent="";ACTS.forEach(function(x){var b=el("button","btn "+x[1],t(x[0]));b.onclick=function(){if(/reboot|restart_gui|standby/.test(x[0])&&!confirm(t("confirm")))return;start("/api/action",{name:x[0]},t(x[0]))};a.appendChild(b)})}
