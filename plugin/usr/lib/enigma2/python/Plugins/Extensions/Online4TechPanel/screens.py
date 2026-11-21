@@ -76,30 +76,40 @@ def _start_clock(screen):
         screen[nm] = Label(STATIC.get(nm, ""))      # fixed texts / flat boxes are plain Label widgets
     if 'name="clock"' not in getattr(screen, "skin", ""):
         return                      # this design has no header clock: no timer needed
+    clk = _Clock(screen)
     timer = eTimer()
-
-    def tick():
-        try:
-            if getattr(screen, "_o4t_dead", False):
-                return
-            screen["clock"].setText(time.strftime("%H:%M"))
-        except Exception:
-            pass
     try:
-        timer.callback.append(tick)
+        timer.callback.append(clk.tick)
     except AttributeError:
-        screen._o4t_clock_conn = timer.timeout.connect(tick)
-    screen._o4t_clock = timer
-    tick()
+        screen._o4t_clock_conn = timer.timeout.connect(clk.tick)
+    screen._o4t_clock = (timer, clk)
+    clk.tick()
     timer.start(20000, False)
+    screen.onClose.append(clk.stop_timer(timer))
+    # onLayoutFinish entries must be BOUND METHODS: Enigma2 exec()s anything else
+    screen.onLayoutFinish.append(clk.tick)
 
-    def stop():
+
+class _Clock(object):
+    def __init__(self, screen):
+        self.screen = screen
+
+    def tick(self):
         try:
-            timer.stop()
+            if getattr(self.screen, "_o4t_dead", False):
+                return
+            import time
+            self.screen["clock"].setText(time.strftime("%H:%M"))
         except Exception:
             pass
-    screen.onClose.append(stop)
-    screen.onLayoutFinish.append(tick)
+
+    def stop_timer(self, timer):
+        def stop():
+            try:
+                timer.stop()
+            except Exception:
+                pass
+        return stop
 
 
 OPEN_MARK = "/tmp/o4t_opening"
