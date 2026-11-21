@@ -183,7 +183,7 @@ jobs:
           assert len(database["ciefp"]) == 41, "Unexpected Ciefp item count"
           assert sum(1 for x in database["ciefp"] if x.get("audit_status") == "restored_item_specific_wrapper") == 39
           assert len(audit["entries"]) == 824
-          assert audit["summary"]["quarantined"] == 59
+          assert audit["summary"]["quarantined"] == 58
           assert len(manifest["sources"]) == 663
           assert len(manifest["nested_sources"]) == 44
           print("Database/audit/manifest checks passed.")
