@@ -8,7 +8,7 @@ on:
       - maintenance/audit-sources-2026-11
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate-panel:
@@ -168,21 +168,6 @@ jobs:
                   assert "rm -rf" not in postrm
               print("%s: build verified (%d files)" % (package, len(names)))
           PY
-
-      - name: Commit refreshed packages to the maintenance branch
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        env:
-          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add enigma2-plugin-extensions-online4tech_7.5_all.ipk enigma2-plugin-extensions-online4tech_7.5_all.deb
-          if git diff --cached --quiet; then
-            echo "Package artifacts are already up to date."
-          else
-            git commit -m "Build Online4Tech Panel 7.5 packages"
-            git push origin "HEAD:${BRANCH_NAME}"
-          fi
 
       - name: Upload built packages
         uses: actions/upload-artifact@v4
