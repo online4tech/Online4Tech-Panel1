@@ -640,6 +640,21 @@ def build_category_entry(title, count_num, icon_name="", lang="ar"):
     return res
 
 
+def path_is_installed(path):
+    """Check the standard Enigma2 plugin locations on lib and lib64 images."""
+    if not path:
+        return False
+    if os.path.exists(path):
+        return True
+    if path.startswith("/usr/lib/"):
+        alternate = "/usr/lib64/" + path[len("/usr/lib/"):]
+        return os.path.exists(alternate)
+    if path.startswith("/usr/lib64/"):
+        alternate = "/usr/lib/" + path[len("/usr/lib64/"):]
+        return os.path.exists(alternate)
+    return False
+
+
 def build_item_entry(title, subtitle, installed=False, icon_name="", is_folder=False, lang="ar"):
     display_title = truncate_text(title, 36)
     display_sub = truncate_text(subtitle, 44)
@@ -1346,14 +1361,43 @@ class Online4TechStoreScreen(Screen):
                 self["top_subtitle"].setText(tr("connecting_db", self.lang))
                 url_with_ts = "%s?t=%d" % (DB_URL, int(time.time())) if force else DB_URL
                 req = Request(url_with_ts, headers={"User-Agent": "Online4Tech-Enigma2-v7.5"})
-                ctx = ssl._create_unverified_context() if hasattr(ssl, "_create_unverified_context") else None
-                resp = urlopen(req, timeout=20, context=ctx) if ctx else urlopen(req, timeout=20)
-                raw = resp.read().decode("utf-8", errors="ignore")
-                with io.open(CACHE_DB, "w", encoding="utf-8") as f:
-                    f.write(raw)
+                temp_cache = CACHE_DB + ".tmp"
+                try:
+                    ctx = ssl.create_default_context() if hasattr(ssl, "create_default_context") else None
+                    resp = urlopen(req, timeout=20, context=ctx) if ctx else urlopen(req, timeout=20)
+                    try:
+                        raw = resp.read().decode("utf-8", errors="strict")
+                    finally:
+                        try:
+                            resp.close()
+                        except Exception:
+                            pass
 
-            with io.open(CACHE_DB, "r", encoding="utf-8", errors="ignore") as f:
-                self.db_data = json.load(f)
+                    parsed_db = json.loads(raw)
+                    if not isinstance(parsed_db, dict):
+                        raise ValueError("Online4Tech database root must be a JSON object")
+
+                    with io.open(temp_cache, "w", encoding="utf-8") as f:
+                        f.write(raw)
+                    os.rename(temp_cache, CACHE_DB)
+                    self.db_data = parsed_db
+                except Exception:
+                    # A failed refresh must not destroy a previously working cache.
+                    try:
+                        if os.path.exists(temp_cache):
+                            os.remove(temp_cache)
+                    except Exception:
+                        pass
+                    if not os.path.isfile(CACHE_DB) or os.path.getsize(CACHE_DB) == 0:
+                        raise
+                    with io.open(CACHE_DB, "r", encoding="utf-8", errors="strict") as f:
+                        self.db_data = json.load(f)
+            else:
+                with io.open(CACHE_DB, "r", encoding="utf-8", errors="strict") as f:
+                    self.db_data = json.load(f)
+
+            if not isinstance(self.db_data, dict):
+                raise ValueError("Online4Tech database cache is not a JSON object")
 
             self.build_master_groups()
             self.nav_stack = []
@@ -1500,7 +1544,7 @@ class Online4TechStoreScreen(Screen):
             else:
                 clean_title, ar_desc = parse_item_name(it.get("name", "Package"))
                 path = it.get("path", "")
-                installed = bool(path and os.path.exists(path))
+                installed = path_is_installed(path)
                 if self.lang == "ar" and ar_desc:
                     sub_txt = ar_desc
                 else:
@@ -1552,22 +1596,37 @@ class Online4TechStoreScreen(Screen):
         else:
             clean_title, ar_desc = parse_item_name(item.get("name", "Package"))
             path = item.get("path", "")
-            installed = bool(path and os.path.exists(path))
+            installed = path_is_installed(path)
             has_remove = bool(item.get("remove_cmd"))
 
             self["detail_title"].setText(truncate_text(clean_title, 44))
-            self["detail_status"].setText(tr("status_installed" if installed else "status_avail", lg))
             self["meta_cat"].setText(tr("meta_cat_fmt", lg) % self.current_section_title)
             self["meta_type"].setText(tr("meta_type_fmt", lg) % pkg_type)
-            self["meta_source"].setText(tr("meta_rem_yes" if has_remove else "meta_rem_no", lg))
 
-            if lg == "ar" and ar_desc:
-                desc_body = tr("desc_pkg_with_ar", lg) % ar_desc
+            if item.get("enabled", True) is False:
+                if lg == "ar":
+                    self["detail_status"].setText("⚠ التثبيت موقوف مؤقتًا")
+                    self["meta_source"].setText("المصدر قيد المراجعة — العنصر محفوظ")
+                    reason = item.get("audit_reason") or "نحتفظ بهذا العنصر لحين التحقق من أمر التثبيت الصحيح."
+                    self["detail_desc"].setText(reason)
+                    self["action_cta"].setText("بانتظار أمر تثبيت موثوق")
+                    self["action_sub"].setText("العنصر محفوظ ولن يتم حذفه")
+                else:
+                    self["detail_status"].setText("⚠ Installation temporarily paused")
+                    self["meta_source"].setText("Source under review — entry retained")
+                    self["detail_desc"].setText("This entry is retained. Installation will resume after its item-specific installer is verified.")
+                    self["action_cta"].setText("Waiting for verified installer")
+                    self["action_sub"].setText("Entry retained; nothing is removed")
             else:
-                desc_body = tr("desc_pkg_default", lg)
-            self["detail_desc"].setText(desc_body)
-            self["action_cta"].setText(tr("cta_reinstall" if installed else "cta_install", lg))
-            self["action_sub"].setText(tr("cta_sub_pkg", lg))
+                self["detail_status"].setText(tr("status_installed" if installed else "status_avail", lg))
+                self["meta_source"].setText(tr("meta_rem_yes" if has_remove else "meta_rem_no", lg))
+                if lg == "ar" and ar_desc:
+                    desc_body = tr("desc_pkg_with_ar", lg) % ar_desc
+                else:
+                    desc_body = tr("desc_pkg_default", lg)
+                self["detail_desc"].setText(desc_body)
+                self["action_cta"].setText(tr("cta_reinstall" if installed else "cta_install", lg))
+                self["action_sub"].setText(tr("cta_sub_pkg", lg))
             cand_icon = item.get("icon") or icon_override or self.current_section_icon
             icon_file = find_icon_path(cand_icon, allow_brand=True)
 
@@ -1651,8 +1710,12 @@ class Online4TechStoreScreen(Screen):
             sub_icon = item.get("icon") or (sub_key + ".png")
             self.open_section(sub_key, sub_title, icon_name=sub_icon, push_history=True)
         else:
-            cmd = item.get("cmd", "")
             clean_title, _ = parse_item_name(item.get("name", "Package"))
+            if item.get("enabled", True) is False:
+                reason = item.get("audit_reason") or "هذا العنصر موقوف مؤقتًا لحين مراجعة مصدر التثبيت."
+                self.session.open(MessageBox, reason, MessageBox.TYPE_INFO, timeout=8)
+                return
+            cmd = item.get("cmd", "")
             if cmd:
                 self.session.open(Console, title="Online4Tech - %s" % clean_title, cmdlist=[cmd], closeOnSuccess=False)
 
