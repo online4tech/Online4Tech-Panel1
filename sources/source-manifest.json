@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generated_from": "o4t_database.json",
   "generated_at": "2026-11-21",
-  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream. KeyAdder and Levi45 Emulator now use first-party safe wrappers; their original third-party sources and credits are recorded under nested_sources and remain upstream.",
+  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream. KeyAdder and Levi45 Emulator now use first-party safe wrappers; their original third-party sources and credits are recorded under nested_sources and remain upstream. EPGImport-99 now uses an Online4Tech opkg wrapper; the original Emil Nabil IPK remains upstream.",
   "sources": [
     {
       "url": "http://dreambox4u.com/emilnabil237/plugins/ajpanel/installer.sh",
@@ -6131,10 +6131,6 @@
         },
         {
           "section": "plugins",
-          "name": "EPGImport-99 (دليل القنوات)"
-        },
-        {
-          "section": "plugins",
           "name": "Filmon"
         },
         {
@@ -9224,6 +9220,19 @@
           "name": "Oscam By Levi45"
         }
       ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_epgimport_safe.sh",
+      "host": "raw.githubusercontent.com",
+      "repository": "online4tech/Online4Tech-Panel1",
+      "source_type": "first_party",
+      "mirror_status": "online4tech_wrapper_external_payload_retained_opkg_only",
+      "items": [
+        {
+          "section": "plugins",
+          "name": "EPGImport-99 (دليل القنوات)"
+        }
+      ]
     }
   ],
   "nested_sources": [
@@ -9298,6 +9307,21 @@
       ],
       "mirror_status": "upstream_package_not_mirrored",
       "note": "Selected on dpkg/DreamOS receivers."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/enigma2-plugin-extensions-epgimport_1.0.ipk",
+      "host": "raw.githubusercontent.com",
+      "repository": "emilnabil/download-plugins",
+      "source_type": "third_party_ipk",
+      "attribution": "Emil Nabil (EPGImport package distribution)",
+      "mirror_status": "upstream_package_not_mirrored",
+      "items": [
+        {
+          "section": "plugins",
+          "name": "EPGImport-99 (دليل القنوات)"
+        }
+      ],
+      "note": "The safe wrapper supports opkg/IPK receivers only; no DEB package was found in the referenced upstream listing."
     }
   ]
 }
