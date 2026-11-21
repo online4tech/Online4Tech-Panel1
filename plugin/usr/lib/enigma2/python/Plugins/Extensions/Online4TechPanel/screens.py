@@ -914,7 +914,7 @@ class O4TSettings(O4TListBase):
         self["key_yellow"].setText("")
         self["key_blue"].setText("")
         self["o4_lr"] = ActionMap(["DirectionActions"],
-                                  {"left": lambda: self.step(-1), "right": lambda: self.step(1)}, 0)
+                                  {"left": lambda: self.step(-1), "right": lambda: self.step(1)}, -3)   # lower = earlier: beats the list's own -1 map
 
     OPTIONS = (("design", list(DESIGNS)), ("theme", list(THEMES)), ("lang", list(LANGS)),
                ("font_scale", list(FONT_SCALES)))

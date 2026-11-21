@@ -23,6 +23,32 @@ from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, prett
                     save_favs)
 
 FEED, FAV = "__feed__", "__fav__"
+
+# The long list of catalog categories is folded into a few sidebar groups.
+# group id -> catalog categories (anything not listed lands in "other")
+GROUPS = {
+    "plugin": [
+        ("panels", ["Panels"]),
+        ("media", ["Media", "IPTV", "Audio"]),
+        ("lists", ["EPG", "Settings", "Ciefp", "Novaler"]),
+        ("system", ["Tools", "System", "Multiboot", "Dependencies"]),
+        ("plugins", ["Plugins", "Community", "Translation"]),
+    ],
+    "skin": [
+        ("skins", ["OpenATV", "OpenBH", "Egami", "OpenSPA", "OpenVIX", "PurE2", "TeamNitro"]),
+        ("pli", ["OpenPLi Py3", "OpenPLi Py2"]),
+        ("lcd", ["Display (LCD)"]),
+        ("graphics", ["Bootlogos", "Spinners", "Picons"]),
+        ("community", ["Community Skins", "XStreamity"]),
+    ],
+}
+
+
+def group_of(kind, category):
+    for gid, cats in GROUPS.get(kind, []):
+        if category in cats:
+            return gid
+    return "other"
 ICON_RULES = (
     ("iptv", "tv"), ("xtream", "tv"), ("epg", "calendar"), ("media", "play"), ("video", "play"),
     ("player", "play"), ("audio", "speaker"), ("sound", "speaker"), ("panel", "grid"),
@@ -134,9 +160,7 @@ class O4TStore(Screen):
         return items if self.show_all else [i for i in items if compatible(i)]
 
     def build_cats(self):
-        cats = catalog.categories(self.kind, self.visible())
-        entries = [(FEED, T("cat_feed"))]
-        entries += [(c, "%s (%d)" % (c, n)) for c, n in cats]
+        entries = self.cat_entries()
         self.cat_keys = [e[0] for e in entries]
         self["cats"].setList([e[1] for e in entries])
         start = 1 if len(entries) > 1 else 0
@@ -146,6 +170,16 @@ class O4TStore(Screen):
         except Exception:
             pass
         self.load_category()
+
+    def cat_entries(self):
+        counts = {}
+        for it in self.visible():
+            g = group_of(self.kind, it.get("category", ""))
+            counts[g] = counts.get(g, 0) + 1
+        order = [g for g, _c in GROUPS.get(self.kind, [])] + ["other"]
+        entries = [(FEED, T("cat_feed"))]
+        entries += [(g, "%s (%d)" % (T("g_" + g), counts[g])) for g in order if counts.get(g)]
+        return entries
 
     # ------------------------------------------------------------ data
     def side_changed(self):
@@ -179,7 +213,7 @@ class O4TStore(Screen):
             self.draw_page()
             return
         else:
-            self.rows = [i for i in self.visible() if i["category"] == cat]
+            self.rows = [i for i in self.visible() if group_of(self.kind, i.get("category", "")) == cat]
         self.o4_loading = False
         self.draw_page()
 
@@ -225,7 +259,7 @@ class O4TStore(Screen):
             self["title"].setText("%s - %s" % (base, T("search_all")))
             self["search"].setText(self.o4_query)
         else:
-            name = {FEED: T("cat_feed")}.get(cat, cat or "")
+            name = T("cat_feed") if cat == FEED else (T("g_" + cat) if cat else "")
             self["title"].setText(base if (not name or name == base) else "%s - %s" % (base, name))
             self["search"].setText(T("search_hint"))
         for i in range(self.per):
@@ -410,9 +444,7 @@ class O4TStore(Screen):
 
     def build_labels_only(self):
         keep = self.cat_idx
-        cats = catalog.categories(self.kind, self.visible())
-        entries = [(FEED, T("cat_feed"))]
-        entries += [(c, "%s (%d)" % (c, n)) for c, n in cats]
+        entries = self.cat_entries()
         self["cats"].setList([e[1] for e in entries])
         try:
             self["cats"].moveToIndex(keep)
