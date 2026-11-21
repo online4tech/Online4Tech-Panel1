@@ -41,6 +41,11 @@ def design():
 
 def font_scale():
     v = get_setting("font_scale", 100)
+    v = {"small": 90, "normal": 100, "large": 115}.get(v, v)   # old text values
+    try:
+        v = int(v)
+    except (TypeError, ValueError):
+        return 100
     return v if v in FONT_SCALES else 100
 
 
@@ -157,21 +162,21 @@ def _glass_main():
     x = [_screen_open(m, "O4TMain"), _header(m)]
     tw, th = GLASS_TILE
     for i, (tx, ty) in enumerate(MAIN_POS):
-        x.append('<ePixmap pixmap="%s" %s alphatest="blend" scale="1" zPosition="1" />\n'
-                 % (m.pix("tile"), m.rect(tx, ty, tw, th)))
-        x.append('<widget name="ic%d" %s alphatest="blend" scale="1" zPosition="3" />\n'
-                 % (i, m.rect(tx + 94, ty + 26, 112, 112)))
+        x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
+                 % (m.pix("tile_s"), m.rect(tx, ty, tw, th)))
+        x.append('<widget name="ic%d" %s alphatest="blend" zPosition="3" />\n'
+                 % (i, m.rect(tx + 86, ty + 10, 128, 128)))
         x.append('<widget name="tt%d" %s font="%s" foregroundColor="%s" transparent="1" '
                  'halign="center" valign="center" zPosition="3" />\n'
-                 % (i, m.rect(tx + 8, ty + 142, tw - 16, 44), m.font(31), TEXT))
+                 % (i, m.rect(tx + 8, ty + 142, tw - 16, 44), m.font(30), TEXT))
         x.append('<widget name="ts%d" %s font="%s" foregroundColor="%s" transparent="1" '
                  'halign="center" valign="center" zPosition="3" />\n'
-                 % (i, m.rect(tx + 8, ty + 190, tw - 16, 34), m.font(21), MUTED))
-    x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" scale="1" zPosition="2" />\n'
-             % (m.pix("sel_" + theme()), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, tw + 32, th + 32)))
+                 % (i, m.rect(tx + 8, ty + 190, tw - 16, 34), m.font(20), MUTED))
+    x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" zPosition="2" />\n'
+             % (m.pix("sel_" + theme() + "_s"), m.rect(MAIN_POS[0][0] - 16, MAIN_POS[0][1] - 16, tw + 32, th + 32)))
     cx, cy, cw, ch = CARD
-    x.append('<ePixmap pixmap="%s" %s alphatest="blend" scale="1" zPosition="1" />\n'
-             % (m.pix("panel_d"), m.rect(cx, cy, cw, ch)))
+    x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
+             % (m.pix("panel_dm"), m.rect(cx, cy, cw, ch)))
     x.append(_devcard_labels(m, cx, cy, cw, TEXT, MUTED, THEME_COLORS[theme()]))
     x.append('<widget name="hint" %s font="%s" foregroundColor="%s" transparent="1" '
              'halign="center" valign="center" zPosition="3" />\n'
