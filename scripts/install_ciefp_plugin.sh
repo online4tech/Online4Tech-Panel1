@@ -161,9 +161,32 @@ if [ -n "$EXISTING_PLUGIN_PATH" ]; then
     done
 fi
 
-echo "[Online4Tech] Updating plugin files in place; existing plugin folders are not deleted..."
-mkdir -p /usr
-cp -a "$SOURCE_USR/." /usr/
+# Resolve the exact plugin folder in the downloaded source tree. The 39
+# maintained Ciefp repositories were checked individually: their usr/ payloads
+# are contained in their own Enigma2 Extensions plugin directory.
+INSTALL_PLUGIN_PATH="$PLUGIN_PATH"
+SOURCE_PLUGIN="$STAGE/$ARCHIVE_ROOT$PLUGIN_PATH"
+
+if [ ! -d "$SOURCE_PLUGIN" ]; then
+    case "$PLUGIN_PATH" in
+        /usr/lib/enigma2/*)
+            INSTALL_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib/#/usr/lib64/#')"
+            ;;
+        /usr/lib64/enigma2/*)
+            INSTALL_PLUGIN_PATH="$(printf '%s\n' "$PLUGIN_PATH" | sed 's#^/usr/lib64/#/usr/lib/#')"
+            ;;
+    esac
+    SOURCE_PLUGIN="$STAGE/$ARCHIVE_ROOT$INSTALL_PLUGIN_PATH"
+fi
+
+if [ ! -d "$SOURCE_PLUGIN" ]; then
+    echo "[ERROR] The exact plugin directory was not found in the source archive."
+    exit 1
+fi
+
+echo "[Online4Tech] Updating only $PLUGIN_NAME; preserving all existing plugin files..."
+mkdir -p "$INSTALL_PLUGIN_PATH"
+cp -a "$SOURCE_PLUGIN/." "$INSTALL_PLUGIN_PATH/"
 
 # Restore user-managed files over packaged defaults, when they existed before.
 if [ -n "$EXISTING_PLUGIN_PATH" ] && [ -d "$PRESERVE_DIR" ]; then
@@ -171,7 +194,7 @@ if [ -n "$EXISTING_PLUGIN_PATH" ] && [ -d "$PRESERVE_DIR" ]; then
 fi
 sync
 
-if [ ! -d "/usr/lib/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ] && [ ! -d "/usr/lib64/enigma2/python/Plugins/Extensions/$PLUGIN_NAME" ]; then
+if [ ! -d "$INSTALL_PLUGIN_PATH" ]; then
     echo "[ERROR] Plugin files were copied, but the expected plugin directory is not present."
     exit 1
 fi
