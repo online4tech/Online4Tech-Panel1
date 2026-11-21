@@ -223,18 +223,19 @@
     },
     {
       "name": "KeyAdder (مفاتيح الشفرات)",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh\" | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "KeyAdder plugin by RAED (fairbird), GPL-3.0; Online4Tech maintains the non-destructive installer wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة التثبيت عبر سكريبت خاص وآمن؛ ملفات البلجن الأصلية من RAED (fairbird) بترخيص GPL-3.0.",
+      "payload_source_url": "https://github.com/fairbird/KeyAdder/archive/refs/heads/main.tar.gz"
     },
     {
       "name": "RaedQuickSignal (بيان إشارة للقنوات)",
@@ -327,17 +328,22 @@
     },
     {
       "name": "Oscam By Levi45",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh\" | /bin/sh",
       "path": "/usr/bin/oscamm",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "Levi45 Emulator package distributed by Emil Nabil; Online4Tech maintains the safe package-manager wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة التثبيت عبر مدير الحزم دون حذف النسخة القديمة يدويًا أو استخدام force-overwrite.",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/",
+      "payload_source_urls": [
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.ipk",
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.deb"
+      ]
     }
   ],
   "updated-dependencic": [
@@ -1813,18 +1819,19 @@
     },
     {
       "name": "KeyAdder (مفاتيح الشفرات)",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh\" | /bin/sh",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "KeyAdder plugin by RAED (fairbird), GPL-3.0; Online4Tech maintains the non-destructive installer wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة التثبيت عبر سكريبت خاص وآمن؛ ملفات البلجن الأصلية من RAED (fairbird) بترخيص GPL-3.0.",
+      "payload_source_url": "https://github.com/fairbird/KeyAdder/archive/refs/heads/main.tar.gz"
     },
     {
       "name": "LiveFeed",
@@ -7208,17 +7215,22 @@
     },
     {
       "name": "Oscam By Levi45",
-      "cmd": "",
+      "cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh\" | /bin/sh",
       "path": "/usr/bin/oscamm",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh",
       "source_host": "raw.githubusercontent.com",
       "source_type": "first_party",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "source_attribution": "Online4Tech repository-hosted script; original component credits remain in the installer/package where present.",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "source_attribution": "Levi45 Emulator package distributed by Emil Nabil; Online4Tech maintains the safe package-manager wrapper.",
       "legacy_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "enabled": false,
-      "audit_status": "quarantined",
-      "audit_reason": "تم إيقاف التثبيت مؤقتًا: سكريبت التثبيت القديم يحمّل سكين Klll-Pro بصرف النظر عن اسم العنصر. يلزم توفير مصدر تثبيت صحيح لهذا العنصر قبل إعادة تفعيله."
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
+      "audit_reason": "تم استعادة التثبيت عبر مدير الحزم دون حذف النسخة القديمة يدويًا أو استخدام force-overwrite.",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/",
+      "payload_source_urls": [
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.ipk",
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.deb"
+      ]
     },
     {
       "name": "oscamicam",
