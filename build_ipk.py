@@ -15,6 +15,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 VERSION = "7.5"
 PKG_NAME = "enigma2-plugin-extensions-online4tech"
 IPK_FILENAME = "%s_%s_all.ipk" % (PKG_NAME, VERSION)
+DEB_FILENAME = "%s_%s_all.deb" % (PKG_NAME, VERSION)
 PLUGIN_RELATIVE_DIR = os.path.join("usr", "lib", "enigma2", "python", "Plugins", "Extensions", "Online4Tech")
 PLUGIN_SOURCE_DIR = os.path.join(ROOT_DIR, PLUGIN_RELATIVE_DIR)
 TARGET_PREFIX = "./" + PLUGIN_RELATIVE_DIR.replace(os.sep, "/")
@@ -98,16 +99,22 @@ def build():
     if len(included) < 60:
         raise RuntimeError("Only %d plugin files found; refusing to build an incomplete package." % len(included))
 
-    output_path = os.path.join(ROOT_DIR, IPK_FILENAME)
-    with open(output_path, "wb") as output:
-        output.write(b"!<arch>\n")
-        output.write(make_ar_member("debian-binary", b"2.0\n"))
-        output.write(make_ar_member("control.tar.gz", control_buffer.getvalue()))
-        output.write(make_ar_member("data.tar.gz", data_buffer.getvalue()))
+    package_data = bytearray(b"!<arch>\n")
+    package_data.extend(make_ar_member("debian-binary", b"2.0\n"))
+    package_data.extend(make_ar_member("control.tar.gz", control_buffer.getvalue()))
+    package_data.extend(make_ar_member("data.tar.gz", data_buffer.getvalue()))
 
-    print("Built %s" % output_path)
-    print("Version: %s | Files included: %d | Size: %d bytes" %
-          (VERSION, len(included), os.path.getsize(output_path)))
+    output_paths = (
+        os.path.join(ROOT_DIR, IPK_FILENAME),
+        os.path.join(ROOT_DIR, DEB_FILENAME),
+    )
+    for output_path in output_paths:
+        with open(output_path, "wb") as output:
+            output.write(package_data)
+        print("Built %s" % output_path)
+
+    print("Version: %s | Files included: %d | Package size: %d bytes" %
+          (VERSION, len(included), len(package_data)))
 
 
 if __name__ == "__main__":
