@@ -113,3 +113,23 @@ These checks validate syntax, repository paths, and package structure. They do n
 - The wrapper does not disable TLS verification or automatically restart Enigma2.
 - 58 other quarantined entries remain untouched pending their own source and installer review.
 - CI syntax and database validation must pass; physical receiver install/upgrade/remove testing is still required.
+
+
+## Additional upstream installer review — 2026-11-21
+
+Four more quarantined entries were matched to their original upstream installer files and reviewed statically. Their database records now retain the exact candidate source and the observed reasons they remain quarantined. **No installer was executed and no plugin was re-enabled.**
+
+| Entry | Upstream source | Observed blocker |
+|---|---|---|
+| CiefpYouTube | https://github.com/ciefp/CiefpYouTube/blob/main/installer.sh | Deletes the installed plugin directory; replaces/removes the global `/usr/bin/yt-dlp`; installs or upgrades system-wide dependencies via opkg/apt/pip; uses TLS verification bypasses and an unpinned branch archive; runs `killall -9 enigma2` by default. |
+| CiefpRottenTomatoes | https://github.com/ciefp/CiefpRottenTomatoes/blob/main/installer.sh | Deletes the installed plugin directory; changes global dependencies and yt-dlp; uses unpinned downloads/archive and a TLS-bypass installer header; runs `killall -9 enigma2` by default. |
+| AdvancedBootLogoSwapper | https://github.com/popking159/abls/blob/main/installer.sh | Deletes the existing plugin directory; downloads an unpinned `main` archive without a SHA-256 check; extracts directly into the receiver root. |
+| Ansite | https://github.com/emil237/ansite/blob/main/installer.sh | Uses `--force-remove`, `--force-depends`, and `--force-reinstall`; performs broad temporary-file cleanup; downloads an IPK without a pinned digest. |
+
+### Disposition
+
+- All four remain `enabled: false` and `audit_status: quarantined`.
+- Their original legacy commands and database records remain preserved.
+- Candidate source URLs, author attribution, and item-specific evidence were added to the database for traceability.
+- Re-enablement requires a separately reviewed wrapper with pinned source/artifact integrity, no pre-delete of installed plugin files, scoped dependency handling, and no forced GUI kill. For Ansite, package contents and dependency metadata must also be inspected before selecting a safe package-manager path.
+- These are static installer findings, not proof that the plugin payload itself is malicious. The quarantine is a preservation and compatibility safeguard.
