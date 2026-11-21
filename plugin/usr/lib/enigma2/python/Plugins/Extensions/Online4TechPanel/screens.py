@@ -222,7 +222,7 @@ class O4TMain(Screen):
 
     def settings_closed(self, changed=False):
         if changed:
-            self.close("reopen")
+            self.close()          # new design applies the next time the panel is opened
 
     def fill_device(self):
         try:

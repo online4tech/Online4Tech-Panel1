@@ -153,8 +153,8 @@ STR = {
     "fs_90": ("Small", "صغير"), "fs_100": ("Normal", "عادي"), "fs_115": ("Large", "كبير"),
     "k_change": ("Change", "تغيير"),
     "k_apply": ("Apply", "تطبيق"),
-    "h_settings_tip": ("Green: change   |   Yellow/Back: apply and reopen",
-                       "اخضر: تغيير   |   اصفر او رجوع: تطبيق واعادة الفتح"),
+    "h_settings_tip": ("Green: change   |   Yellow/Back: apply (the panel closes - open it again)",
+                       "اخضر: تغيير   |   اصفر او رجوع: تطبيق (البانل بيقفل - افتحه تاني)"),
     "th_cyan": ("Cyan", "سماوي"), "th_violet": ("Violet", "بنفسجي"), "th_green": ("Green", "اخضر"),
     "th_orange": ("Orange", "برتقالي"), "th_pink": ("Pink", "وردي"),
     # generic

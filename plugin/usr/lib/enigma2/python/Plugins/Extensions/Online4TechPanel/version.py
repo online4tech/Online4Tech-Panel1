@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import os
 
-VERSION = "1.5.3"
+VERSION = "1.5.4"
 PLUGIN_NAME = "Online4Tech Panel"
 SLOGAN = "خليك دايما اونلاين"
 
