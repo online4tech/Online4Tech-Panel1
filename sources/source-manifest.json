@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generated_from": "o4t_database.json",
   "generated_at": "2026-11-21",
-  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream. KeyAdder and Levi45 Emulator now use first-party safe wrappers; their original third-party sources and credits are recorded under nested_sources and remain upstream. EPGImport-99 now uses an Online4Tech opkg wrapper; the original Emil Nabil IPK remains upstream.",
+  "note": "Source URLs are preserved verbatim. External artifacts are not copied unless redistribution rights and integrity can be verified. Klll-Pro-FHD now uses an Online4Tech wrapper; its original Biko-73 payload is recorded separately under nested_sources and remains hosted upstream. KeyAdder and Levi45 Emulator now use first-party safe wrappers; their original third-party sources and credits are recorded under nested_sources and remain upstream. EPGImport-99 now uses an Online4Tech opkg wrapper; the original Emil Nabil IPK remains upstream. Thirty-nine Ciefp-family items now use the Online4Tech generic archive wrapper; original ciefp source archives remain upstream and are individually listed under nested_sources.",
   "sources": [
     {
       "url": "http://dreambox4u.com/emilnabil237/plugins/ajpanel/installer.sh",
@@ -6219,167 +6219,11 @@
         },
         {
           "section": "ciefp",
-          "name": "CiefpBootlogo"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpBouquetUpdater"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpChannelManager"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpE2Converter"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpE2editor"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpEasySetup"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpEPGshare"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpIPTVBouquets"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpKingSat"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpMojTvEPG"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpOpenDirectories"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpOpenSubtitles"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpOscamEditor"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpParabolaCZ"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpPiconManager"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpPicturePlayer"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpPlugins"
-        },
-        {
-          "section": "ciefp",
           "name": "CiefpRottenTomatoes"
         },
         {
           "section": "ciefp",
-          "name": "CiefpSatelliteAnalyzer"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSatellitesXmlEditor"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpScreenGrab"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSelectSatellite"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsDownloader"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsPanel"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsStreamrelay PY2"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsStreamrelay PY3"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsT2miAbertis"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpSettingsT2miAbertisOpenPLi"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpsettingsMotor"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTMDBSearch"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTvProgram"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTvProgramA1HR"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTvProgramSBB"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTvProgramSK"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpTvTodayDE"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpVibes"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpVideoPlayer"
-        },
-        {
-          "section": "ciefp",
-          "name": "CiefpWhitelistStreamrelay"
-        },
-        {
-          "section": "ciefp",
           "name": "CiefpYouTube"
-        },
-        {
-          "section": "ciefp",
-          "name": "TitloviBrowser"
-        },
-        {
-          "section": "ciefp",
-          "name": "WebCamE2PrenjSF"
         },
         {
           "section": "media",
@@ -9233,6 +9077,171 @@
           "name": "EPGImport-99 (دليل القنوات)"
         }
       ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_ciefp_plugin.sh",
+      "host": "raw.githubusercontent.com",
+      "repository": "online4tech/Online4Tech-Panel1",
+      "source_type": "first_party",
+      "mirror_status": "online4tech_generic_wrapper_external_payload_retained",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpBootlogo"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpBouquetUpdater"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpChannelManager"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpE2Converter"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpE2editor"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpEasySetup"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpEPGshare"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpIPTVBouquets"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpKingSat"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpMojTvEPG"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpOpenDirectories"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpOpenSubtitles"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpOscamEditor"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpParabolaCZ"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpPiconManager"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpPicturePlayer"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpPlugins"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSatelliteAnalyzer"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSatellitesXmlEditor"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpScreenGrab"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSelectSatellite"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsDownloader"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsPanel"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsStreamrelay PY2"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsStreamrelay PY3"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsT2miAbertis"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsT2miAbertisOpenPLi"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpsettingsMotor"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTMDBSearch"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgram"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramA1HR"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramSBB"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramSK"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpTvTodayDE"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpVibes"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpVideoPlayer"
+        },
+        {
+          "section": "ciefp",
+          "name": "CiefpWhitelistStreamrelay"
+        },
+        {
+          "section": "ciefp",
+          "name": "TitloviBrowser"
+        },
+        {
+          "section": "ciefp",
+          "name": "WebCamE2PrenjSF"
+        }
+      ]
     }
   ],
   "nested_sources": [
@@ -9322,6 +9331,591 @@
         }
       ],
       "note": "The safe wrapper supports opkg/IPK receivers only; no DEB package was found in the referenced upstream listing."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpBootlogo/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpBootlogo",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpBootlogo"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpBouquetUpdater/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpBouquetUpdater",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpBouquetUpdater"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpChannelManager/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpChannelManager",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpChannelManager"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpE2Converter/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpE2Converter",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpE2Converter"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpE2editor/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpE2editor",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpE2editor"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpEasySetup/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpEasySetup",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpEasySetup"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpEPGshare/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpEPGshare",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpEPGshare"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpIPTVBouquets/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpIPTVBouquets",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpIPTVBouquets"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpKingSat/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpKingSat",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpKingSat"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpMojTvEPG/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpMojTvEPG",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpMojTvEPG"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpOpenDirectories/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpOpenDirectories",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpOpenDirectories"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpOpenSubtitles/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpOpenSubtitles",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpOpenSubtitles"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpOscamEditor/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpOscamEditor",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpOscamEditor"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpParabolaCZ/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpParabolaCZ",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpParabolaCZ"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpPiconManager/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpPiconManager",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpPiconManager"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpPicturePlayer/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpPicturePlayer",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpPicturePlayer"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpPlugins/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpPlugins",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpPlugins"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSatelliteAnalyzer/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSatelliteAnalyzer",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSatelliteAnalyzer"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSatelliteXmlEditor/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSatelliteXmlEditor",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSatellitesXmlEditor"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpScreenGrab/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpScreenGrab",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpScreenGrab"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSelectSatellite/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSelectSatellite",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSelectSatellite"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSettingsDownloader/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSettingsDownloader",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsDownloader"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpsettingsPanel/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpsettingsPanel",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsPanel"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSettingsStreamrelayPY2/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSettingsStreamrelayPY2",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsStreamrelay PY2"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSettingsStreamrelay/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSettingsStreamrelay",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsStreamrelay PY3"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSettingsT2miAbertis/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSettingsT2miAbertis",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsT2miAbertis"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpSettingsT2miAbertisOpenPLi/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpSettingsT2miAbertisOpenPLi",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpSettingsT2miAbertisOpenPLi"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpsettingsMotor/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpsettingsMotor",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpsettingsMotor"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTMDBSearch/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTMDBSearch",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTMDBSearch"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTvProgram/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTvProgram",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgram"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTvProgramA1HR/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTvProgramA1HR",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramA1HR"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTvProgramSBB/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTvProgramSBB",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramSBB"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTvProgramSK/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTvProgramSK",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTvProgramSK"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpTvTodayDE/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpTvTodayDE",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpTvTodayDE"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpVibes/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpVibes",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpVibes"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpVideoPlayer/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpVideoPlayer",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpVideoPlayer"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/CiefpWhitelistStreamrelay/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/CiefpWhitelistStreamrelay",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "CiefpWhitelistStreamrelay"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/TitloviBrowser/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/TitloviBrowser",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "TitloviBrowser"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
+    },
+    {
+      "url": "https://github.com/ciefp/WebCamE2PrenjSF/archive/refs/heads/main.tar.gz",
+      "host": "github.com",
+      "repository": "ciefp/WebCamE2PrenjSF",
+      "source_type": "third_party_source_archive",
+      "attribution": "ciefp (original plugin author)",
+      "mirror_status": "upstream_archive_not_mirrored",
+      "items": [
+        {
+          "section": "ciefp",
+          "name": "WebCamE2PrenjSF"
+        }
+      ],
+      "note": "Fetched by Online4Tech's generic safe wrapper over verified HTTPS; plugin files are copied in place without pre-deleting the existing plugin directory."
     }
   ]
 }
