@@ -9,11 +9,11 @@
     "commands": 824,
     "removeCommands": 457,
     "urls": 818,
-    "uniqueUrls": 659,
+    "uniqueUrls": 661,
     "http": 69,
     "tlsBypass": 136,
     "pipeShell": 816,
-    "quarantined": 103,
+    "quarantined": 99,
     "removeWildcards": 5,
     "thirdParty": 320,
     "firstParty": 498
@@ -60,6 +60,18 @@
       "severity": "info",
       "title": "Klll-Pro-FHD restored with item-specific installer",
       "detail": "The Klll-Pro-FHD entry now uses scripts/install_klll_pro.sh. The wrapper validates the upstream archive, uses verified HTTPS, does not pre-delete the installed skin, and credits Biko-73. The other 103 shared-installer entries remain quarantined pending individual verification."
+    },
+    {
+      "id": "KEYADDER_RESTORED",
+      "severity": "info",
+      "title": "KeyAdder restored with non-destructive installer",
+      "detail": "The two KeyAdder category entries now use scripts/install_keyadder_safe.sh. The wrapper validates and stages the fairbird/KeyAdder archive, copies its usr tree without pre-deleting existing plugin folders, and credits RAED/fairbird under GPL-3.0."
+    },
+    {
+      "id": "LEVI45_RESTORED",
+      "severity": "info",
+      "title": "Levi45 Emulator restored with package-manager installer",
+      "detail": "The two Levi45 category entries now use scripts/install_levi45_emulator.sh. It downloads the original Emil Nabil IPK/DEB over verified HTTPS, validates the archive header, and installs through opkg/dpkg without manually deleting the old plugin or using force-overwrite."
     }
   ],
   "entries": [
@@ -209,18 +221,23 @@
       "name": "KeyAdder (مفاتيح الشفرات)",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh\" | /bin/sh",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_payload_retained",
+        "verified_https",
+        "archive_validated",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "static_path_command"
+      "remove_review": "static_path_command",
+      "payload_source_url": "https://github.com/fairbird/KeyAdder/archive/refs/heads/main.tar.gz",
+      "source_attribution": "KeyAdder plugin by RAED (fairbird), GPL-3.0; Online4Tech maintains the non-destructive installer wrapper."
     },
     {
       "section": "favourites",
@@ -346,18 +363,28 @@
       "name": "Oscam By Levi45",
       "path": "/usr/bin/oscamm",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh\" | /bin/sh",
       "remove_cmd": "",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_package_retained",
+        "verified_https",
+        "archive_magic_validated",
+        "package_manager_install",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "none_or_disabled"
+      "remove_review": "none_or_disabled",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/",
+      "payload_source_urls": [
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.ipk",
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.deb"
+      ],
+      "source_attribution": "Levi45 Emulator package distributed by Emil Nabil; Online4Tech maintains the safe package-manager wrapper."
     },
     {
       "section": "updated-dependencic",
@@ -2291,18 +2318,23 @@
       "name": "KeyAdder (مفاتيح الشفرات)",
       "path": "/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh\" | /bin/sh",
       "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/KeyAdder'",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_keyadder_safe.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_payload_retained",
+        "verified_https",
+        "archive_validated",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "static_path_command"
+      "remove_review": "static_path_command",
+      "payload_source_url": "https://github.com/fairbird/KeyAdder/archive/refs/heads/main.tar.gz",
+      "source_attribution": "KeyAdder plugin by RAED (fairbird), GPL-3.0; Online4Tech maintains the non-destructive installer wrapper."
     },
     {
       "section": "plugins",
@@ -9548,18 +9580,28 @@
       "name": "Oscam By Levi45",
       "path": "/usr/bin/oscamm",
       "original_cmd": "wget https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh -O - | /bin/sh",
-      "active_cmd": "",
+      "active_cmd": "wget -qO - \"https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh\" | /bin/sh",
       "remove_cmd": "",
-      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/main_installer.sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/install_levi45_emulator.sh",
       "source_host": "raw.githubusercontent.com",
-      "mirror_status": "quarantined_wrong_shared_installer",
-      "enabled": false,
-      "audit_status": "quarantined",
+      "mirror_status": "online4tech_wrapper_external_payload_retained",
+      "enabled": true,
+      "audit_status": "restored_item_specific_wrapper",
       "flags": [
-        "remote_script_executed_by_shell",
-        "wrong_shared_installer_klll_pro"
+        "online4tech_item_specific_wrapper",
+        "third_party_package_retained",
+        "verified_https",
+        "archive_magic_validated",
+        "package_manager_install",
+        "remote_script_executed_by_shell"
       ],
-      "remove_review": "none_or_disabled"
+      "remove_review": "none_or_disabled",
+      "payload_source_url": "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/",
+      "payload_source_urls": [
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.ipk",
+        "https://raw.githubusercontent.com/emilnabil/download-plugins/refs/heads/main/levi45emulator/enigma2-plugin-extensions-levi45emulator_all.deb"
+      ],
+      "source_attribution": "Levi45 Emulator package distributed by Emil Nabil; Online4Tech maintains the safe package-manager wrapper."
     },
     {
       "section": "softcams",
