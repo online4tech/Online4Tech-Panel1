@@ -3994,13 +3994,14 @@
       "host": "raw.githubusercontent.com",
       "repository": "online4tech/Online4Tech-Panel1",
       "source_type": "first_party",
-      "mirror_status": "already_hosted_in_online4tech_repo",
+      "mirror_status": "missing_in_online4tech_repo_restore_required",
       "items": [
         {
           "section": "online4tech_official",
           "name": "Online4Tech Web Panel (لوحة تحكم الويب والسوفت كام على بورت 2020)"
         }
-      ]
+      ],
+      "note": "Online4Tech Web Panel installer is still referenced by an active database item but the file is absent from main and the maintenance branch. Restore the original installer; do not substitute a guessed script."
     },
     {
       "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/acherone_installer.sh",
@@ -4501,13 +4502,14 @@
       "host": "raw.githubusercontent.com",
       "repository": "online4tech/Online4Tech-Panel1",
       "source_type": "first_party",
-      "mirror_status": "already_hosted_in_online4tech_repo",
+      "mirror_status": "missing_in_online4tech_repo_restore_required",
       "items": [
         {
           "section": "online4tech_official",
           "name": "Ahmed Romeh Channels (ملف قنوات أحمد رميح)"
         }
-      ]
+      ],
+      "note": "Ahmed Romeh Channels installer is still referenced by an active database item but the file is absent from main and the maintenance branch. Restore the original installer; do not substitute a guessed script."
     },
     {
       "url": "https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/main/scripts/ciefp-channels-e2_ciefp-channels-e2-75e-34w.sh",
