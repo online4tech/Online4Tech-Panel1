@@ -27,7 +27,7 @@ from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_s
                     detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
                     pretty_name, read_file, save_favs, shquote, txt, valid_pkg, valid_url,
                     version_tuple)
-from .version import (HOME_URL, INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
+from .version import (INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
                       VERSION_URL)
 
 OPKG_INSTALLED = "opkg list-installed 2>/dev/null | grep '^enigma2-plugin-'"
@@ -901,51 +901,65 @@ class O4TTools(O4TListBase):
 
 @guarded
 class O4TSettings(O4TListBase):
-    """Design / colour / language / text size. Applies by reopening the panel."""
+    """Design / colour / language / text size.
+    Left/Right change the highlighted option, GREEN saves and applies, RED cancels."""
     MENU_TITLE = "m_settings"
 
     def __init__(self, session):
         O4TListBase.__init__(self, session)
-        self.o4_changed = False
-        self["key_green"].setText(T("k_change"))
-        self["key_yellow"].setText(T("k_apply"))
+        self.o4_pending = {"design": design(), "theme": theme(),
+                           "lang": get_setting("lang", "auto"), "font_scale": font_scale()}
+        self["key_red"].setText(T("k_cancel"))
+        self["key_green"].setText(T("k_apply"))
+        self["key_yellow"].setText("")
+        self["key_blue"].setText("")
+        self["o4_lr"] = ActionMap(["DirectionActions"],
+                                  {"left": lambda: self.step(-1), "right": lambda: self.step(1)}, 0)
+
+    OPTIONS = (("design", list(DESIGNS)), ("theme", list(THEMES)), ("lang", list(LANGS)),
+               ("font_scale", list(FONT_SCALES)))
 
     def reload(self):
+        p = self.o4_pending
         self.set_items([
-            {"id": "design", "name": "%s: %s" % (T("t_design"), T("ds_" + design())),
+            {"id": "design", "name": "%s:   < %s >" % (T("t_design"), T("ds_" + p["design"])),
              "desc": T("d_design")},
-            {"id": "theme", "name": "%s: %s" % (T("t_theme"), T("th_" + theme())),
+            {"id": "theme", "name": "%s:   < %s >" % (T("t_theme"), T("th_" + p["theme"])),
              "desc": T("d_theme")},
-            {"id": "lang", "name": "%s: %s" % (T("t_lang"), T("v_" + get_setting("lang", "auto"))),
+            {"id": "lang", "name": "%s:   < %s >" % (T("t_lang"), T("v_" + p["lang"])),
              "desc": T("d_lang")},
-            {"id": "font", "name": "%s: %s" % (T("t_font"), T("fs_%d" % font_scale())),
+            {"id": "font_scale", "name": "%s:   < %s >" % (T("t_font"), T("fs_%d" % p["font_scale"])),
              "desc": T("d_font")},
         ], keep=True)
 
     def detail_for(self, item):
         return "%s\n\n%s\n\n%s" % (item["name"], item["desc"], T("h_settings_tip"))
 
-    def key_green(self):
+    def step(self, delta):
         item = self.current()
         if not item:
             return
-        k = item["id"]
-        if k == "design":
-            cycle_setting("design", list(DESIGNS), "glass")
-        elif k == "theme":
-            cycle_setting("theme", THEMES, "cyan")
-        elif k == "lang":
-            cycle_setting("lang", LANGS, "auto")
-        elif k == "font":
-            cycle_setting("font_scale", list(FONT_SCALES), 100)
-        self.o4_changed = True
+        for key, values in self.OPTIONS:
+            if key == item["id"]:
+                cur = self.o4_pending[key]
+                pos = values.index(cur) if cur in values else 0
+                self.o4_pending[key] = values[(pos + delta) % len(values)]
         self.reload()
 
+    def key_green(self):
+        from .utils import set_setting
+        changed = False
+        for key, _values in self.OPTIONS:
+            if get_setting(key, None) != self.o4_pending[key]:
+                set_setting(key, self.o4_pending[key])
+                changed = True
+        self.close(changed)
+
     def key_yellow(self):
-        self.close(self.o4_changed)
+        pass
 
     def go_back(self):
-        self.close(self.o4_changed)
+        self.close(False)
 
 
 # =====================================================================
@@ -1126,14 +1140,6 @@ class O4TDiag(O4TTextBase):
 
 
 @guarded
-class O4TAbout(O4TTextBase):
-    MENU_TITLE = "m_about"
-
-    def start(self):
-        self["detail"].setText(T("about_text") + "\n\n" + SLOGAN + "\n" + HOME_URL +
-                               "\nv" + VERSION)
-
-
 @guarded
 class O4TSelfUpdate(O4TTextBase):
     MENU_TITLE = "m_selfupdate"

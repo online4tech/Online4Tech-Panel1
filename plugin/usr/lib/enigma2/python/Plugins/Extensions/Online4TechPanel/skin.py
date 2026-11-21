@@ -409,8 +409,7 @@ def row_xy(i):
 
 def _contact_lines(b, x, y, w):
     st = b.st
-    for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"),
-                                    ("Facebook", "fb.com/online4tech0"))):
+    for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"))):
         b.static(cap, x, y + k * 92, w, 30, 21, st["accent"])
         b.static(val, x, y + 30 + k * 92, w, 42, 26, st["text"])
 
@@ -432,10 +431,9 @@ def _rows_main():
         b.box("logo_big", 700, 196, 620, 207, 1)
         b.lab("ht", 600, 440, 760, 70, 52, st["accent"], "center")
         b.lab("hint", 620, 530, 720, 150, 30, st["soft"], "center", valign="top")
-        for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"),
-                                        ("Facebook", "fb.com/online4tech0"))):
-            b.static(cap, 600 + k * 260, 760, 250, 30, 21, st["accent"], "center")
-            b.static(val, 600 + k * 260, 792, 250, 42, 22, st["text"], "center")
+        for k, (cap, val) in enumerate((("WhatsApp", "01092978131"), ("Store", "sllr.co/online4tech"))):
+            b.static(cap, 660 + k * 330, 760, 320, 30, 21, st["accent"], "center")
+            b.static(val, 660 + k * 330, 792, 320, 42, 26, st["text"], "center")
     else:
         b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
         b.box("logo", 60, 214, 340, 113, 1)
