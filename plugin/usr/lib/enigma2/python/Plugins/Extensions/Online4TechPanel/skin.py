@@ -318,6 +318,9 @@ ROWS_PER_PAGE = 8
 ROW_X, ROW_Y = 460, 262
 
 
+STATIC = {}      # widget name -> fixed text (tx*) of the screen being built
+
+
 class _B(object):
     """Tiny helper that emits either pixmaps or flat coloured boxes."""
 
@@ -326,14 +329,17 @@ class _B(object):
         self.st = style()
         self.flat = self.st["flat"]
         self.x = [_screen_open(self.m, name)]
+        self.n = 0
+        STATIC.clear()
         if not self.flat:
             self.x.append('<ePixmap pixmap="%s" position="0,0" size="%d,%d" zPosition="-5" />\n'
                           % (self.m.pix("bg"), self.m.W, self.m.H))
 
     def box(self, img, x, y, w, h, z=0, color=None):
         if self.flat:
-            self.x.append('<eLabel %s backgroundColor="%s" zPosition="%d" />\n'
-                          % (self.m.rect(x, y, w, h), color or self.st["panel"], z))
+            self.n += 1
+            self.x.append('<widget name="bx%d" %s backgroundColor="%s" transparent="0" zPosition="%d" />\n'
+                          % (self.n, self.m.rect(x, y, w, h), color or self.st["panel"], z))
         else:
             self.x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="%d" />\n'
                           % (self.m.pix(img), self.m.rect(x, y, w, h), z))
@@ -360,9 +366,12 @@ class _B(object):
                       % (nm, self.m.rect(x, y, w, h), self.m.font(size), color, align, valign, z))
 
     def static(self, text, x, y, w, h, size, color, align="left", z=4):
-        self.x.append('<eLabel text="%s" %s font="%s" foregroundColor="%s" transparent="1" '
+        self.n += 1
+        nm = "tx%d" % self.n
+        STATIC[nm] = text
+        self.x.append('<widget name="%s" %s font="%s" foregroundColor="%s" transparent="1" '
                       'halign="%s" valign="center" zPosition="%d" />\n'
-                      % (text, self.m.rect(x, y, w, h), self.m.font(size), color, align, z))
+                      % (nm, self.m.rect(x, y, w, h), self.m.font(size), color, align, z))
 
     def header(self, title=True):
         st = self.st

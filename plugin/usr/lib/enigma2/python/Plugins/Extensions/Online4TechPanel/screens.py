@@ -69,7 +69,11 @@ def guarded(cls):
 
 def _start_clock(screen):
     """Keeps screen['clock'] showing HH:MM (only designs with a header clock define it)."""
+    import re
     import time
+    from .skin import STATIC
+    for nm in re.findall(r'<widget name="((?:bx|tx)\d+)"', getattr(screen, "skin", "")):
+        screen[nm] = Label(STATIC.get(nm, ""))      # fixed texts / flat boxes are plain Label widgets
     if 'name="clock"' not in getattr(screen, "skin", ""):
         return                      # this design has no header clock: no timer needed
     timer = eTimer()
