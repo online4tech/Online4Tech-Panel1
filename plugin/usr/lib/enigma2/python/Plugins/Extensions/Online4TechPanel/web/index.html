@@ -123,6 +123,87 @@ html[data-skin=gold] .btn.sun{color:#f0d38f;border-color:rgba(217,179,106,.6);ba
 html[data-skin=gold] .btn.hot{color:#f3c0b5;border-color:rgba(224,116,95,.55);background:linear-gradient(180deg,#2c1511,#1d0e0b);box-shadow:none}
 .skinbtn{width:100%;border:1px solid var(--edge);background:var(--deep);color:var(--mut);font:inherit;padding:8px;border-radius:999px;cursor:pointer;transition:.18s}
 .skinbtn:hover{color:var(--txt);border-color:var(--sig)}
+
+/* ---- terminal command library (all skins) ---- */
+.libbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+.libbar input{flex:1;min-width:200px}
+.warn{margin:0 0 14px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,180,84,.5);background:rgba(255,180,84,.1);color:var(--sun);font-size:13.5px}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:12px}
+.cmd{display:flex;flex-direction:column;gap:9px;padding:15px;border-radius:16px;background:rgba(6,11,20,.55);border:1px solid var(--edge);transition:.2s}
+.cmd:hover{border-color:rgba(41,224,255,.4)}
+.cmd .t{font-weight:650;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cmd .d{color:var(--mut);font-size:13px}
+.cmd code{display:block;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#04080f;color:#a9f5d2;border-radius:10px;padding:9px 11px;white-space:pre-wrap;word-break:break-all;max-height:84px;overflow:auto}
+.cmd .acts{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+.tag.c{color:var(--sun);background:rgba(255,180,84,.14)}
+
+/* ---- skin: Prime (light, top navigation, editorial cards; bottom dock on phones) ---- */
+html[data-skin=prime]{--ink:#eef1f7;--deep:#ffffff;--panel:#ffffff;--edge:#dde3ee;--txt:#0f1b2d;--mut:#5a6a83;--sig:#4338ca;--sig2:#6366f1;--hot:#e11d48;--sun:#b45309;--ok:#047857;color-scheme:light}
+html[data-skin=prime] body{font-family:"Segoe UI",Inter,Tahoma,"Noto Sans Arabic",Arial,sans-serif;background:var(--ink)}
+html[data-skin=prime] body:before{background:radial-gradient(820px 420px at 88% -8%,rgba(99,102,241,.18),transparent 60%),radial-gradient(700px 420px at 0% 0%,rgba(14,165,164,.12),transparent 60%)}
+html[data-skin=prime] .shell{display:block}
+html[data-skin=prime] aside{position:sticky;top:0;z-index:15;height:auto;overflow:visible;display:flex;flex-direction:row;align-items:center;gap:18px;padding:12px clamp(16px,3vw,40px);background:rgba(255,255,255,.94);border:0;border-bottom:1px solid var(--edge);box-shadow:0 8px 28px rgba(15,27,45,.06)}
+html[data-skin=prime] .brand b{color:#0f1b2d;font-weight:800}
+html[data-skin=prime] .mark{background:#eef0ff;border:1px solid #c9cdfd;box-shadow:none;border-radius:14px}
+html[data-skin=prime] .mark svg{stroke:#4338ca}
+html[data-skin=prime] .menu{display:flex;flex:1;justify-content:center;gap:2px;width:max-content;max-width:100%;margin:0 auto;padding:5px;background:#e9edf5;border-radius:999px;overflow-x:auto;scrollbar-width:none}
+html[data-skin=prime] .menu button{width:auto;flex:none;flex-direction:row;gap:8px;padding:9px 16px;border-radius:999px;color:#4b5b75;font-weight:600;font-size:14px;border:0;white-space:nowrap}
+html[data-skin=prime] .menu button:hover{background:rgba(255,255,255,.7);color:#0f1b2d}
+html[data-skin=prime] .menu button.on{color:#3730a3;background:#fff;box-shadow:0 3px 12px rgba(15,27,45,.14)}
+html[data-skin=prime] .side-foot{margin:0;display:flex;align-items:center;gap:10px}
+html[data-skin=prime] .side-foot .links,html[data-skin=prime] .side-foot .note{display:none}
+html[data-skin=prime] .lang{width:132px;background:#e9edf5;border:0}
+html[data-skin=prime] .lang button{font-weight:600;color:#4b5b75}
+html[data-skin=prime] .lang button.on{color:#3730a3;background:#fff;box-shadow:0 2px 8px rgba(15,27,45,.16)}
+html[data-skin=prime] .skinbtn{width:auto;white-space:nowrap;padding:8px 16px;color:#3730a3;background:#fff;border:1px solid #c9cdfd;font-weight:600}
+html[data-skin=prime] .skinbtn:hover{background:#eef0ff;border-color:#4338ca}
+html[data-skin=prime] main{max-width:1240px;margin:0 auto;padding:34px clamp(16px,3vw,40px) 96px}
+html[data-skin=prime] h1{font-size:clamp(28px,3.6vw,42px);font-weight:800;letter-spacing:-.6px;margin:0 0 4px;color:#0f1b2d}
+html[data-skin=prime] .sub{font-size:16px;margin:0 0 26px}
+html[data-skin=prime] h2{font-size:17px;font-weight:700;color:#0f1b2d}
+html[data-skin=prime] .panel{background:#fff;border:1px solid var(--edge);border-radius:26px;padding:24px;box-shadow:0 16px 44px rgba(15,27,45,.07)}
+html[data-skin=prime] .home .col:first-child .panel{color:#fff;border:0;background:radial-gradient(520px 260px at 100% 0%,rgba(129,140,248,.45),transparent 65%),linear-gradient(135deg,#1e1b4b,#312e81 55%,#4338ca);box-shadow:0 22px 56px rgba(49,46,129,.38)}
+html[data-skin=prime] .home .col:first-child .model{color:#fff;font-size:26px;font-weight:800}
+html[data-skin=prime] .home .col:first-child .image,html[data-skin=prime] .home .col:first-child .mini small{color:rgba(255,255,255,.72)}
+html[data-skin=prime] .home .col:first-child .live{color:#86efac}
+html[data-skin=prime] .home .col:first-child .g,html[data-skin=prime] .home .col:first-child .mini div{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16)}
+html[data-skin=prime] .home .col:first-child .ring .bg{stroke:rgba(255,255,255,.2)}
+html[data-skin=prime] .home .col:first-child .g small,html[data-skin=prime] .home .col:first-child .g span{color:#fff}
+html[data-skin=prime] .home .col:first-child .ring b,html[data-skin=prime] .home .col:first-child .mini b{color:#fff}
+html[data-skin=prime] .btn,html[data-skin=prime] button.btn{color:#1e2a44;border-radius:14px;border:1px solid #d4dae8;background:#fff;box-shadow:0 2px 6px rgba(15,27,45,.06);font-weight:600}
+html[data-skin=prime] .btn:hover{transform:translateY(-1px);border-color:#4338ca;box-shadow:0 8px 20px rgba(67,56,202,.18)}
+html[data-skin=prime] .btn.pri{color:#fff;border:0;background:linear-gradient(135deg,#4338ca,#6366f1);box-shadow:0 8px 22px rgba(67,56,202,.35)}
+html[data-skin=prime] .btn.pri:hover{box-shadow:0 12px 30px rgba(67,56,202,.5)}
+html[data-skin=prime] .btn.sun{color:#92400e;border-color:#f3d19b;background:#fff7e6;box-shadow:none}
+html[data-skin=prime] .btn.hot{color:#be123c;border-color:#f6b8c6;background:#fff1f4;box-shadow:none}
+html[data-skin=prime] input,html[data-skin=prime] select{background:#fff;color:#0f1b2d;border:1px solid #d4dae8;border-radius:14px}
+html[data-skin=prime] input:focus,html[data-skin=prime] select:focus{border-color:#4338ca;box-shadow:0 0 0 4px rgba(67,56,202,.16)}
+html[data-skin=prime] :focus-visible{outline-color:#4338ca}
+html[data-skin=prime] .chip{background:#fff;color:#4b5b75;border-color:#d4dae8;font-weight:600}
+html[data-skin=prime] .chip:hover{border-color:#4338ca;color:#3730a3}
+html[data-skin=prime] .chip.on{color:#fff;background:#4338ca;border-color:#4338ca;box-shadow:0 6px 16px rgba(67,56,202,.35)}
+html[data-skin=prime] .card,html[data-skin=prime] .cmd{background:#f7f8fc;border:1px solid #e3e8f2;border-radius:20px;box-shadow:none}
+html[data-skin=prime] .card:hover,html[data-skin=prime] .cmd:hover{background:#fff;border-color:#a5a9f5;box-shadow:0 14px 34px rgba(67,56,202,.14);transform:translateY(-2px)}
+html[data-skin=prime] .tag.ok{color:#047857;background:#d9f7ea}html[data-skin=prime] .tag.w{color:#92400e}
+html[data-skin=prime] .tag.c{color:#92400e;background:#fdeccb}
+html[data-skin=prime] .warn{color:#92400e;background:#fff7e6;border-color:#f3d19b}
+html[data-skin=prime] .soc{color:#1e2a44;background:#fff;box-shadow:0 2px 6px rgba(15,27,45,.06);border-radius:14px}
+html[data-skin=prime] .soc.store{--c:#d97706}html[data-skin=prime] .soc.site{--c:#4338ca}
+html[data-skin=prime] .count,html[data-skin=prime] .note{color:#5a6a83}
+html[data-skin=prime] pre,html[data-skin=prime] .cmd code{background:#0f1b2d;border-color:#0f1b2d;color:#b8f5d9}
+html[data-skin=prime] #drawer{background:#fff;border:0;border-radius:26px 26px 0 0;box-shadow:0 -18px 56px rgba(15,27,45,.28)}
+html[data-skin=prime] #toast{background:#0f1b2d;color:#fff;border:0;box-shadow:0 14px 34px rgba(15,27,45,.35)}
+@media(max-width:860px){
+html[data-skin=prime] aside{position:sticky;top:0;bottom:auto;left:auto;right:auto;padding:10px 14px;gap:10px;justify-content:space-between}
+html[data-skin=prime] .brand{display:flex}html[data-skin=prime] .brand small{display:none}
+html[data-skin=prime] .menu{position:fixed;inset:auto 10px calc(10px + env(safe-area-inset-bottom)) 10px;z-index:30;width:auto;margin:0;justify-content:space-between;gap:0;padding:6px;background:rgba(255,255,255,.98);border:1px solid var(--edge);border-radius:26px;box-shadow:0 16px 44px rgba(15,27,45,.3);overflow:visible}
+html[data-skin=prime] .menu button{flex:1;min-width:0;flex-direction:column;gap:3px;padding:8px 2px;font-size:10.5px;border-radius:20px}
+html[data-skin=prime] .menu button.on{background:#eef0ff;box-shadow:none}
+html[data-skin=prime] .menu button span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+html[data-skin=prime] .lang{width:104px}html[data-skin=prime] .skinbtn{padding:7px 10px;font-size:12px}
+html[data-skin=prime] main{padding:20px 14px 130px}
+html[data-skin=prime] .panel{border-radius:22px;padding:18px}
+html[data-skin=prime] #drawer{bottom:88px}}
 </style></head><body>
 <div class="shell">
 <aside>
@@ -156,7 +237,11 @@ html[data-skin=gold] .btn.hot{color:#f3c0b5;border-color:rgba(224,116,95,.55);ba
  </section>
  <section class="page" id="p-term">
   <h1 data-i="term"></h1><p class="sub" data-i="term_sub"></p>
-  <div class="panel"><div class="row"><input class="grow" id="cmd" dir="ltr" data-ph="cmd" autocomplete="off"><button class="btn pri" id="run" data-i="run"></button></div></div>
+  <div class="panel"><div class="warn" id="shellnote" style="display:none"></div>
+  <div class="row"><input class="grow" id="cmd" dir="ltr" data-ph="cmd" autocomplete="off"><button class="btn pri" id="run" data-i="run"></button><button class="btn" id="savecmd" data-i="save_mine"></button></div></div>
+  <div class="panel"><h2 data-i="lib"></h2><p class="note" style="margin:-6px 0 0" data-i="lib_sub"></p>
+  <div class="libbar"><input id="libq" data-ph="lib_search" autocomplete="off"></div>
+  <div class="chips" id="libcats"></div><div class="lib" id="lib"></div></div>
  </section>
 </main></div>
 <div id="drawer"><div class="h"><b id="dt"></b><button class="btn sm" id="dx" data-i="close"></button></div><pre id="out"></pre></div>
@@ -165,13 +250,21 @@ html[data-skin=gold] .btn.hot{color:#f3c0b5;border-color:rgba(224,116,95,.55);ba
 "use strict";
 var $=function(i){return document.getElementById(i)};
 var I={
-ar:{slog:"خليك دايما اونلاين",home:"الرئيسية",home_sub:"حالة الريسيفر والتحكم السريع",online:"متصل",quick:"تحكم سريع",plugin:"البلجنات",skin:"السكنات",channels:"قوائم القنوات",picons:"البيكونات",iptv:"اشتراكات IPTV",term:"التيرمنال",
+ar:{lib:"مكتبة الأوامر",lib_sub:"اختر أمراً جاهزاً: الاستخدام يكتبه في الخانة، والتشغيل ينفذه على الريسيفر",lib_search:"ابحث في الأوامر...",
+use:"استخدم",save_mine:"احفظ الأمر الحالي",mine:"أوامري",lib_empty:"لا توجد أوامر هنا",del:"حذف",ask:"اكتب القيمة",bad_val:"قيمة غير صالحة",
+shell_off:"التيرمنال مقفول. فعّله من الريسيفر: Tools > Web control (الزر الأصفر)",confirm_cmd:"هذا الأمر يغيّر النظام. هل تريد تشغيله؟",caution:"بحذر",
+name_ask:"اسم الأمر",saved:"تم الحفظ",c_install:"تثبيت وتحديث",c_info:"معلومات النظام",c_net:"الشبكة",c_clean:"تنظيف وسجلات",c_panel:"البانل",skin_l:"السكين: ",sk_classic:"كلاسيك",sk_gold:"ذهبي",sk_prime:"برايم",
+slog:"خليك دايما اونلاين",home:"الرئيسية",home_sub:"حالة الريسيفر والتحكم السريع",online:"متصل",quick:"تحكم سريع",plugin:"البلجنات",skin:"السكنات",channels:"قوائم القنوات",picons:"البيكونات",iptv:"اشتراكات IPTV",term:"التيرمنال",
 plugin_sub:"ثبّت أحدث البلجنات من الكتالوج",skin_sub:"سكنات جاهزة للتثبيت",channels_sub:"قوائم قنوات محدّثة",picons_sub:"حزم بيكونات القنوات",iptv_sub:"أضف اشتراكك إلى XStreamity أو XKlass",term_sub:"نفّذ أوامر مباشرة على الريسيفر",
 search:"ابحث بالاسم...",show_all:"إظهار غير المتوافق",all:"الكل",items:"عنصر",first:"أول",none:"لا توجد نتائج. جرّب كلمة أخرى أو قسماً آخر.",installed:"مثبّت",incompat:"غير متوافق",install:"تثبيت",reinstall:"إعادة تثبيت",remove:"حذف",confirm:"متأكد؟",confirm_rm:"حذف",
 ram:"الرام",flash:"الفلاش",temp:"الحرارة",uptime:"مدة التشغيل",image:"الصورة",m3u:"رابط M3U كامل (اختياري)",save_sub:"حفظ الاشتراك",own_only:"للاشتراكات الخاصة بك فقط.",cmd:"اكتب أمر لينكس",run:"تنفيذ",close:"إغلاق",output:"المخرجات",busy:"عملية أخرى قيد التنفيذ",done:"تم",
 restart_gui:"إعادة تشغيل الواجهة",standby:"ستاندباي",clear_ram:"تنظيف الرام",clean_tmp:"تنظيف الملفات المؤقتة",update_feed:"تحديث الفيد",sync_catalog:"مزامنة الكتالوج",self_update:"تحديث البانل",reboot:"إعادة تشغيل الجهاز",
 contact:"تواصل معنا",contact_sub:"فريق Online4Tech جاهز لمساعدتك",whatsapp:"واتساب",messenger:"ماسنجر",page:"صفحة فيسبوك",store:"المتجر",site:"الموقع",d:"ي",h:"س",m:"د"},
-en:{slog:"Stay online, always",home:"Home",home_sub:"Receiver status and quick controls",online:"Online",quick:"Quick controls",plugin:"Plugins",skin:"Skins",channels:"Channel lists",picons:"Picons",iptv:"IPTV subscriptions",term:"Terminal",
+en:{lib:"Command library",lib_sub:"Pick a ready command: Use puts it in the box, Run executes it on the receiver",lib_search:"Search commands...",
+use:"Use",save_mine:"Save current command",mine:"My commands",lib_empty:"No commands here",del:"Delete",ask:"Enter a value",bad_val:"Invalid value",
+shell_off:"The terminal is off. Enable it on the receiver: Tools > Web control (yellow button)",confirm_cmd:"This command changes the system. Run it?",caution:"Caution",
+name_ask:"Command name",saved:"Saved",c_install:"Install & update",c_info:"System info",c_net:"Network",c_clean:"Cleanup & logs",c_panel:"Panel",skin_l:"Skin: ",sk_classic:"Classic",sk_gold:"Gold",sk_prime:"Prime",
+slog:"Stay online, always",home:"Home",home_sub:"Receiver status and quick controls",online:"Online",quick:"Quick controls",plugin:"Plugins",skin:"Skins",channels:"Channel lists",picons:"Picons",iptv:"IPTV subscriptions",term:"Terminal",
 plugin_sub:"Install the latest plugins from the catalog",skin_sub:"Ready-to-install skins",channels_sub:"Up-to-date channel lists",picons_sub:"Channel picon packs",iptv_sub:"Add your subscription to XStreamity or XKlass",term_sub:"Run commands directly on the receiver",
 search:"Search by name...",show_all:"Show incompatible",all:"All",items:"items",first:"first",none:"No results. Try another word or category.",installed:"Installed",incompat:"Incompatible",install:"Install",reinstall:"Reinstall",remove:"Remove",confirm:"Are you sure?",confirm_rm:"Remove",
 ram:"RAM",flash:"Flash",temp:"Temperature",uptime:"Uptime",image:"Image",m3u:"Full M3U link (optional)",save_sub:"Save subscription",own_only:"For your own subscriptions only.",cmd:"Type a Linux command",run:"Run",close:"Close",output:"Output",busy:"Another operation is running",done:"Done",
@@ -196,17 +289,18 @@ function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method=
  return fetch(path,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||j.message||r.status);return j})})}
 
 var skin="classic";try{skin=localStorage.getItem("o4t_skin")||"classic"}catch(e){}
-var sq=/[?&]skin=(classic|gold)/.exec(location.search);if(sq)skin=sq[1];
+var SKINS=["classic","gold","prime"];if(SKINS.indexOf(skin)<0)skin="classic";
+var sq=/[?&]skin=(classic|gold|prime)/.exec(location.search);if(sq)skin=sq[1];
 function applySkin(){document.documentElement.setAttribute("data-skin",skin);try{localStorage.setItem("o4t_skin",skin)}catch(e){}
- var b=document.getElementById("skinbtn");if(b)b.textContent=(lang=="ar"?"السكين: ":"Skin: ")+(skin=="gold"?(lang=="ar"?"ذهبي":"Gold"):(lang=="ar"?"كلاسيك":"Classic"))}
-document.getElementById("skinbtn").onclick=function(){skin=skin=="gold"?"classic":"gold";applySkin()};
+ var b=document.getElementById("skinbtn");if(b)b.textContent=t("skin_l")+t("sk_"+skin)}
+document.getElementById("skinbtn").onclick=function(){skin=SKINS[(SKINS.indexOf(skin)+1)%SKINS.length];applySkin()};
 applySkin();
 function applyLang(){var d=document.documentElement;d.lang=lang;d.dir=lang=="ar"?"rtl":"ltr";
  try{localStorage.setItem("o4t_lang",lang)}catch(e){}
  $("l-ar").className=lang=="ar"?"on":"";$("l-en").className=lang=="en"?"on":"";
  Array.prototype.forEach.call(document.querySelectorAll("[data-i]"),function(n){n.textContent=t(n.dataset.i)});
  Array.prototype.forEach.call(document.querySelectorAll("[data-ph]"),function(n){n.placeholder=t(n.dataset.ph)});
- applySkin();$("slog").textContent=t("slog");buildMenu();buildActs();if(last)renderStatus(last);if(cur!="home"&&cur!="iptv"&&cur!="term")load();setCatTitle()}
+ applySkin();$("slog").textContent=t("slog");buildMenu();buildActs();if(window.buildLib)buildLib();if(last)renderStatus(last);if(cur!="home"&&cur!="iptv"&&cur!="term")load();setCatTitle()}
 function buildMenu(){var m=$("menu");m.textContent="";NAV.forEach(function(k){var b=el("button",cur==k?"on":"");b.innerHTML='<svg viewBox="0 0 24 24">'+IC[k]+'</svg>';b.appendChild(el("span","",t(k)));b.onclick=function(){go(k)};m.appendChild(b)})}
 var ACTS=[["self_update","pri"],["restart_gui",""],["sync_catalog",""],["update_feed",""],["clear_ram",""],["clean_tmp",""],["standby","sun"],["reboot","hot"]];
 function buildActs(){var a=$("acts");a.textContent="";ACTS.forEach(function(x){var b=el("button","btn "+x[1],t(x[0]));b.onclick=function(){if(/reboot|restart_gui|standby/.test(x[0])&&!confirm(t("confirm")))return;start("/api/action",{name:x[0]},t(x[0]))};a.appendChild(b)})}
@@ -231,7 +325,7 @@ function renderStatus(s){last=s;drawBox(s.model);$("model").textContent=s.model;
  G.appendChild(gauge(t("ram"),ramP,s.ram_used+" / "+s.ram_total+" MB"));G.appendChild(gauge(t("flash"),fp,fu.toFixed(1)+" / "+s.flash_total+" GB"));
  G.appendChild(gauge(t("temp"),s.temp==null?0:Math.min(100,s.temp),s.temp==null?"-":s.temp+" °C"));
  var M=$("mini");M.textContent="";M.appendChild(mini(t("uptime"),fmt(s.uptime)));M.appendChild(mini("Panel","v"+s.version));
- $("ver").textContent="v"+s.version;buildLinks(s);busy=s.busy}
+ $("ver").textContent="v"+s.version;buildLinks(s);busy=s.busy;if(window.buildLib)shellNote()}
 function buildLinks(s){["links","contact"].forEach(function(id){var L=$(id);L.textContent="";CT.forEach(function(c){var u=s.links[c[0]];if(!u)return;
  var a=el("a","soc "+c[0]);a.href=u;a.target="_blank";a.rel="noopener";a.title=t(c[0]);a.setAttribute("aria-label",t(c[0]));a.innerHTML='<svg viewBox="0 0 24 24">'+BR[c[0]]+'</svg>';
  if(id=="contact")a.appendChild(el("span","",t(c[0])));L.appendChild(a)})});if(s.phone){var p=$("phone");p.textContent="+"+s.phone;p.href="tel:+"+s.phone}}
@@ -256,8 +350,71 @@ function load(){var u="/api/catalog?kind="+kind+"&cat="+encodeURIComponent(cat)+
    c.appendChild(g);L.appendChild(c)})}).catch(function(e){toast(e.message)})}
 var tm;$("q").oninput=function(){clearTimeout(tm);tm=setTimeout(load,300)};$("all").onchange=load;
 $("iptv-save").onclick=function(){api("/api/iptv",{player:$("pl").value,m3u:$("m3u").value,host:$("host").value,port:$("port").value,user:$("user").value,pass:$("pass").value}).then(function(r){toast(r.message);$("pass").value=""}).catch(function(e){toast(e.message)})};
-$("run").onclick=function(){var c=$("cmd").value.trim();if(c)start("/api/shell",{cmd:c},c.slice(0,40))};
+
+/* ---- command library: [cat, title en, title ar, desc en, desc ar, command, caution] ---- */
+var LIB=[
+["install","Update package lists","تحديث قوائم الحزم","Refresh the list of available packages.","يحدّث قائمة الحزم المتاحة.","opkg update",0],
+["install","Upgrade all packages","ترقية كل الحزم","Updates every installed package. Can take a while.","يحدّث كل الحزم المثبتة وقد يأخذ وقتاً.","opkg update && opkg upgrade",1],
+["install","Install a package","تثبيت حزمة","Installs a package by name (you will be asked for it).","يثبّت حزمة بالاسم (سيُطلب منك الاسم).","opkg install {{pkg}}",0],
+["install","Remove a package","حذف حزمة","Removes an installed package by name.","يحذف حزمة مثبتة بالاسم.","opkg remove {{pkg}}",1],
+["install","Search packages","بحث عن حزمة","Finds packages whose name contains a word.","يبحث عن الحزم التي يحتوي اسمها على كلمة.","opkg list | grep -i {{word}}",0],
+["install","Package details","تفاصيل حزمة","Shows version and description of a package.","يعرض اصدار الحزمة ووصفها.","opkg info {{pkg}}",0],
+["install","Install an .ipk from a link","تثبيت ipk من رابط","Downloads an .ipk file from a link and installs it.","يحمّل ملف ipk من رابط ويثبّته.","cd /tmp && wget -q --no-check-certificate -O o4t_lib.ipk \"{{url}}\" && opkg install --force-reinstall o4t_lib.ipk; rm -f /tmp/o4t_lib.ipk",1],
+["install","List installed plugins","عرض البلجنات المثبتة","Every enigma2-plugin package on the receiver.","كل حزم البلجنات على الريسيفر.","opkg list-installed | grep enigma2-plugin",0],
+["info","Image version","اصدار الصورة","Name and version of the running image.","اسم واصدار الصورة الشغالة.","cat /etc/image-version",0],
+["info","System summary","ملخص النظام","Kernel, architecture and uptime.","النواة والمعمارية ومدة التشغيل.","uname -a; uptime",0],
+["info","Python version","اصدار بايثون","Which Python this image runs.","أي بايثون تعمل عليه الصورة.","python3 --version 2>&1 || python --version 2>&1",0],
+["info","Memory","الذاكرة","RAM usage in MB.","استخدام الرام بالميجابايت.","free -m",0],
+["info","Disk space","مساحة التخزين","Free space on every disk and USB.","المساحة الفارغة على كل قرص وفلاشة.","df -h",0],
+["info","Mounted storage","وسائط التخزين","USB, HDD and memory cards that are mounted.","الفلاشات والهارد والكروت المركبة.","mount | grep -E \"usb|hdd|mmc|sd\"",0],
+["net","IP addresses","عناوين IP","Network interfaces and addresses.","كروت الشبكة وعناوينها.","ip addr show",0],
+["net","Internet test","اختبار الانترنت","Pings a public server 4 times.","يعمل ping لسيرفر عام 4 مرات.","ping -c 4 8.8.8.8",0],
+["net","DNS test","اختبار DNS","Checks that names resolve (github.com).","يتأكد أن الأسماء تُحل (github.com).","ping -c 2 github.com",0],
+["net","GitHub reachable?","هل GitHub متاح؟","Needed for panel and plugin downloads.","مطلوب لتحميل البانل والبلجنات.","wget -q --spider --no-check-certificate https://raw.githubusercontent.com && echo \"GitHub: OK\" || echo \"GitHub: NOT reachable\"",0],
+["net","DNS servers","سيرفرات DNS","Shows the DNS servers in use.","يعرض سيرفرات DNS المستخدمة.","cat /etc/resolv.conf",0],
+["net","Open ports","المنافذ المفتوحة","Services listening on this receiver.","الخدمات المفتوحة على الريسيفر.","netstat -tln 2>/dev/null | head -30",0],
+["clean","Clean /tmp downloads","تنظيف تحميلات tmp","Deletes leftover .ipk and .tar.gz files from /tmp.","يحذف ملفات ipk و tar.gz المتبقية من tmp.","rm -f /tmp/*.ipk /tmp/*.tar.gz && echo done",0],
+["clean","Free RAM cache","تفريغ كاش الرام","Drops the file cache to free memory.","يفرّغ كاش الملفات لتحرير الذاكرة.","sync; echo 3 > /proc/sys/vm/drop_caches && echo done",0],
+["clean","Last crash error","آخر خطأ كراش","Shows the error part of the newest crash log.","يعرض جزء الخطأ من أحدث ملف كراش.","f=$(ls -t /home/root/logs/*crash* 2>/dev/null | head -1); [ -n \"$f\" ] && grep -n -B14 \"Error\" \"$f\" | tail -n 45 || echo \"no crash logs\"",0],
+["clean","List crash logs","عرض ملفات الكراش","The newest 5 crash logs.","أحدث 5 ملفات كراش.","ls -lt /home/root/logs/ 2>/dev/null | grep crash | head -5",0],
+["clean","Delete crash logs","حذف ملفات الكراش","Removes all enigma2 crash logs.","يحذف كل ملفات كراش انيجما.","rm -f /home/root/logs/*crash* && echo done",1],
+["clean","Restart the GUI","اعادة تشغيل الواجهة","Restarts enigma2 (the screen goes black for a moment).","يعيد تشغيل انيجما (الشاشة تسود لحظات).","killall -9 enigma2",1],
+["panel","Panel version","اصدار البانل","The installed Online4Tech Panel version.","اصدار Online4Tech Panel المثبت.","grep VERSION /usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel/version.py",0],
+["panel","Panel log","سجل البانل","Last lines of the panel log (send it with bug reports).","آخر أسطر سجل البانل (ارسله مع أي مشكلة).","tail -n 40 /tmp/o4t_panel.log 2>/dev/null || echo \"log is empty\"",0],
+["panel","Update the panel","تحديث البانل","Installs the newest panel and restarts the GUI.","يثبّت أحدث بانل ويعيد تشغيل الواجهة.","wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh",1]
+];
+var libCat="install",MINE=[];
+try{MINE=JSON.parse(localStorage.getItem("o4t_cmds")||"[]")}catch(e){MINE=[]}
+function saveMine(){try{localStorage.setItem("o4t_cmds",JSON.stringify(MINE))}catch(e){}}
+function shellOK(){return !last||last.shell!==false}
+function shellNote(){var n=$("shellnote");if(!n)return;n.textContent=t("shell_off");n.style.display=shellOK()?"none":"block"}
+function fillCmd(c){var out=c,m,re=/\{\{(\w+)\}\}/;
+ while((m=re.exec(out))){var v=prompt(t("ask")+" ("+m[1]+")","");if(v===null)return null;v=v.trim();
+  var ok=m[1]=="url"?/^https?:\/\/[^\s'"`$;|&<>]+$/.test(v):/^[A-Za-z0-9._+-]{1,80}$/.test(v);
+  if(!ok){toast(t("bad_val"));return null}out=out.replace(re,v)}
+ return out}
+function runCmd(c,risky){if(!shellOK()){toast(t("shell_off"));return}
+ var f=fillCmd(c);if(!f)return;$("cmd").value=f;if(risky&&!confirm(t("confirm_cmd")+"\n\n"+f))return;start("/api/shell",{cmd:f},f.slice(0,40))}
+function useCmd(c){var f=fillCmd(c);if(!f)return;$("cmd").value=f;$("cmd").focus();window.scrollTo(0,0)}
+function libItems(){var q=$("libq").value.trim().toLowerCase(),out=[];
+ if(libCat=="mine")MINE.forEach(function(m,i){out.push({n:m.n,d:"",c:m.c,r:1,i:i,mine:1})});
+ else LIB.forEach(function(x){if(x[0]!=libCat&&!q)return;out.push({n:x[lang=="ar"?2:1],d:x[lang=="ar"?4:3],c:x[5],r:x[6]})});
+ if(q)out=out.filter(function(x){return(x.n+" "+x.d+" "+x.c).toLowerCase().indexOf(q)>=0});
+ return out}
+function buildLib(){var C=$("libcats");C.textContent="";["install","info","net","clean","panel","mine"].forEach(function(k){
+  var b=el("button","chip"+(libCat==k?" on":""),k=="mine"?t("mine")+(MINE.length?" ("+MINE.length+")":""):t("c_"+k));b.onclick=function(){libCat=k;buildLib()};C.appendChild(b)});
+ var L=$("lib");L.textContent="";var items=libItems();if(!items.length)L.appendChild(el("div","empty",t("lib_empty")));
+ items.forEach(function(x){var c=el("div","cmd"),h=el("div","t",x.n);if(x.r&&!x.mine)h.appendChild(el("span","tag c",t("caution")));c.appendChild(h);
+  if(x.d)c.appendChild(el("div","d",x.d));c.appendChild(el("code","",x.c));
+  var a=el("div","acts"),u=el("button","btn sm",t("use"));u.onclick=function(){useCmd(x.c)};
+  var r=el("button","btn sm pri",t("run"));r.onclick=function(){runCmd(x.c,x.r)};a.appendChild(u);a.appendChild(r);
+  if(x.mine){var d=el("button","btn sm hot",t("del"));d.onclick=function(){MINE.splice(x.i,1);saveMine();buildLib()};a.appendChild(d)}
+  c.appendChild(a);L.appendChild(c)});shellNote()}
+$("libq").oninput=buildLib;
+$("savecmd").onclick=function(){var c=$("cmd").value.trim();if(!c)return;var n=prompt(t("name_ask"),c.slice(0,30));if(!n)return;
+ MINE.push({n:n.slice(0,40),c:c});saveMine();libCat="mine";buildLib();toast(t("saved"))};
+$("run").onclick=function(){var c=$("cmd").value.trim();if(!c)return;if(!shellOK()){toast(t("shell_off"));return}start("/api/shell",{cmd:c},c.slice(0,40))};
 $("cmd").onkeydown=function(e){if(e.key=="Enter")$("run").click()};
 $("l-ar").onclick=function(){lang="ar";applyLang()};$("l-en").onclick=function(){lang="en";applyLang()};
-applyLang();go("home");status();setInterval(status,15000);
+applyLang();buildLib();var pq=/[?&]page=(home|plugin|skin|channels|picons|iptv|term)/.exec(location.search);go(pq?pq[1]:"home");status();setInterval(status,15000);
 </script></body></html>
