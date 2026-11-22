@@ -15,8 +15,8 @@ tools/set_channel.sh stable
 bash build_ipk.sh | tail -1
 git add -A
 git commit -q -m "Release v$VER (promoted from dev $SHA)" || echo "nothing new to release"
-git tag "v$VER" >/dev/null
+git tag "v$VER" >/dev/null 2>&1 || true
 git push origin stable 2>&1 | grep -v remote || true
-git push origin "v$VER" 2>&1 | grep -v remote || true
+git push origin "v$VER" >/dev/null 2>&1 || true   # tags are optional; rollback finds releases by commit message
 git checkout -q dev
 echo "stable is now v$VER"

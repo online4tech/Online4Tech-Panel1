@@ -111,4 +111,4 @@ Not included on purpose: softcam installers and CCcam/oscam/ncam server-line wri
 | **dev** | `dev` | `wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/dev/install.sh \| sh` | testing (shows `-dev` in the version) |
 
 Work happens on `dev`. When a version is tested: `tools/promote.sh` copies it to `stable` and tags it.
-Problem after a release? `tools/rollback.sh v1.9.0` puts customers back on the older tag.
+Problem after a release? `tools/rollback.sh v1.9.0` puts customers back on that older release.
