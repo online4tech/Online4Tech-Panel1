@@ -2,14 +2,28 @@
 from __future__ import absolute_import
 import os
 
-VERSION = "1.9.0"
+BASE_VERSION = "1.9.0"
 PLUGIN_NAME = "Online4Tech Panel"
 SLOGAN = "خليك دايما اونلاين"
 
 GITHUB_REPO = "online4tech/Online4Tech-Panel1"
-BRANCH = "panel-v2"
 
 PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _read_channel():
+    """'stable' (customers) or 'dev' (testing) - written into channel.txt when the package is made."""
+    try:
+        with open(os.path.join(PLUGIN_DIR, "channel.txt")) as fh:
+            word = fh.read().strip().lower()
+        return "dev" if word == "dev" else "stable"
+    except Exception:
+        return "stable"
+
+
+CHANNEL = _read_channel()
+BRANCH = "dev" if CHANNEL == "dev" else "stable"
+VERSION = BASE_VERSION + ("-dev" if CHANNEL == "dev" else "")
 RAW = "https://raw.githubusercontent.com/%s/%s" % (GITHUB_REPO, BRANCH)
 CATALOG_URL = RAW + "/catalog.json"
 VERSION_URL = RAW + "/version.txt"

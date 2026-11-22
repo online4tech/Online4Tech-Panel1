@@ -25,7 +25,7 @@ A modern glass-style panel for Enigma2 receivers: browse and install the newest 
 ### Telnet / SSH (الأسهل)
 
 ```sh
-wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh
+wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/dev/install.sh | sh
 ```
 
 بيحمّل ملف IPK صغير (~400KB) ويثبّته، وبعدها الجهاز بيعمل ريستارت للواجهة تلقائي. افتح **Plugins** او **Extensions** ← *Online4Tech Panel*.
@@ -102,3 +102,13 @@ XStreamity/XKlass playlist entry, live console output, optional web shell.
 Security: Basic auth + 5-attempt lockout, CSRF header on POST, install commands come only
 from the validated catalog, web shell is OFF until enabled on the receiver (runs as root).
 Not included on purpose: softcam installers and CCcam/oscam/ncam server-line writers.
+
+## Release channels
+
+| Channel | Branch | Install command | Who |
+|---|---|---|---|
+| **stable** | `stable` | `wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/dev/install.sh \| sh` | customers |
+| **dev** | `dev` | `wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/dev/install.sh \| sh` | testing (shows `-dev` in the version) |
+
+Work happens on `dev`. When a version is tested: `tools/promote.sh` copies it to `stable` and tags it.
+Problem after a release? `tools/rollback.sh v1.9.0` puts customers back on the older tag.

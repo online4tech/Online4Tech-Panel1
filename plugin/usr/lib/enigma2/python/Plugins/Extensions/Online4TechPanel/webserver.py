@@ -22,7 +22,7 @@ from twisted.web import resource, server
 from . import catalog
 from .utils import (device_name, PY3, compatible, get_setting, item_key, log, parse_opkg_list,
                     read_file, set_setting, shquote, txt, urlparse)
-from .version import (INSTALL_URL, MESSENGER_URL, PAGE_URL, SITE_URL, STORE_URL, VERSION,
+from .version import (CHANNEL, INSTALL_URL, MESSENGER_URL, PAGE_URL, SITE_URL, STORE_URL, VERSION,
                       WEB_PORT, WHATSAPP_NUMBER, WHATSAPP_URL)
 
 try:
@@ -186,7 +186,7 @@ def system_status():
         "ram_total": total, "ram_used": max(0, total - free), "uptime": up,
         "flash_total": round(fl_total, 1), "flash_free": round(fl_free, 1),
         "temp": _temp(), "model": device_name(),
-        "image": image[0] if image else "-", "version": VERSION,
+        "image": image[0] if image else "-", "version": VERSION, "channel": CHANNEL, "install_url": INSTALL_URL,
         "shell": bool(get_setting("web_shell", False)), "auth": bool(get_setting("web_auth", False)), "busy": running_job() is not None,
         "links": {"whatsapp": WHATSAPP_URL, "messenger": MESSENGER_URL, "page": PAGE_URL,
                   "store": STORE_URL, "site": SITE_URL},

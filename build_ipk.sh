@@ -3,6 +3,8 @@
 set -e
 cd "$(dirname "$0")"
 VER="$(tr -d ' \n' < version.txt)"
+CH="$(tr -d ' \n' < plugin/usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel/channel.txt)"
+[ "$CH" = "dev" ] && VER="$VER-dev" || CH="stable"
 PKG="enigma2-plugin-extensions-online4techpanel"
 OUT="release"
 W="$(mktemp -d)"
@@ -19,7 +21,7 @@ Architecture: all
 Maintainer: Online4Tech
 Section: extra
 Priority: optional
-Homepage: https://github.com/online4tech/Online4Tech-Panel1/tree/panel-v2
+Homepage: https://github.com/online4tech/Online4Tech-Panel1/tree/$CH
 Description: Online4Tech Panel - latest plugins and skins panel for Enigma2 (Python 2/3)
 CTL
 cat > "$W/control/postinst" <<'SH'

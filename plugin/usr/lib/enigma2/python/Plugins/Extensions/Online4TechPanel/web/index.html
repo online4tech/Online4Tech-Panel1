@@ -325,7 +325,7 @@ function renderStatus(s){last=s;drawBox(s.model);$("model").textContent=s.model;
  G.appendChild(gauge(t("ram"),ramP,s.ram_used+" / "+s.ram_total+" MB"));G.appendChild(gauge(t("flash"),fp,fu.toFixed(1)+" / "+s.flash_total+" GB"));
  G.appendChild(gauge(t("temp"),s.temp==null?0:Math.min(100,s.temp),s.temp==null?"-":s.temp+" °C"));
  var M=$("mini");M.textContent="";M.appendChild(mini(t("uptime"),fmt(s.uptime)));M.appendChild(mini("Panel","v"+s.version));
- $("ver").textContent="v"+s.version;buildLinks(s);busy=s.busy;if(window.buildLib)shellNote()}
+ $("ver").textContent="v"+s.version;buildLinks(s);busy=s.busy;document.title=(s.channel=="dev"?"[DEV] ":"")+"Online4Tech Panel";if(window.buildLib)shellNote()}
 function buildLinks(s){["links","contact"].forEach(function(id){var L=$(id);L.textContent="";CT.forEach(function(c){var u=s.links[c[0]];if(!u)return;
  var a=el("a","soc "+c[0]);a.href=u;a.target="_blank";a.rel="noopener";a.title=t(c[0]);a.setAttribute("aria-label",t(c[0]));a.innerHTML='<svg viewBox="0 0 24 24">'+BR[c[0]]+'</svg>';
  if(id=="contact")a.appendChild(el("span","",t(c[0])));L.appendChild(a)})});if(s.phone){var p=$("phone");p.textContent="+"+s.phone;p.href="tel:+"+s.phone}}
@@ -381,7 +381,7 @@ var LIB=[
 ["clean","Restart the GUI","اعادة تشغيل الواجهة","Restarts enigma2 (the screen goes black for a moment).","يعيد تشغيل انيجما (الشاشة تسود لحظات).","killall -9 enigma2",1],
 ["panel","Panel version","اصدار البانل","The installed Online4Tech Panel version.","اصدار Online4Tech Panel المثبت.","grep VERSION /usr/lib/enigma2/python/Plugins/Extensions/Online4TechPanel/version.py",0],
 ["panel","Panel log","سجل البانل","Last lines of the panel log (send it with bug reports).","آخر أسطر سجل البانل (ارسله مع أي مشكلة).","tail -n 40 /tmp/o4t_panel.log 2>/dev/null || echo \"log is empty\"",0],
-["panel","Update the panel","تحديث البانل","Installs the newest panel and restarts the GUI.","يثبّت أحدث بانل ويعيد تشغيل الواجهة.","wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh",1]
+["panel","Update the panel","تحديث البانل","Installs the newest panel and restarts the GUI.","يثبّت أحدث بانل ويعيد تشغيل الواجهة.","wget -q --no-check-certificate -O - __INSTALL_URL__ | sh",1]
 ];
 var libCat="install",MINE=[];
 try{MINE=JSON.parse(localStorage.getItem("o4t_cmds")||"[]")}catch(e){MINE=[]}
@@ -389,6 +389,7 @@ function saveMine(){try{localStorage.setItem("o4t_cmds",JSON.stringify(MINE))}ca
 function shellOK(){return !last||last.shell!==false}
 function shellNote(){var n=$("shellnote");if(!n)return;n.textContent=t("shell_off");n.style.display=shellOK()?"none":"block"}
 function fillCmd(c){var out=c,m,re=/\{\{(\w+)\}\}/;
+ if(out.indexOf("__INSTALL_URL__")>=0){if(!last||!last.install_url){toast("...");return null}out=out.replace(/__INSTALL_URL__/g,last.install_url)}
  while((m=re.exec(out))){var v=prompt(t("ask")+" ("+m[1]+")","");if(v===null)return null;v=v.trim();
   var ok=m[1]=="url"?/^https?:\/\/[^\s'"`$;|&<>]+$/.test(v):/^[A-Za-z0-9._+-]{1,80}$/.test(v);
   if(!ok){toast(t("bad_val"));return null}out=out.replace(re,v)}
