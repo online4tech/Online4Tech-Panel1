@@ -12,7 +12,7 @@ from .utils import THEMES, get_setting
 from .version import PLUGIN_DIR
 
 TEXT = "#FFFFFF"
-MUTED = "#9FB3D1"
+MUTED = "#C4D3EA"
 ACCENT = "#38BDF8"
 THEME_COLORS = {"cyan": "#38BDF8", "violet": "#A78BFA", "green": "#4ADE80",
                 "orange": "#FB923C", "pink": "#F472B6"}
@@ -28,6 +28,18 @@ def accent():
 SOFT = "#E5EDFF"
 
 _cache = {}
+
+# Clear Arabic + Latin face shipped with the panel. If it cannot be registered the
+# skin silently keeps the image's default font ("Regular").
+FONT_NAME = "Regular"
+try:
+    _ff = os.path.join(PLUGIN_DIR, "fonts", "Tajawal-Medium.ttf")
+    if os.path.isfile(_ff):
+        from enigma import addFont
+        addFont(_ff, "O4T", 100, False)
+        FONT_NAME = "O4T"
+except Exception:
+    FONT_NAME = "Regular"
 
 
 DESIGNS = ("glass", "console", "flame", "lite")
@@ -105,7 +117,8 @@ class Metrics(object):
         return 'position="%s" size="%s"' % (self.pos(x, y), self.size(w, h))
 
     def font(self, n):
-        return "Regular;%d" % max(8, int(round(n * self.k * self.fs / 100.0)))
+        bump = 1.06 if FONT_NAME != "Regular" else 1.0
+        return "%s;%d" % (FONT_NAME, max(8, int(round(n * self.k * self.fs * bump / 100.0))))
 
     def pix(self, name):
         return os.path.join(self.dir, name + ".png")
@@ -155,10 +168,10 @@ def _footer(m):
 
 # ---------------------------------------------------------------- screens
 MAIN_POS = []
-MAIN_N = 6                      # menu entries (screens.O4TMain.MENU)
-MAIN_COLS = 3
+MAIN_N = 8                      # menu entries (screens.O4TMain.MENU)
+MAIN_COLS = 4
 for _i in range(MAIN_N):
-    MAIN_POS.append((40 + (_i % MAIN_COLS) * 446, 215 + (_i // MAIN_COLS) * 330))
+    MAIN_POS.append((40 + (_i % MAIN_COLS) * 333, 215 + (_i // MAIN_COLS) * 282))
 GLASS_TILE = (300, 250)
 CARD = (1384, 196, 496, 700)      # device card on the main screen (glass)
 
@@ -322,7 +335,7 @@ def _glass_store(name):
 ROW_W, ROW_H, ROW_STEP = 940, 76, 84
 ROWS_PER_PAGE = 8
 ROW_X, ROW_Y = 460, 262
-ROWS_Y0, ROWS_STEP = 214, 118       # main menu rows (6 entries)
+ROWS_Y0, ROWS_STEP = 200, 84        # main menu rows (8 entries)
 
 
 STATIC = {}      # widget name -> fixed text (tx*) of the screen being built

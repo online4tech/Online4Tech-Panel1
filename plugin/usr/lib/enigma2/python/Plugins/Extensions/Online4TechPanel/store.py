@@ -29,10 +29,14 @@ FEED, FAV = "__feed__", "__fav__"
 GROUPS = {
     "plugin": [
         ("panels", ["Panels"]),
-        ("media", ["Media", "IPTV", "Audio"]),
-        ("lists", ["EPG", "Settings", "Ciefp", "Novaler"]),
-        ("system", ["Tools", "System", "Multiboot", "Dependencies"]),
-        ("plugins", ["Plugins", "Community", "Translation"]),
+        ("plugins", ["Plugins"]),
+        ("tools", ["Tools"]),
+        ("media", ["Media", "Audio"]),
+        ("iptv", ["IPTV"]),
+        ("epg", ["EPG", "Settings", "Ciefp", "Novaler"]),
+        ("system", ["System", "Multiboot", "Dependencies"]),
+        ("pcomm", ["Community"]),
+        ("translation", ["Translation"]),
     ],
     "skin": [
         ("skins", ["OpenATV", "OpenBH", "Egami", "OpenSPA", "OpenVIX", "PurE2", "TeamNitro"]),

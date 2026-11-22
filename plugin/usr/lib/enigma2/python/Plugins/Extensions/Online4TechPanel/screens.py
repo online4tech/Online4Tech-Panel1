@@ -185,9 +185,9 @@ def _confirm(screen, text, fn):
 # =====================================================================
 @guarded
 class O4TMain(Screen):
-    MENU = ["plugins", "skins", "installed", "updates", "tools", "info"]
+    MENU = ["plugins", "skins", "installed", "updates", "tools", "settings", "selfupdate", "info"]
     # icon file index per entry (ic0..ic7 were drawn in this order)
-    ICON_OF = {"plugins": 0, "skins": 1, "updates": 2, "installed": 3, "tools": 4, "info": 5}
+    ICON_OF = {"plugins": 0, "skins": 1, "updates": 2, "installed": 3, "tools": 4, "info": 5, "selfupdate": 6, "settings": 8}
 
     def __init__(self, session):
         mark_opening("main")
@@ -313,6 +313,10 @@ class O4TMain(Screen):
             self.session.open(O4TTools)
         elif key == "info":
             self.session.open(O4TInfo)
+        elif key == "settings":
+            self.open_settings()
+        elif key == "selfupdate":
+            self.session.open(O4TSelfUpdate)
 
 
 # =====================================================================

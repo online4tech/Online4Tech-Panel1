@@ -28,6 +28,7 @@ ICON_COLORS = [
     (96, 165, 250),   # info
     (45, 212, 191),   # panel update
     (244, 114, 182),  # about
+    (148, 163, 184),  # settings
 ]
 
 
@@ -56,7 +57,10 @@ def glass(w, h, r, tint=(120, 160, 255), strength=1.0, border=110):
                  (255, 255, 255, int(52 * strength)),
                  (tint[0], tint[1], tint[2], int(16 * strength)))
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    img.paste(base, (0, 0), rrect_mask(W, H, R))
+    # dark backing so text on the card stays readable over the busy background
+    img.paste(Image.new("RGBA", (W, H), (3, 10, 34, int(min(235, 175 * max(strength, 0.8))))),
+              (0, 0), rrect_mask(W, H, R))
+    img.alpha_composite(Image.composite(base, Image.new("RGBA", (W, H), (0, 0, 0, 0)), rrect_mask(W, H, R)))
     # top gloss
     gh = int(H * 0.5)
     gl = vgrad(W, gh, (255, 255, 255, int(40 * strength)), (255, 255, 255, 0))
@@ -190,6 +194,11 @@ def draw_icon(idx, size, color):
             rad = 190 if k % 2 == 0 else 84
             pts.append((cx + rad * math.cos(ang), cy + 12 + rad * math.sin(ang)))
         d.polygon(pts, fill=c)
+    elif idx == 8:  # settings: three sliders
+        for yy, kx in ((130, 170), (256, 330), (382, 230)):
+            d.rounded_rectangle((70, yy - 16, 442, yy + 16), 16, fill=c)
+            d.ellipse((kx - 46, yy - 46, kx + 46, yy + 46), fill=(0, 0, 0, 0))
+            d.ellipse((kx - 46, yy - 46, kx + 46, yy + 46), outline=c, width=26)
     glow = img.filter(ImageFilter.GaussianBlur(14))
     glow = Image.eval(glow.split()[3], lambda v: int(v * 0.55))
     glow_img = Image.new("RGBA", (S, S), color + (0,))
@@ -459,7 +468,7 @@ def build_design(name, k_name, k):
     for nm, col in (("red", (239, 68, 68)), ("green", (34, 197, 94)),
                     ("yellow", (234, 179, 8)), ("blue", (59, 130, 246))):
         save(dot(s(28), col, ring=(name == "flame")), "dot_" + nm)
-    for i in range(8):
+    for i in range(9):
         save(draw_icon(i, s(128), acc), "ic%d" % i)
     for key in CAT_ICONS:
         save(cat_icon(key, s(128), acc), "ci_%s" % key)
