@@ -4,7 +4,7 @@
 #   wget -q --no-check-certificate -O - https://raw.githubusercontent.com/online4tech/Online4Tech-Panel1/panel-v2/install.sh | sh
 #
 REPO="online4tech/Online4Tech-Panel1"
-BRANCH="dev"
+BRANCH="stable"
 RAW="https://raw.githubusercontent.com/$REPO/$BRANCH"
 IPK_URL="$RAW/release/enigma2-plugin-extensions-online4techpanel_all.ipk"
 IPK="/tmp/o4t_panel.ipk"
