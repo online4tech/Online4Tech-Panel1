@@ -14,6 +14,7 @@ from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
 
+from .groups import group_of, order as group_order
 from . import catalog
 from .i18n import T
 from .screens import (_start_clock, mark_opening, mark_shown, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
@@ -24,35 +25,8 @@ from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, prett
 
 FEED, FAV = "__feed__", "__fav__"
 
-# The long list of catalog categories is folded into a few sidebar groups.
-# group id -> catalog categories (anything not listed lands in "other")
-GROUPS = {
-    "plugin": [
-        ("panels", ["Panels"]),
-        ("plugins", ["Plugins"]),
-        ("tools", ["Tools"]),
-        ("media", ["Media", "Audio"]),
-        ("iptv", ["IPTV"]),
-        ("epg", ["EPG", "Settings", "Ciefp", "Novaler"]),
-        ("system", ["System", "Multiboot", "Dependencies"]),
-        ("pcomm", ["Community"]),
-        ("translation", ["Translation"]),
-    ],
-    "skin": [
-        ("skins", ["OpenATV", "OpenBH", "Egami", "OpenSPA", "OpenVIX", "PurE2", "TeamNitro"]),
-        ("pli", ["OpenPLi Py3", "OpenPLi Py2"]),
-        ("lcd", ["Display (LCD)"]),
-        ("graphics", ["Bootlogos", "Spinners", "Picons"]),
-        ("community", ["Community Skins", "XStreamity"]),
-    ],
-}
+# Sidebar groups live in groups.py (items are sorted by what they do)
 
-
-def group_of(kind, category):
-    for gid, cats in GROUPS.get(kind, []):
-        if category in cats:
-            return gid
-    return "other"
 ICON_RULES = (
     ("iptv", "tv"), ("xtream", "tv"), ("epg", "calendar"), ("media", "play"), ("video", "play"),
     ("player", "play"), ("audio", "speaker"), ("sound", "speaker"), ("panel", "grid"),
@@ -175,14 +149,17 @@ class O4TStore(Screen):
             pass
         self.load_category()
 
+    def gname(self, g):
+        return T("g_pcomm" if (g == "community" and self.kind == "plugin") else "g_" + g)
+
     def cat_entries(self):
         counts = {}
         for it in self.visible():
-            g = group_of(self.kind, it.get("category", ""))
+            g = group_of(self.kind, it)
             counts[g] = counts.get(g, 0) + 1
-        order = [g for g, _c in GROUPS.get(self.kind, [])] + ["other"]
+        order = group_order(self.kind)
         entries = [(FEED, T("cat_feed"))]
-        entries += [(g, "%s (%d)" % (T("g_" + g), counts[g])) for g in order if counts.get(g)]
+        entries += [(g, "%s (%d)" % (self.gname(g), counts[g])) for g in order if counts.get(g)]
         return entries
 
     # ------------------------------------------------------------ data
@@ -217,7 +194,7 @@ class O4TStore(Screen):
             self.draw_page()
             return
         else:
-            self.rows = [i for i in self.visible() if group_of(self.kind, i.get("category", "")) == cat]
+            self.rows = [i for i in self.visible() if group_of(self.kind, i) == cat]
         self.o4_loading = False
         self.draw_page()
 
@@ -263,7 +240,7 @@ class O4TStore(Screen):
             self["title"].setText("%s - %s" % (base, T("search_all")))
             self["search"].setText(self.o4_query)
         else:
-            name = T("cat_feed") if cat == FEED else (T("g_" + cat) if cat else "")
+            name = T("cat_feed") if cat == FEED else (self.gname(cat) if cat else "")
             self["title"].setText(base if (not name or name == base) else "%s - %s" % (base, name))
             self["search"].setText(T("search_hint"))
         for i in range(self.per):

@@ -292,7 +292,7 @@ def _glass_store(name):
     x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
              'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
              'backgroundColorSelected="#55%s" zPosition="2" />\n'
-             % (m.rect(38, 206, 272, 738), m.font(25), m.S(52), TEXT, accent()[1:]))
+             % (m.rect(38, 206, 272, 738), m.font(25), m.S(48), TEXT, accent()[1:]))
     lab("title", 376, 202, 470, 52, 36, TEXT, "left")
     pix("search", 868, 202, 560, 54, 1)
     lab("search", 904, 204, 490, 50, 24, MUTED, "left")
