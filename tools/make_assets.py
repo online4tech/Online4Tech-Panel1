@@ -95,18 +95,18 @@ def selector(w, h, r, color=ACCENT):
 
 def pill(w, h, color):
     W, H, R = w * SS, h * SS, (h * SS) // 2
-    top = tuple(min(255, c + 60) for c in color) + (235,)
-    bot = tuple(int(c * 0.55) for c in color) + (235,)
+    top = tuple(min(255, int(c * 1.05)) for c in color) + (255,)
+    bot = tuple(int(c * 0.62) for c in color) + (255,)
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     img.paste(vgrad(W, H, top, bot), (0, 0), rrect_mask(W, H, R))
     gloss = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ImageDraw.Draw(gloss).rounded_rectangle(
-        (SS * 6, SS * 3, W - SS * 6, int(H * 0.5)), R, fill=(255, 255, 255, 70))
+        (SS * 6, SS * 3, W - SS * 6, int(H * 0.5)), R, fill=(255, 255, 255, 22))
     gloss = Image.composite(gloss, Image.new("RGBA", (W, H), (0, 0, 0, 0)),
                             rrect_mask(W, H, R))
     img = Image.alpha_composite(img, gloss)
     ImageDraw.Draw(img).rounded_rectangle((0, 0, W - 1, H - 1), R,
-                                          outline=(255, 255, 255, 120), width=SS * 2)
+                                          outline=(255, 255, 255, 200), width=SS * 2)
     return img.resize((w, h), Image.LANCZOS)
 
 
@@ -340,8 +340,8 @@ def build(name, k):
     glass(s(1060), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_l.png"), optimize=True)
     glass(s(670), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_r.png"), optimize=True)
     glass(s(1760), s(700), s(34), strength=0.8).save(os.path.join(out, "panel_f.png"), optimize=True)
-    for nm, col in (("red", (225, 29, 72)), ("green", (34, 197, 94)),
-                    ("yellow", (234, 179, 8)), ("blue", (59, 130, 246))):
+    for nm, col in (("red", (200, 24, 64)), ("green", (22, 128, 62)),
+                    ("yellow", (170, 105, 6)), ("blue", (37, 99, 235))):
         pill(s(250), s(56), col).save(os.path.join(out, "btn_%s.png" % nm), optimize=True)
     for i, col in enumerate(ICON_COLORS):
         draw_icon(i, s(128), col).save(os.path.join(out, "ic%d.png" % i), optimize=True)

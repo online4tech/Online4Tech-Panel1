@@ -31,15 +31,22 @@ _cache = {}
 
 # Clear Arabic + Latin face shipped with the panel. If it cannot be registered the
 # skin silently keeps the image's default font ("Regular").
-FONT_NAME = "Regular"
+FONT_NAME = BOLD_NAME = "Regular"
 try:
     _ff = os.path.join(PLUGIN_DIR, "fonts", "Tajawal-Medium.ttf")
     if os.path.isfile(_ff):
         from enigma import addFont
         addFont(_ff, "O4T", 100, False)
         FONT_NAME = "O4T"
+        _fb = os.path.join(PLUGIN_DIR, "fonts", "Tajawal-Bold.ttf")
+        if os.path.isfile(_fb):
+            addFont(_fb, "O4TB", 100, False)
+            BOLD_NAME = "O4TB"
 except Exception:
     FONT_NAME = "Regular"
+if BOLD_NAME == "Regular" and FONT_NAME != "Regular":
+    BOLD_NAME = FONT_NAME
+SHADOW = 'shadowColor="#000000" shadowOffset="-2,-2"'      # keeps text readable on any button
 
 
 DESIGNS = ("glass", "console", "flame", "lite")
@@ -116,9 +123,10 @@ class Metrics(object):
     def rect(self, x, y, w, h):
         return 'position="%s" size="%s"' % (self.pos(x, y), self.size(w, h))
 
-    def font(self, n):
+    def font(self, n, bold=False):
         bump = 1.06 if FONT_NAME != "Regular" else 1.0
-        return "%s;%d" % (FONT_NAME, max(8, int(round(n * self.k * self.fs * bump / 100.0))))
+        face = BOLD_NAME if bold else FONT_NAME
+        return "%s;%d" % (face, max(8, int(round(n * self.k * self.fs * bump / 100.0))))
 
     def pix(self, name):
         return os.path.join(self.dir, name + ".png")
@@ -157,9 +165,9 @@ def _footer(m):
         x = 80 + i * 274
         out.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
                    % (m.pix("btn_" + c), m.rect(x, 972, 250, 56)))
-        out.append('<widget name="key_%s" %s font="%s" foregroundColor="%s" transparent="1" '
+        out.append('<widget name="key_%s" %s font="%s" %s foregroundColor="#FFFFFF" transparent="1" '
                    'halign="center" valign="center" zPosition="3" />\n'
-                   % (c, m.rect(x, 972, 250, 56), m.font(25), TEXT))
+                   % (c, m.rect(x, 972, 250, 56), m.font(26, True), SHADOW))
     out.append('<widget name="ver" %s font="%s" foregroundColor="%s" transparent="1" '
                'halign="right" valign="center" zPosition="3" />\n'
                % (m.rect(1440, 972, 400, 56), m.font(24), MUTED))
@@ -273,10 +281,10 @@ def _glass_store(name):
         x.append('<ePixmap pixmap="%s" %s alphatest="blend" zPosition="%d" />\n'
                  % (m.pix(img), m.rect(x0, y0, w, h), z))
 
-    def lab(nm, x0, y0, w, h, size, color, align="center", z=4, valign="center"):
-        x.append('<widget name="%s" %s font="%s" foregroundColor="%s" transparent="1" '
+    def lab(nm, x0, y0, w, h, size, color, align="center", z=4, valign="center", btn=False):
+        x.append('<widget name="%s" %s font="%s" %s foregroundColor="%s" transparent="1" '
                  'halign="%s" valign="%s" zPosition="%d" />\n'
-                 % (nm, m.rect(x0, y0, w, h), m.font(size), color, align, valign, z))
+                 % (nm, m.rect(x0, y0, w, h), m.font(size, btn), SHADOW if btn else "", color, align, valign, z))
 
     pix("panel_s", 24, 190, 300, 770)
     pix("panel_c", 340, 190, 1096, 770)
@@ -295,11 +303,10 @@ def _glass_store(name):
                  % (i, m.pix("card"), m.rect(cx, cy, CARD_W, CARD_H)))
         x.append('<widget name="ci%d" %s alphatest="blend" zPosition="3" />\n'
                  % (i, m.rect(cx + 89, cy + 12, 72, 72)))
-        lab("cn%d" % i, cx + 8, cy + 88, CARD_W - 16, 34, 25, TEXT)
-        lab("cd%d" % i, cx + 8, cy + 120, CARD_W - 16, 28, 19, MUTED)
+        lab("cn%d" % i, cx + 8, cy + 92, CARD_W - 16, 52, 26, TEXT)
         x.append('<widget name="cp%d" pixmap="%s" %s alphatest="blend" zPosition="2" />\n'
                  % (i, m.pix("pill_blue"), m.rect(cx + 30, cy + 152, 190, 38)))
-        lab("cl%d" % i, cx + 30, cy + 152, 190, 38, 21, TEXT)
+        lab("cl%d" % i, cx + 30, cy + 152, 190, 38, 23, "#FFFFFF", btn=True)
     x.append('<widget name="sel" pixmap="%s" %s alphatest="blend" zPosition="5" />\n'
              % (m.pix("card_sel_" + theme()), m.rect(GRID_X - 21, GRID_Y - 17, 292, 230)))
     lab("status", 376, 400, 1020, 200, 30, MUTED)
@@ -307,22 +314,22 @@ def _glass_store(name):
     # details
     x.append('<widget name="di" %s alphatest="blend" zPosition="3" />\n' % m.rect(1608, 206, 128, 128))
     lab("dn", 1464, 340, 416, 44, 32, TEXT)
-    lab("dd", 1464, 384, 416, 52, 21, MUTED, valign="top")
-    lab("dpt", 1464, 442, 416, 30, 22, accent(), "left")
-    lab("dp", 1464, 472, 416, 50, 18, SOFT, "left", valign="top")
-    lab("dct", 1464, 526, 416, 30, 22, accent(), "left")
-    lab("dc", 1464, 556, 416, 40, 20, SOFT, "left", valign="top")
-    lab("drt", 1464, 612, 416, 30, 22, accent(), "left")
-    lab("dr", 1464, 642, 416, 40, 20, SOFT, "left", valign="top")
+    lab("dd", 1464, 386, 416, 104, 21, "#E8F0FF", valign="top")
+    lab("dpt", 1464, 496, 416, 30, 22, accent(), "left")
+    lab("dp", 1464, 526, 416, 50, 18, SOFT, "left", valign="top")
+    lab("dct", 1464, 580, 416, 30, 22, accent(), "left")
+    lab("dc", 1464, 610, 416, 34, 20, SOFT, "left", valign="top")
+    lab("drt", 1464, 652, 416, 30, 22, accent(), "left")
+    lab("dr", 1464, 682, 416, 34, 20, SOFT, "left", valign="top")
     for j, nm in enumerate(("green", "red")):
         yy = 790 + j * 76
         pix("wpill_" + nm, 1472, yy, 400, 50, 2)
-        lab("db%d" % j, 1472, yy, 400, 50, 24, TEXT)
+        lab("db%d" % j, 1472, yy, 400, 50, 26, "#FFFFFF", btn=True)
     # footer
     for k, c in enumerate(("red", "green", "yellow", "blue")):
         bx = 24 + k * 264
         pix("btn_" + c, bx, 972, 250, 56, 1)
-        lab("key_" + c, bx, 972, 250, 56, 25, TEXT)
+        lab("key_" + c, bx, 972, 250, 56, 26, "#FFFFFF", btn=True)
     lab("contact", 1100, 972, 796, 56, 26, SOFT, "right")
     lab("ver", 1100, 1030, 796, 40, 18, MUTED, "right")
     x.append("</screen>")
@@ -380,9 +387,11 @@ class _B(object):
                       % (nm, self.m.rect(x, y, w, h), z))
 
     def lab(self, nm, x, y, w, h, size, color, align="left", z=4, valign="center"):
-        self.x.append('<widget name="%s" %s font="%s" foregroundColor="%s" transparent="1" '
+        btn = nm.startswith(("key_", "cl", "db"))
+        self.x.append('<widget name="%s" %s font="%s" %s foregroundColor="%s" transparent="1" '
                       'halign="%s" valign="%s" zPosition="%d" />\n'
-                      % (nm, self.m.rect(x, y, w, h), self.m.font(size), color, align, valign, z))
+                      % (nm, self.m.rect(x, y, w, h), self.m.font(size, btn), SHADOW if btn else "",
+                         color, align, valign, z))
 
     def static(self, text, x, y, w, h, size, color, align="left", z=4):
         self.n += 1

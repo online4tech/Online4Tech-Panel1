@@ -319,7 +319,7 @@ class O4TStore(Screen):
                 self[nm].setText("")
             return
         self["dn"].setText(clip(it["name"], 26))
-        self["dd"].setText(clip(it.get("desc", ""), 90))
+        self["dd"].setText(clip(it.get("desc", ""), 90 if self.rowsmode else 150))
         self["dpt"].setText(T("s_path"))
         path = it.get("path") or "-"
         self["dp"].setText(path if len(path) <= 44 else "..." + path[-41:])
