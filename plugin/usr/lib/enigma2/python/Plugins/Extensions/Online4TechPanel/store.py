@@ -48,8 +48,15 @@ def icon_key(kind, category):
 
 
 def clip(text, n):
-    text = " ".join((text or "").split())
-    return text if len(text) <= n else text[:n - 1].rstrip() + "..."
+    """Shorten text to n characters (counted as characters, also for UTF-8 Arabic on Python 2)."""
+    text = text or ""
+    py2_bytes = isinstance(text, bytes) and str is bytes
+    if py2_bytes:
+        text = text.decode("utf-8", "replace")
+    text = u" ".join(text.split())
+    if len(text) > n:
+        text = text[:n - 1].rstrip() + u"..."
+    return text.encode("utf-8") if py2_bytes else text
 
 
 def guard_all(cls):
