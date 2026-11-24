@@ -24,7 +24,7 @@ from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, prett
                     save_favs)
 
 FEED, FAV, LATEST = "__feed__", "__fav__", "__new__"
-MAX_LATEST = 40
+MAX_LATEST = 10
 
 # Sidebar groups live in groups.py (items are sorted by what they do)
 
