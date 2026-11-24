@@ -95,6 +95,11 @@ def uses_rows():
     return STYLES[design()]["rows"]
 
 
+def side_slots():
+    """Number of button backgrounds behind the store's category list."""
+    return 14 if uses_rows() else 15
+
+
 class Metrics(object):
     def __init__(self):
         try:
@@ -289,10 +294,15 @@ def _glass_store(name):
     pix("panel_s", 24, 190, 300, 770)
     pix("panel_c", 340, 190, 1096, 770)
     pix("panel_d", 1448, 190, 448, 770)
+    # category list = solid glass buttons: one opaque button per entry behind the (text-only) list,
+    # the selected row is drawn with an opaque, accent-coloured glass button
+    for i in range(side_slots()):
+        x.append('<widget name="sbg%d" pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
+                 % (i, m.pix("sbtn"), m.rect(38, 206 + 48 * i, 272, 48)))
     x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
              'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
-             'backgroundColorSelected="#55%s" zPosition="2" />\n'
-             % (m.rect(38, 206, 272, 738), m.font(25), m.S(48), TEXT, accent()[1:]))
+             'selectionPixmap="%s" zPosition="2" />\n'
+             % (m.rect(38, 206, 272, 738), m.font(25), m.S(48), TEXT, m.pix("sbtn_sel_" + theme())))
     lab("title", 376, 202, 470, 52, 36, TEXT, "left")
     pix("search", 868, 202, 560, 54, 1)
     lab("search", 904, 204, 490, 50, 24, MUTED, "left")
@@ -519,10 +529,13 @@ def _rows_store(name):
     b.lab("contact", 900, 78, 960, 36, 22, st["muted"], "right")
     b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
     b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
+    for i in range(side_slots()):
+        b.wbox("sbg%d" % i, "srow", 54, 206 + 52 * i, 352, 52, 1, st.get("row"))
     b.x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
-               'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
-               'backgroundColorSelected="#55%s" zPosition="2" />\n'
-               % (b.m.rect(54, 206, 352, 738), b.m.font(25), b.m.S(52), st["text"], st["accent"][1:]))
+               'transparent="1" foregroundColor="%s" foregroundColorSelected="%s" '
+               'backgroundColorSelected="%s" zPosition="2" />\n'
+               % (b.m.rect(54, 206, 352, 738), b.m.font(25), b.m.S(52), st["text"], st["pilltext"],
+                  st["accent"]))
     b.lab("title", ROW_X, 192, 400, 58, 34, st["accent"])
     b.box("search", 840, 194, 560, 54, 1, st.get("row"))
     b.lab("search", 876, 196, 490, 50, 23, st["muted"])
