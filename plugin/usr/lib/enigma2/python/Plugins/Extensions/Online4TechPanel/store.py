@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function
 import os
 
-from enigma import ePoint
+from enigma import ePoint, eTimer
 from Components.ActionMap import NumberActionMap
 from Components.Console import Console
 from Components.Label import Label
@@ -19,7 +19,7 @@ from . import catalog
 from .i18n import T
 from .screens import (_start_clock, mark_opening, mark_shown, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
                       _guard, _run, _watch_close)
-from .skin import is_flat, metrics, skin_store, store_geometry, uses_rows
+from .skin import is_flat, metrics, side_slots, skin_store, store_geometry, uses_rows
 from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, pretty_name,
                     save_favs)
 
@@ -91,6 +91,10 @@ class O4TStore(Screen):
         self.o4_focus = "side"
         self.o4_loading = False
         self["cats"] = MenuList([])
+        self._vis = self._groups = self._latest = None     # caches (see reset_cache)
+        self._px = {}
+        for i in range(side_slots()):
+            self["sbg%d" % i] = (Label if self.flat else Pixmap)()
         self["title"] = Label("")
         self["search"] = Label(T("search_hint"))
         self["status"] = Label("")
@@ -128,6 +132,13 @@ class O4TStore(Screen):
             ["OkCancelActions", "ColorActions", "DirectionActions", "MenuActions",
              "NumberActions"], actions, -1)
         self["cats"].onSelectionChanged.append(self.side_changed)
+        # category switches are applied after a short pause, so holding UP/DOWN doesn't redraw every step
+        self.cat_timer = eTimer()
+        try:
+            self.cat_timer.callback.append(self.load_category)
+        except AttributeError:
+            self._cat_conn = self.cat_timer.timeout.connect(self.load_category)
+        self.onClose.append(self.stop_cat_timer)
         self.onLayoutFinish.append(self.layout_done)
 
     # ------------------------------------------------------------ setup
@@ -141,12 +152,38 @@ class O4TStore(Screen):
         self.installed = dict((p["pkg"], p["version"]) for p in parse_opkg_list(data))
         self.draw_page()
 
+    def stop_cat_timer(self):
+        self.cat_timer.stop()
+
+    def reset_cache(self):
+        self._vis = self._groups = self._latest = None
+
     def visible(self):
-        items = catalog.items(self.kind)
-        return items if self.show_all else [i for i in items if compatible(i)]
+        if self._vis is None:
+            items = catalog.items(self.kind)
+            self._vis = items if self.show_all else [i for i in items if compatible(i)]
+        return self._vis
+
+    def group_rows(self):
+        """{group: [items]} built once (the keyword rules are slow when run for every key press)."""
+        if self._groups is None:
+            groups = {}
+            for it in self.visible():
+                groups.setdefault(group_of(self.kind, it), []).append(it)
+            self._groups = groups
+        return self._groups
+
+    def show_side_buttons(self, n):
+        for i in range(side_slots()):
+            try:
+                (self["sbg%d" % i].show if i < n else self["sbg%d" % i].hide)()
+            except Exception:
+                pass
 
     def build_cats(self):
+        self.reset_cache()
         entries = self.cat_entries()
+        self.show_side_buttons(len(entries))
         self.cat_keys = [e[0] for e in entries]
         self["cats"].setList([e[1] for e in entries])
         start = 1 if len(entries) > 1 else 0
@@ -158,21 +195,20 @@ class O4TStore(Screen):
         self.load_category()
 
     def latest_rows(self):
-        rows = []
-        for it in catalog.latest(MAX_LATEST, None if self.show_all else compatible):
-            c = dict(it)
-            c["where"] = "%s > %s" % (T("nw_skin" if it["type"] == "skin" else "nw_plugin"), it["category"])
-            rows.append(c)
-        return rows
+        if self._latest is None:
+            rows = []
+            for it in catalog.latest(MAX_LATEST, None if self.show_all else compatible):
+                c = dict(it)
+                c["where"] = "%s > %s" % (T("nw_skin" if it["type"] == "skin" else "nw_plugin"), it["category"])
+                rows.append(c)
+            self._latest = rows
+        return self._latest
 
     def gname(self, g):
         return T("g_pcomm" if (g == "community" and self.kind == "plugin") else "g_" + g)
 
     def cat_entries(self):
-        counts = {}
-        for it in self.visible():
-            g = group_of(self.kind, it)
-            counts[g] = counts.get(g, 0) + 1
+        counts = dict((g, len(r)) for g, r in self.group_rows().items())
         order = group_order(self.kind)
         entries = [(FEED, T("cat_feed"))]
         if self.kind == "plugin":                      # "Latest additions": newest plugins, skins and tools
@@ -191,7 +227,7 @@ class O4TStore(Screen):
         if idx != self.cat_idx and self.cat_keys:
             self.cat_idx = idx
             self.o4_query = ""
-            self.load_category()
+            self.cat_timer.start(70, True)
 
     def current_cat(self):
         if self.o4_query:
@@ -216,7 +252,7 @@ class O4TStore(Screen):
             self.draw_page()
             return
         else:
-            self.rows = [i for i in self.visible() if group_of(self.kind, i) == cat]
+            self.rows = list(self.group_rows().get(cat, []))
         self.o4_loading = False
         self.draw_page()
 
@@ -246,11 +282,14 @@ class O4TStore(Screen):
         return self.rows[self.o4_page * self.per:(self.o4_page + 1) * self.per]
 
     def px(self, name, size=None):
-        try:
-            m = metrics()
-            return LoadPixmap(m.icon(name, size) if size else m.pix(name))
-        except Exception:
-            return None
+        key = (name, size)
+        if key not in self._px:         # icons are reused all the time: load each file once
+            try:
+                m = metrics()
+                self._px[key] = LoadPixmap(m.icon(name, size) if size else m.pix(name))
+            except Exception:
+                self._px[key] = None
+        return self._px[key]
 
     def draw_page(self):
         items = self.page_items()

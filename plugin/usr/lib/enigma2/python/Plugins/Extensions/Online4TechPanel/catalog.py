@@ -85,14 +85,34 @@ def _keep_py(raw, it):
         it["py"] = raw["py"]
 
 
+_ALL = {"key": None, "items": []}
+
+
+def _stamp(path):
+    try:
+        st = os.stat(path)
+        return (path, st.st_mtime, st.st_size)
+    except OSError:
+        return (path, 0, 0)
+
+
+def _all():
+    """Every valid catalog item. The JSON is read and cleaned once and re-read only when a file changes
+    (this used to happen on every category switch, which made the store feel slow)."""
+    key = (_stamp(TMP_CATALOG), _stamp(BUNDLED))
+    if _ALL["key"] != key:
+        data = _load(TMP_CATALOG) or _load(BUNDLED) or {"items": []}
+        out = []
+        for raw in data["items"]:
+            it = _clean(raw)
+            if it:
+                out.append(it)
+        _ALL["key"], _ALL["items"] = key, out
+    return _ALL["items"]
+
+
 def items(kind):
-    data = _load(TMP_CATALOG) or _load(BUNDLED) or {"items": []}
-    out = []
-    for raw in data["items"]:
-        it = _clean(raw)
-        if it and it["type"] == kind:
-            out.append(it)
-    return out
+    return [i for i in _all() if i["type"] == kind]
 
 
 ADDED_BASELINE = "2026-01-01"      # items that existed before 'added' dates were tracked
@@ -128,6 +148,7 @@ def refresh(console, callback):
     def done(data, retval, extra=None):
         if getattr(console, "_o4t_dead", False):
             return
+        _ALL["key"] = None
         ok = (retval == 0) and _load(TMP_CATALOG) is not None
         if not ok:
             for p in (TMP_CATALOG, TMP_CATALOG + ".part"):

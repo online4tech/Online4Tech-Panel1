@@ -474,12 +474,64 @@ def build_design(name, k_name, k):
         save(cat_icon(key, s(128), acc), "ci_%s" % key)
 
 
+def side_button(w, h, top, bottom, rim, gloss, margin=2):
+    """Opaque glass button for the store's category list: solid gradient, bright rim, soft gloss.
+    The image is the whole list cell (w x h); `margin` px of transparent gap keep buttons apart."""
+    W, H, M = w * SS, h * SS, margin * SS
+    iw, ih = W - 2 * M, H - 2 * M
+    R = ih // 3
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    body = vgrad(iw, ih, top + (255,), bottom + (255,))
+    shine = Image.new("RGBA", (iw, ih), (0, 0, 0, 0))
+    ImageDraw.Draw(shine).rounded_rectangle((SS * 4, SS * 3, iw - SS * 4, int(ih * 0.48)), R,
+                                            fill=(255, 255, 255, gloss))
+    body = Image.alpha_composite(body, shine)
+    img.paste(body, (M, M), rrect_mask(iw, ih, R))
+    ImageDraw.Draw(img).rounded_rectangle((M, M, W - M - 1, H - M - 1), R,
+                                          outline=rim + (255,), width=SS * 2)
+    return img.resize((w, h), Image.LANCZOS)
+
+
+def build_sidebar():
+    """Category-list buttons (glass design: fhd/hd; row designs: console/flame)."""
+    for name, k in (("fhd", 1.0), ("hd", 2.0 / 3.0)):
+        out = os.path.join(OUT, name)
+
+        def s(v):
+            return int(round(v * k))
+        side_button(s(272), s(48), (54, 88, 142), (22, 40, 80), (150, 188, 238), 46).save(
+            os.path.join(out, "sbtn.png"), optimize=True)
+        for tname, tcol in THEMES.items():
+            side_button(s(272), s(48), tuple(int(c * 0.80) for c in tcol),
+                        tuple(int(c * 0.36) for c in tcol), (255, 255, 255), 70).save(
+                os.path.join(out, "sbtn_sel_%s.png" % tname), optimize=True)
+        for dn, fill, border in (("console", (19, 27, 43), (60, 78, 112)),
+                                 ("flame", (34, 26, 22), (110, 76, 52))):
+            dout = os.path.join(OUT, dn, name)
+            Image.alpha_composite(
+                Image.new("RGBA", (s(352), s(52)), (0, 0, 0, 0)),
+                _pad(flat_panel(s(352) - 2 * s(2), s(52) - 2 * s(2), s(12), fill + (255,),
+                                border + (255,), 1), s(352), s(52), s(2))).save(
+                os.path.join(dout, "srow.png"), optimize=True)
+
+
+def _pad(img, w, h, m):
+    cell = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    cell.paste(img, (m, m))
+    return cell
+
+
 def main():
+    if "--sidebar" in sys.argv:        # only the category-list buttons
+        build_sidebar()
+        print("sidebar buttons written")
+        return 0
     build("fhd", 1.0)
     build("hd", 2.0 / 3.0)
     for dn in DESIGN_SPECS:
         build_design(dn, "fhd", 1.0)
         build_design(dn, "hd", 2.0 / 3.0)
+    build_sidebar()
     plugin_icon(120, 60).save(os.path.join(OUT, "..", "plugin.png"), optimize=True)
     print("assets written to", OUT)
 
