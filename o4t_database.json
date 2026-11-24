@@ -2769,14 +2769,16 @@
       "enabled": true
     },
     {
-      "name": "FootBall Events (مواعيد وأحداث المباريات)",
+      "name": "FootBall Events (مواعيد وأحداث المباريات - Python 3 فقط - يعيد تشغيل الواجهة)",
       "cmd": "wget -qO- \"https://events.r108.me/api/install.php?t=c08895b8b91eb646a7d5070640dadfb8\" | sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FootballEvents",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FootballEvents'",
       "source_url": "https://events.r108.me/api/install.php?t=c08895b8b91eb646a7d5070640dadfb8",
       "source_host": "events.r108.me",
       "source_type": "third_party",
       "mirror_status": "external_source_retained",
       "source_attribution": "Original URL preserved from events.r108.me; author and redistribution license have not been independently verified.",
-      "audit_status": "not_reviewed",
+      "audit_status": "static_reviewed",
       "enabled": true
     }
   ],
