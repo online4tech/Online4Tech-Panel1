@@ -41,7 +41,7 @@ def _clean(raw):
     try:
         it = {"type": txt(raw.get("type")), "category": txt(raw.get("category", "")),
               "name": txt(raw.get("name", "")).strip(), "method": txt(raw.get("method")),
-              "desc": txt(raw.get("desc", "")), "version": txt(raw.get("version", "")),
+              "desc": txt(raw.get("desc", "")), "version": txt(raw.get("version", "")), "added": txt(raw.get("added", "")),
               "cmd": txt(raw.get("cmd", "")), "url": txt(raw.get("url", "")),
               "pkg": txt(raw.get("pkg", "")), "path": txt(raw.get("path", "")),
               "remove": txt(raw.get("remove", "")),
@@ -93,6 +93,21 @@ def items(kind):
         if it and it["type"] == kind:
             out.append(it)
     return out
+
+
+ADDED_BASELINE = "2026-01-01"      # items that existed before 'added' dates were tracked
+
+
+def latest(limit=40, keep=None):
+    """Newest catalog additions (plugins, skins, tools...), newest first."""
+    pool = []
+    for kind in ("plugin", "skin"):
+        pool += items(kind)
+    if keep:
+        pool = [i for i in pool if keep(i)]
+    pool = [i for i in pool if i.get("added", "") > ADDED_BASELINE]
+    pool.sort(key=lambda i: i["added"], reverse=True)       # stable: ties keep catalog order
+    return pool[:limit]
 
 
 def categories(kind, all_items=None):

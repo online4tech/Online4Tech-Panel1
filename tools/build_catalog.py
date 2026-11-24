@@ -170,7 +170,7 @@ def main():
         it = {"type": typ, "category": cat, "name": name, "method": "cmd", "cmd": cmd,
               "source": "custom"}
         for k_src, k_dst in (("desc", "desc"), ("path", "path"), ("remove", "remove"),
-                             ("py", "py"), ("images", "images")):
+                             ("py", "py"), ("images", "images"), ("added", "added")):
             if raw.get(k_src):
                 it[k_dst] = raw[k_src]
         before = len(items)
@@ -260,9 +260,23 @@ def main():
     # skin groups that already exist in the DB make community display skins redundant: keep unique only
     cats = collections.Counter((i["type"], i["category"]) for i in items)
     updated = datetime.date.today().isoformat()
-    try:  # keep the old date when nothing changed (avoids a commit per day)
+    # 'added' = day an item first appeared (kept from the previous catalog). The first build that
+    # introduces the field marks everything already there with a baseline date, so only items added
+    # from now on show up in the panel's "Latest additions".
+    old, old_added = {}, {}
+    try:
         with open(a.out, encoding="utf-8") as fh:
             old = json.load(fh)
+        for i in old.get("items", []):
+            if i.get("added"):
+                old_added[(i["type"], i["category"], i["name"])] = i["added"]
+    except Exception:
+        pass
+    default_added = updated if old_added else "2026-01-01"
+    for it in items:
+        if not it.get("added"):
+            it["added"] = old_added.get((it["type"], it["category"], it["name"]), default_added)
+    try:  # keep the old date when nothing changed (avoids a commit per day)
         if old.get("items") == items:
             updated = old.get("updated", updated)
     except Exception:
