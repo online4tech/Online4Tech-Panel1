@@ -492,28 +492,34 @@ def side_button(w, h, top, bottom, rim, gloss, margin=2):
     return img.resize((w, h), Image.LANCZOS)
 
 
+SIDE_TIERS = (36, 40, 44, 48, 56, 64, 80, 96, 112)     # keep in sync with skin.SIDE_TIERS
+
+
 def build_sidebar():
-    """Category-list buttons (glass design: fhd/hd; row designs: console/flame)."""
+    """Category-list buttons in every height tier (the store picks the tier that makes the list fill
+    its panel). Glass design: fhd/hd; row designs: console/flame."""
     for name, k in (("fhd", 1.0), ("hd", 2.0 / 3.0)):
         out = os.path.join(OUT, name)
 
         def s(v):
             return int(round(v * k))
-        # dark enough that white text stays crisp; the selected button takes the theme colour
-        side_button(s(272), s(40), (40, 68, 120), (14, 28, 60), (130, 170, 225), 24).save(
-            os.path.join(out, "sbtn.png"), optimize=True)
-        for tname, tcol in THEMES.items():
-            side_button(s(272), s(40), tuple(int(c * 0.62) for c in tcol),
-                        tuple(int(c * 0.28) for c in tcol), (255, 255, 255), 44).save(
-                os.path.join(out, "sbtn_sel_%s.png" % tname), optimize=True)
+        for h in SIDE_TIERS:
+            # dark enough that white text stays crisp; the selected button takes the theme colour
+            side_button(s(272), s(h), (40, 68, 120), (14, 28, 60), (130, 170, 225), 24).save(
+                os.path.join(out, "sbtn_%d.png" % h), optimize=True)
+            for tname, tcol in THEMES.items():
+                side_button(s(272), s(h), tuple(int(c * 0.62) for c in tcol),
+                            tuple(int(c * 0.28) for c in tcol), (255, 255, 255), 44).save(
+                    os.path.join(out, "sbtn_sel_%s_%d.png" % (tname, h)), optimize=True)
         for dn, fill, border in (("console", (19, 27, 43), (60, 78, 112)),
                                  ("flame", (34, 26, 22), (110, 76, 52))):
             dout = os.path.join(OUT, dn, name)
-            Image.alpha_composite(
-                Image.new("RGBA", (s(352), s(44)), (0, 0, 0, 0)),
-                _pad(flat_panel(s(352) - 2 * s(2), s(44) - 2 * s(2), s(11), fill + (255,),
-                                border + (255,), 1), s(352), s(44), s(2))).save(
-                os.path.join(dout, "srow.png"), optimize=True)
+            acc = DESIGN_SPECS[dn]["accent"]
+            for h in SIDE_TIERS:
+                for fname, fc, bc in (("srow_%d" % h, fill, border), ("srow_sel_%d" % h, acc, (255, 255, 255))):
+                    _pad(flat_panel(s(352) - 2 * s(2), s(h) - 2 * s(2), max(4, s(h) // 4),
+                                    fc + (255,), bc + (255,), 1), s(352), s(h), s(2)).save(
+                        os.path.join(dout, fname + ".png"), optimize=True)
 
 
 def _pad(img, w, h, m):

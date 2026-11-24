@@ -95,12 +95,27 @@ def uses_rows():
     return STYLES[design()]["rows"]
 
 
-SIDE_H, SIDE_H_ROWS = 40, 44          # height of one category button (px at 1080p)
+SIDE_TIERS = (36, 40, 44, 48, 56, 64, 80, 96, 112)     # pre-rendered button heights (px at 1080p)
+SIDE_AREA_H = 738                                        # height of the category list area
 
 
 def side_slots():
-    """Number of button backgrounds behind the store's category list."""
-    return 16 if uses_rows() else 18
+    """Most buttons the category list can show (widgets are created for this many)."""
+    return 20
+
+
+def side_geometry():
+    """(x, y, width) of the category list area."""
+    return (54, 206, 352) if uses_rows() else (38, 206, 272)
+
+
+def side_layout(n):
+    """(row pitch, button height, font size): n entries exactly fill the category list, so there is
+    no scrolling and no empty strip whatever the number of sections."""
+    n = max(1, n)
+    pitch = max(36, min(150, SIDE_AREA_H // n))
+    h = max([t for t in SIDE_TIERS if t + 3 <= pitch] or [SIDE_TIERS[0]])
+    return pitch, h, (22 if h <= 48 else (24 if h <= 64 else 26))
 
 
 class Metrics(object):
@@ -299,14 +314,16 @@ def _glass_store(name):
     pix("panel_d", 1448, 190, 448, 770)
     # category list = solid glass buttons: one opaque button per entry behind the (text-only) list,
     # the selected row is drawn with an opaque, accent-coloured glass button
+    # (button positions, sizes, font and row height are set by the store screen from the entry count)
     for i in range(side_slots()):
         x.append('<widget name="sbg%d" pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
-                 % (i, m.pix("sbtn"), m.rect(38, 206 + SIDE_H * i, 272, SIDE_H)))
-    x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
+                 % (i, m.pix("sbtn_40"), m.rect(38, 206 + 40 * i, 272, 40)))
+    x.append('<widget name="ssel" pixmap="%s" %s alphatest="blend" zPosition="2" />\n'
+             % (m.pix("sbtn_sel_%s_40" % theme()), m.rect(38, 206, 272, 40)))
+    x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showNever" '
              'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
-             'selectionPixmap="%s" zPosition="2" />\n'
-             % (m.rect(38, 206, 272, 738), m.font(22, True), m.S(SIDE_H), TEXT,
-                m.pix("sbtn_sel_" + theme())))
+             'backgroundColorSelected="#00000000" zPosition="3" />\n'
+             % (m.rect(38, 206, 272, 738), m.font(22, True), m.S(40), TEXT))
     lab("title", 376, 202, 470, 52, 36, TEXT, "left")
     pix("search", 868, 202, 560, 54, 1)
     lab("search", 904, 204, 490, 50, 24, MUTED, "left")
@@ -534,12 +551,13 @@ def _rows_store(name):
     b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
     b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
     for i in range(side_slots()):
-        b.wbox("sbg%d" % i, "srow", 54, 206 + SIDE_H_ROWS * i, 352, SIDE_H_ROWS, 1, st.get("row"))
-    b.x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
+        b.wbox("sbg%d" % i, "srow_40", 54, 206 + 40 * i, 352, 40, 1, st.get("row"))
+    b.wbox("ssel", "srow_sel_40", 54, 206, 352, 40, 2, st["accent"])
+    b.x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showNever" '
                'transparent="1" foregroundColor="%s" foregroundColorSelected="%s" '
-               'backgroundColorSelected="%s" zPosition="2" />\n'
-               % (b.m.rect(54, 206, 352, 738), b.m.font(22, True), b.m.S(SIDE_H_ROWS), st["text"],
-                  st["pilltext"], st["accent"]))
+               'backgroundColorSelected="#00000000" zPosition="3" />\n'
+               % (b.m.rect(54, 206, 352, 738), b.m.font(22, True), b.m.S(40), st["text"],
+                  st["pilltext"]))
     b.lab("title", ROW_X, 192, 400, 58, 34, st["accent"])
     b.box("search", 840, 194, 560, 54, 1, st.get("row"))
     b.lab("search", 876, 196, 490, 50, 23, st["muted"])
