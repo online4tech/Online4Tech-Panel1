@@ -25,7 +25,7 @@ from .skin import (MAIN_COLS, DESIGNS, FONT_SCALES, MAIN_POS, design, font_scale
                    metrics, skin_list, skin_main, skin_text, theme, uses_rows)
 from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_setting,
                     detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
-                    pretty_name, read_file, save_favs, shquote, txt, valid_pkg, valid_url,
+                    pretty_name, read_file, save_favs, set_setting, shquote, txt, valid_pkg, valid_url,
                     version_tuple)
 from .version import (INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
                       VERSION_URL)
@@ -173,6 +173,51 @@ def _ask_restart(screen):
     screen.session.openWithCallback(answer, MessageBox, T("restart_q"), MessageBox.TYPE_YESNO)
 
 
+def _show_news(screen):
+    """Pop-up with the catalog items added since the panel last looked (and where to find them)."""
+    try:
+        from . import whatsnew
+        text = whatsnew.check()          # always updates the 'seen' list
+        if text and get_setting("news_popup", "on") == "on":
+            screen.session.open(MessageBox, text, MessageBox.TYPE_INFO, timeout=30)
+    except Exception as exc:
+        log("whatsnew failed: %s" % exc)
+
+
+def _check_new_version(screen):
+    """Once per new version: ask the user whether to update the panel."""
+    if get_setting("news_popup", "on") != "on":
+        return
+
+    def got(data, retval):
+        try:
+            if retval != 0:
+                return
+            lines = [l.strip() for l in read_file(TMP_VERSION).strip().splitlines() if l.strip()]
+            latest = lines[0] if lines else ""
+            if not latest or version_tuple(latest) <= version_tuple(VERSION):
+                return
+            if get_setting("notified_ver", "") == latest:
+                return
+            set_setting("notified_ver", latest)
+            text = T("upd_popup") % (latest, VERSION)
+            if lines[1:]:
+                text += "\n\n" + "\n".join(lines[1:6])
+
+            def answer(yes):
+                if yes:
+                    cmd = ("wget -q --no-check-certificate -O - %s | O4T_NO_RESTART=1 /bin/sh"
+                           % shquote(INSTALL_URL))
+                    screen.session.openWithCallback(lambda *a: _ask_restart(screen), ConsoleScreen,
+                                                    title="Online4Tech Panel", cmdlist=[cmd])
+            screen.session.openWithCallback(answer, MessageBox, text, MessageBox.TYPE_YESNO)
+        except Exception as exc:
+            log("version popup failed: %s" % exc)
+
+    _run(screen.console, "wget -q -T 10 -t 1 --no-check-certificate -O %s %s"
+         % (TMP_VERSION, shquote(VERSION_URL)), got)
+
+
 def _confirm(screen, text, fn):
     def answer(yes):
         if yes:
@@ -268,7 +313,8 @@ class O4TMain(Screen):
             except Exception:
                 pass
         self.update_sel()
-        catalog.refresh(self.console, lambda ok: None)  # silent background sync
+        catalog.refresh(self.console, lambda ok: _show_news(self) if ok else None)  # background sync
+        _check_new_version(self)
 
     def update_sel(self):
         m = metrics()
@@ -298,6 +344,8 @@ class O4TMain(Screen):
         def done(ok):
             self.session.open(MessageBox, T("synced") if ok else T("sync_failed"),
                               MessageBox.TYPE_INFO if ok else MessageBox.TYPE_WARNING, timeout=4)
+            if ok:
+                _show_news(self)
         catalog.refresh(self.console, done)
 
     def open_current(self):
@@ -912,7 +960,8 @@ class O4TSettings(O4TListBase):
     def __init__(self, session):
         O4TListBase.__init__(self, session)
         self.o4_pending = {"design": design(), "theme": theme(),
-                           "lang": get_setting("lang", "auto"), "font_scale": font_scale()}
+                           "lang": get_setting("lang", "auto"), "font_scale": font_scale(),
+                           "news_popup": get_setting("news_popup", "on")}
         self["key_red"].setText(T("k_cancel"))
         self["key_green"].setText(T("k_apply"))
         self["key_yellow"].setText("")
@@ -921,7 +970,7 @@ class O4TSettings(O4TListBase):
                                   {"left": lambda: self.step(-1), "right": lambda: self.step(1)}, -3)   # lower = earlier: beats the list's own -1 map
 
     OPTIONS = (("design", list(DESIGNS)), ("theme", list(THEMES)), ("lang", list(LANGS)),
-               ("font_scale", list(FONT_SCALES)))
+               ("font_scale", list(FONT_SCALES)), ("news_popup", ["on", "off"]))
 
     def reload(self):
         p = self.o4_pending
@@ -934,6 +983,8 @@ class O4TSettings(O4TListBase):
              "desc": T("d_lang")},
             {"id": "font_scale", "name": "%s:   < %s >" % (T("t_font"), T("fs_%d" % p["font_scale"])),
              "desc": T("d_font")},
+            {"id": "news_popup", "name": "%s:   < %s >" % (T("t_news"), T("v_" + p["news_popup"])),
+             "desc": T("d_news")},
         ], keep=True)
 
     def detail_for(self, item):

@@ -132,7 +132,8 @@ def main():
         if key in seen:
             stats["duplicate"] += 1
             return
-        if not a.include_softcam and SOFTCAM_RE.search(it["name"] + " " + it.get("cmd", "")):
+        if not a.include_softcam and it["source"] != "custom" and \
+                SOFTCAM_RE.search(it["name"] + " " + it.get("cmd", "")):
             stats["excluded_softcam"] += 1
             dropped["softcam"].append(it["name"])
             return
@@ -150,7 +151,35 @@ def main():
         items.append(it)
         stats["added_" + it["source"]] += 1
 
-    # 1) Online4Tech database (highest priority: has path + remove command)
+    # 0) custom.json: items added by hand (highest priority, keyword filter not applied)
+    try:
+        with open(os.path.join(ROOT, "custom.json"), encoding="utf-8") as fh:
+            custom = json.load(fh)
+    except FileNotFoundError:
+        custom = {}
+    except ValueError as exc:
+        print("::error file=custom.json::invalid JSON - %s" % exc)
+        custom = {}
+    for raw in custom.get("items", []):
+        name, cmd = str(raw.get("name", "")).strip(), str(raw.get("cmd", "")).strip()
+        if not name or not cmd:
+            print("::warning file=custom.json::item skipped, 'name' and 'cmd' are required: %r" % raw)
+            continue
+        typ = raw.get("type", "plugin")
+        cat = raw.get("category") or ("Community Skins" if typ == "skin" else "Plugins")
+        it = {"type": typ, "category": cat, "name": name, "method": "cmd", "cmd": cmd,
+              "source": "custom"}
+        for k_src, k_dst in (("desc", "desc"), ("path", "path"), ("remove", "remove"),
+                             ("py", "py"), ("images", "images")):
+            if raw.get(k_src):
+                it[k_dst] = raw[k_src]
+        before = len(items)
+        add(it, (typ, cat, norm(name)) if typ in ("skin", "channels") else (typ, norm(name)))
+        if len(items) == before:
+            print("::warning file=custom.json::'%s' was NOT added (host not in TRUSTED_HOSTS, "
+                  "duplicate name, or invalid type)" % name)
+
+    # 1) Online4Tech database (has path + remove command)
     db = src["o4t_database.json"]
     for section, (typ, cat) in DB_MAP.items():
         for raw in db.get(section, []):
