@@ -131,8 +131,8 @@ OTHER = {"dm900": "Dreambox DM900", "dm920": "Dreambox DM920", "dreamone": "Drea
          "gbue4k": "GigaBlue UE 4K", "osmio4k": "Edision OSmio4K", "osmio4kplus": "Edision OSmio4K Plus"}
 
 
-def device_name():
-    """Human readable receiver name, e.g. 'Vu+ Duo 4K' (best effort)."""
+def _device_name_from_proc():
+    """Receiver name guessed from /proc and the hostname, e.g. 'Vu+ Duo 4K' (best effort)."""
     def first(*paths):
         for path in paths:
             val = read_file(path).strip()
@@ -151,6 +151,188 @@ def device_name():
         if key in OTHER:
             return OTHER[key]
     return (first("/proc/stb/info/model") or raw or host or "-").upper() if (raw or host) else "-"
+
+
+BRANDS = ("Vu+", "Dreambox", "Zgemma", "AX", "GigaBlue", "Edision", "Octagon", "Mutant", "Formuler",
+          "Xtrend", "Technomate", "Amiko", "Medialink", "Openbox", "Golden Interstar", "WeTek")
+
+
+def receiver_model():
+    """(brand, full name, model code) e.g. ('Vu+', 'Vu+ Duo 4K', 'vuduo4k').
+
+    The image's own branding data is used first (it knows the marketing name), then Enigma2's
+    HardwareInfo, then the /proc based guess."""
+    brand = name = code = ""
+    try:
+        from boxbranding import getMachineBrand, getMachineName
+        brand, name = getMachineBrand(), getMachineName()
+    except Exception:
+        pass
+    try:
+        from boxbranding import getMachineBuild
+        code = getMachineBuild()
+    except Exception:
+        pass
+    if not name:
+        try:
+            from Components.SystemInfo import BoxInfo
+            brand = BoxInfo.getItem("displaybrand") or BoxInfo.getItem("brand") or ""
+            name = BoxInfo.getItem("displaymodel") or BoxInfo.getItem("model") or ""
+            code = code or BoxInfo.getItem("machinebuild") or ""
+        except Exception:
+            pass
+    if not code:
+        for path in ("/proc/stb/info/boxtype", "/proc/stb/info/model", "/proc/stb/info/vumodel"):
+            code = read_file(path).strip()
+            if code:
+                break
+    brand, name = (brand or "").strip(), (name or "").strip()
+    if name:
+        full = name if (not brand or name.lower().startswith(brand.lower())) else "%s %s" % (brand, name)
+    else:
+        full = _device_name_from_proc()
+        if not brand:
+            for b in BRANDS:
+                if full.lower().startswith(b.lower() + " "):
+                    brand = b
+                    break
+    return brand or "-", full or "-", code or "-"
+
+
+def device_name():
+    """Human readable receiver name, e.g. 'Vu+ Duo 4K'."""
+    return receiver_model()[1]
+
+
+def chipset_name():
+    for path in ("/proc/stb/info/chipset", "/proc/stb/info/soc", "/proc/stb/info/socfamily"):
+        v = read_file(path).strip()
+        if v:
+            return v.upper()
+    return "-"
+
+
+def cpu_summary():
+    """e.g. 'ARMv7 Processor rev 1 (v7l)  x 4 cores  1.5 GHz'."""
+    names, cores = "", 0
+    for line in read_file("/proc/cpuinfo").splitlines():
+        k, _sep, v = line.partition(":")
+        k, v = k.strip().lower(), v.strip()
+        if k == "processor":
+            cores += 1
+        elif k in ("model name", "cpu model", "hardware", "system type") and not names:
+            names = v
+    out = names or "-"
+    if cores > 1:
+        out += "  x %d" % cores
+    try:
+        mhz = float(read_file("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq").strip()) / 1000.0
+        out += "  %.1f GHz" % (mhz / 1000.0)
+    except Exception:
+        pass
+    return out
+
+
+def tuner_summary():
+    """e.g. '2 x DVB-S2, 1 x DVB-T2' from /proc/bus/nim_sockets."""
+    counts, order = {}, []
+    for line in read_file("/proc/bus/nim_sockets").splitlines():
+        line = line.strip()
+        if line.startswith("Type:"):
+            t = line.split(":", 1)[1].strip()
+            if t not in counts:
+                order.append(t)
+            counts[t] = counts.get(t, 0) + 1
+    return ", ".join("%d x %s" % (counts[t], t) for t in order) if order else "-"
+
+
+def fmt_size(mb):
+    return "%.1f GB" % (mb / 1024.0) if mb >= 1024 else "%d MB" % mb
+
+
+def usage(used_mb, total_mb):
+    """('412 MB / 1.8 GB  (23%)', 23)"""
+    pct = int(round(100.0 * used_mb / total_mb)) if total_mb else 0
+    return "%s / %s  (%d%%)" % (fmt_size(used_mb), fmt_size(total_mb), pct), pct
+
+
+def ram_usage():
+    mem = {}
+    for line in read_file("/proc/meminfo").splitlines():
+        p = line.replace(":", " ").split()
+        if len(p) >= 2 and p[1].isdigit():
+            mem[p[0]] = int(p[1])
+    total = mem.get("MemTotal", 0) // 1024
+    free = mem.get("MemAvailable", mem.get("MemFree", 0)) // 1024
+    return max(0, total - free), total
+
+
+def disk_usage(path):
+    try:
+        st = os.statvfs(path)
+        total = st.f_blocks * st.f_frsize // 1048576
+        free = st.f_bavail * st.f_frsize // 1048576
+        return max(0, total - free), total
+    except Exception:
+        return 0, 0
+
+
+def storage_device():
+    """(label, mount point) of the main external drive, or ('', '')."""
+    for label, mp in (("HDD", "/media/hdd"), ("USB", "/media/usb"), ("USB", "/media/usb1"),
+                      ("MMC", "/media/mmc")):
+        if os.path.ismount(mp):
+            return label, mp
+    for line in read_file("/proc/mounts").splitlines():
+        p = line.split()
+        if len(p) > 1 and p[0].startswith("/dev/") and p[1].startswith("/media/"):
+            return os.path.basename(p[1]).upper(), p[1]
+    return "", ""
+
+
+def format_uptime(seconds):
+    d, rest = divmod(int(seconds), 86400)
+    h, rest = divmod(rest, 3600)
+    m = rest // 60
+    return ("%dd " % d if d else "") + "%dh %02dm" % (h, m)
+
+
+def receiver_temp():
+    for path, div in (("/proc/stb/fp/temp_sensor_avs", 1.0), ("/proc/stb/fp/temp_sensor", 1.0),
+                      ("/sys/class/thermal/thermal_zone0/temp", 1000.0),
+                      ("/proc/stb/sensors/temp0/value", 1.0)):
+        try:
+            t = float(read_file(path).strip()) / div
+            if 0 < t < 150:
+                return int(round(t))
+        except Exception:
+            continue
+    return None
+
+
+def mac_address():
+    base = "/sys/class/net"
+    try:
+        names = sorted(n for n in os.listdir(base) if n != "lo")
+    except Exception:
+        return "-"
+    for pick_up in (True, False):
+        for n in names:
+            if pick_up and read_file("%s/%s/operstate" % (base, n)).strip() != "up":
+                continue
+            mac = read_file("%s/%s/address" % (base, n)).strip()
+            if mac and mac != "00:00:00:00:00:00":
+                return mac.upper()
+    return "-"
+
+
+def image_build_date():
+    for line in read_file("/etc/image-version").splitlines():
+        k, _sep, v = line.partition("=")
+        if k.strip().lower() in ("date", "builddate", "build_date") and v.strip():
+            d = v.strip()
+            return "%s-%s-%s" % (d[:4], d[4:6], d[6:8]) if d.isdigit() and len(d) >= 8 else d
+    return "-"
 
 
 def image_info():

@@ -499,19 +499,20 @@ def build_sidebar():
 
         def s(v):
             return int(round(v * k))
-        side_button(s(272), s(48), (54, 88, 142), (22, 40, 80), (150, 188, 238), 46).save(
+        # dark enough that white text stays crisp; the selected button takes the theme colour
+        side_button(s(272), s(40), (40, 68, 120), (14, 28, 60), (130, 170, 225), 24).save(
             os.path.join(out, "sbtn.png"), optimize=True)
         for tname, tcol in THEMES.items():
-            side_button(s(272), s(48), tuple(int(c * 0.80) for c in tcol),
-                        tuple(int(c * 0.36) for c in tcol), (255, 255, 255), 70).save(
+            side_button(s(272), s(40), tuple(int(c * 0.62) for c in tcol),
+                        tuple(int(c * 0.28) for c in tcol), (255, 255, 255), 44).save(
                 os.path.join(out, "sbtn_sel_%s.png" % tname), optimize=True)
         for dn, fill, border in (("console", (19, 27, 43), (60, 78, 112)),
                                  ("flame", (34, 26, 22), (110, 76, 52))):
             dout = os.path.join(OUT, dn, name)
             Image.alpha_composite(
-                Image.new("RGBA", (s(352), s(52)), (0, 0, 0, 0)),
-                _pad(flat_panel(s(352) - 2 * s(2), s(52) - 2 * s(2), s(12), fill + (255,),
-                                border + (255,), 1), s(352), s(52), s(2))).save(
+                Image.new("RGBA", (s(352), s(44)), (0, 0, 0, 0)),
+                _pad(flat_panel(s(352) - 2 * s(2), s(44) - 2 * s(2), s(11), fill + (255,),
+                                border + (255,), 1), s(352), s(44), s(2))).save(
                 os.path.join(dout, "srow.png"), optimize=True)
 
 

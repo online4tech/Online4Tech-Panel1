@@ -11,6 +11,7 @@ from Components.Console import Console
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.Pixmap import Pixmap
+from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
 from Screens.Console import Console as ConsoleScreen
 from Screens.MessageBox import MessageBox
@@ -1061,37 +1062,110 @@ class O4TTextBase(Screen):
 
 @guarded
 class O4TInfo(O4TTextBase):
+    """Receiver information: model, hardware, image, memory/storage bars, status and network."""
     MENU_TITLE = "m_info"
+    BARS = 3
+
+    def __init__(self, session):
+        O4TTextBase.__init__(self, session)
+        for nm in ("hero", "herosub", "lh0", "lh1", "rh0", "rh1", "rh2"):
+            self[nm] = Label("")
+        for i in range(12):
+            self["lk%d" % i] = Label("")
+            self["lv%d" % i] = Label("")
+        for i in range(9):
+            self["rk%d" % i] = Label("")
+            self["rv%d" % i] = Label("")
+        for i in range(self.BARS):
+            self["rb%d" % i] = ProgressBar()
+        self.o4_timer = eTimer()
+        try:
+            self.o4_timer.callback.append(self.tick)
+        except AttributeError:
+            self._o4_conn = self.o4_timer.timeout.connect(self.tick)
+        self.onClose.append(self.stop_timer)
+
+    def stop_timer(self):
+        self.o4_timer.stop()
 
     def start(self):
-        self["detail"].setText(T("loading"))
-        cmd = ("echo '## IP'; ip -o -4 addr show 2>/dev/null | awk '{print $2\": \"$4}'; "
-               "echo; echo '## Storage'; df -h / /tmp /media/hdd /media/usb 2>/dev/null")
-        _run(self.console, cmd, self.show_info)
-
-    def show_info(self, data, retval):
-        mem = {}
-        for line in read_file("/proc/meminfo").splitlines():
-            p = line.replace(":", " ").split()
-            if len(p) >= 2:
-                mem[p[0]] = p[1]
+        from . import utils as u
+        brand, full, code = u.receiver_model()
+        img, ver = u.image_info()
         try:
-            ram = "%d MB total / %d MB free" % (int(mem["MemTotal"]) // 1024,
-                                                int(mem.get("MemAvailable", mem["MemFree"])) // 1024)
+            from enigma import getEnigmaVersionString
+            e2 = getEnigmaVersionString()
         except Exception:
-            ram = "-"
-        model = read_file("/proc/stb/info/model").strip() or \
-            read_file("/proc/stb/info/boxtype").strip() or "-"
-        image = [l for l in read_file("/etc/image-version").splitlines() if l.strip()][:8]
+            e2 = "-"
         try:
             import platform
             kernel = platform.release()
         except Exception:
             kernel = "-"
-        lines = ["## Receiver", "Model: " + model, "RAM: " + ram, "Kernel: " + kernel,
-                 "Python: " + sys.version.split()[0], "Panel: v" + VERSION, "",
-                 "## Image"] + image + ["", data.strip()]
-        self["detail"].setText("\n".join(lines))
+        chipset = u.chipset_name()
+        self["hero"].setText(full)
+        self["herosub"].setText("  |  ".join(x for x in ("%s %s" % (img, ver) if img != "-" else "",
+                                                      chipset if chipset != "-" else "") if x))
+        self["lh0"].setText(T("i_receiver"))
+        self["lh1"].setText(T("i_software"))
+        left = [("i_brand", brand), ("i_model", full), ("i_code", code), ("i_chipset", chipset),
+                ("i_cpu", u.cpu_summary()), ("i_tuners", u.tuner_summary()),
+                ("i_image", "%s  %s" % (img, ver)), ("i_build", u.image_build_date()),
+                ("i_e2", e2), ("i_kernel", kernel), ("i_python", sys.version.split()[0]),
+                ("i_panel", "v" + VERSION)]
+        for i, (key, val) in enumerate(left):
+            self["lk%d" % i].setText(T(key))
+            self["lv%d" % i].setText(clip_text(val, 52))
+        self["rh0"].setText(T("i_memory"))
+        self["rh1"].setText(T("i_status"))
+        self["rh2"].setText(T("i_network"))
+        label, mp = u.storage_device()
+        self.o4_storage = mp
+        keys = ["i_ram", "i_flash", (label or T("i_storage")), "i_uptime", "i_temp", "i_load",
+                "i_ip", "i_mac", "i_host"]
+        for i, key in enumerate(keys):
+            self["rk%d" % i].setText(T(key) if key.startswith("i_") else key)
+        self["rv7"].setText(u.mac_address())
+        try:
+            import socket
+            self["rv8"].setText(socket.gethostname())
+        except Exception:
+            self["rv8"].setText("-")
+        self.fill_dynamic()
+        self.o4_timer.start(5000, False)       # RAM, uptime, temperature... stay live
+
+    def tick(self):
+        try:
+            self.fill_dynamic()
+        except Exception as exc:          # a live refresh must never pop up an error box
+            log("info refresh failed: %s" % exc)
+
+    def fill_dynamic(self):
+        from . import utils as u
+        rows = [u.ram_usage(), u.disk_usage("/"),
+                u.disk_usage(self.o4_storage) if self.o4_storage else (0, 0)]
+        for i, (used, total) in enumerate(rows):
+            if total:
+                text, pct = u.usage(used, total)
+            else:
+                text, pct = T("i_none"), 0
+            self["rv%d" % i].setText(text)
+            self["rb%d" % i].setValue(pct)
+        try:
+            up = u.format_uptime(float(read_file("/proc/uptime").split()[0]))
+        except Exception:
+            up = "-"
+        temp = u.receiver_temp()
+        load = " ".join(read_file("/proc/loadavg").split()[:3]) or "-"
+        self["rv3"].setText(up)
+        self["rv4"].setText("%d C" % temp if temp is not None else "-")
+        self["rv5"].setText(load)
+        self["rv6"].setText(u.local_ip())
+
+
+def clip_text(text, n):
+    text = " ".join(str(text).split())
+    return text if len(text) <= n else text[:n - 3] + "..."
 
 
 @guarded

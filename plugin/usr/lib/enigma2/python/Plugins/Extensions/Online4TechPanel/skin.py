@@ -95,9 +95,12 @@ def uses_rows():
     return STYLES[design()]["rows"]
 
 
+SIDE_H, SIDE_H_ROWS = 40, 44          # height of one category button (px at 1080p)
+
+
 def side_slots():
     """Number of button backgrounds behind the store's category list."""
-    return 14 if uses_rows() else 15
+    return 16 if uses_rows() else 18
 
 
 class Metrics(object):
@@ -298,11 +301,12 @@ def _glass_store(name):
     # the selected row is drawn with an opaque, accent-coloured glass button
     for i in range(side_slots()):
         x.append('<widget name="sbg%d" pixmap="%s" %s alphatest="blend" zPosition="1" />\n'
-                 % (i, m.pix("sbtn"), m.rect(38, 206 + 48 * i, 272, 48)))
+                 % (i, m.pix("sbtn"), m.rect(38, 206 + SIDE_H * i, 272, SIDE_H)))
     x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
              'transparent="1" foregroundColor="%s" foregroundColorSelected="#FFFFFF" '
              'selectionPixmap="%s" zPosition="2" />\n'
-             % (m.rect(38, 206, 272, 738), m.font(25), m.S(48), TEXT, m.pix("sbtn_sel_" + theme())))
+             % (m.rect(38, 206, 272, 738), m.font(22, True), m.S(SIDE_H), TEXT,
+                m.pix("sbtn_sel_" + theme())))
     lab("title", 376, 202, 470, 52, 36, TEXT, "left")
     pix("search", 868, 202, 560, 54, 1)
     lab("search", 904, 204, 490, 50, 24, MUTED, "left")
@@ -396,11 +400,11 @@ class _B(object):
         self.x.append('<widget name="%s" %s alphatest="blend" zPosition="%d" />\n'
                       % (nm, self.m.rect(x, y, w, h), z))
 
-    def lab(self, nm, x, y, w, h, size, color, align="left", z=4, valign="center"):
+    def lab(self, nm, x, y, w, h, size, color, align="left", z=4, valign="center", bold=False):
         btn = nm.startswith(("key_", "cl", "db"))
         self.x.append('<widget name="%s" %s font="%s" %s foregroundColor="%s" transparent="1" '
                       'halign="%s" valign="%s" zPosition="%d" />\n'
-                      % (nm, self.m.rect(x, y, w, h), self.m.font(size, btn), SHADOW if btn else "",
+                      % (nm, self.m.rect(x, y, w, h), self.m.font(size, btn or bold), SHADOW if btn else "",
                          color, align, valign, z))
 
     def static(self, text, x, y, w, h, size, color, align="left", z=4):
@@ -530,12 +534,12 @@ def _rows_store(name):
     b.box("panel_s", 40, 190, 380, 770, 0, st.get("panel"))
     b.box("panel_d", 1440, 190, 440, 770, 0, st.get("panel"))
     for i in range(side_slots()):
-        b.wbox("sbg%d" % i, "srow", 54, 206 + 52 * i, 352, 52, 1, st.get("row"))
+        b.wbox("sbg%d" % i, "srow", 54, 206 + SIDE_H_ROWS * i, 352, SIDE_H_ROWS, 1, st.get("row"))
     b.x.append('<widget name="cats" %s font="%s" itemHeight="%d" scrollbarMode="showOnDemand" '
                'transparent="1" foregroundColor="%s" foregroundColorSelected="%s" '
                'backgroundColorSelected="%s" zPosition="2" />\n'
-               % (b.m.rect(54, 206, 352, 738), b.m.font(25), b.m.S(52), st["text"], st["pilltext"],
-                  st["accent"]))
+               % (b.m.rect(54, 206, 352, 738), b.m.font(22, True), b.m.S(SIDE_H_ROWS), st["text"],
+                  st["pilltext"], st["accent"]))
     b.lab("title", ROW_X, 192, 400, 58, 34, st["accent"])
     b.box("search", 840, 194, 560, 54, 1, st.get("row"))
     b.lab("search", 876, 196, 490, 50, 23, st["muted"])
@@ -580,7 +584,70 @@ def skin_list(name):
     return _rows_list(name) if uses_rows() else _glass_list(name)
 
 
+# ------------------------------------------------------------ system info screen
+INFO_LEFT_ROWS = (410, 446, 482, 518, 554, 590, 678, 714, 750, 786, 822, 858)     # lk/lv 0..11
+INFO_RIGHT_ROWS = (300, 366, 432, 554, 590, 626, 716, 752, 788)                      # rk/rv 0..8
+INFO_BARS = ((1196, 338), (1196, 404), (1196, 470))                                  # rb 0..2
+
+
+def _info_items():
+    """(widget, x, y, w, h, font size, role) in 1080p glass coordinates."""
+    it = [("hero", 116, 252, 990, 60, 46, "hero"), ("herosub", 116, 312, 990, 36, 26, "sub"),
+          ("lh0", 116, 372, 990, 34, 28, "head"), ("lh1", 116, 640, 990, 34, 28, "head"),
+          ("rh0", 1196, 256, 620, 34, 28, "head"), ("rh1", 1196, 510, 620, 34, 28, "head"),
+          ("rh2", 1196, 672, 620, 34, 28, "head")]
+    for i, y in enumerate(INFO_LEFT_ROWS):
+        it += [("lk%d" % i, 116, y, 250, 34, 24, "key"), ("lv%d" % i, 372, y, 740, 34, 26, "val")]
+    for i, y in enumerate(INFO_RIGHT_ROWS):
+        it += [("rk%d" % i, 1196, y, 190, 34, 24, "key"), ("rv%d" % i, 1390, y, 430, 34, 26, "val")]
+    return it
+
+
+def _info_bar(m, i, bx, by, border, color, back, dy=0):
+    return ('<widget name="rb%d" %s borderWidth="1" borderColor="%s" foregroundColor="%s" '
+            'backgroundColor="%s" transparent="0" zPosition="3" />\n'
+            % (i, m.rect(bx, by + dy, 620, 14), border, color, back))
+
+
+def _glass_info(name):
+    m = metrics()
+    colors = {"hero": accent(), "sub": MUTED, "head": accent(), "key": MUTED, "val": TEXT}
+    x = [_screen_open(m, name), _header(m),
+         '<ePixmap pixmap="%s" %s alphatest="blend" zPosition="0" />\n'
+         % (m.pix("panel_l"), m.rect(80, 236, 1060, 700)),
+         '<ePixmap pixmap="%s" %s alphatest="blend" zPosition="0" />\n'
+         % (m.pix("panel_r"), m.rect(1170, 236, 670, 700))]
+    for nm, x0, y0, w, h, size, role in _info_items():
+        x.append('<widget name="%s" %s font="%s" foregroundColor="%s" transparent="1" halign="left" '
+                 'valign="center" zPosition="3" />\n'
+                 % (nm, m.rect(x0, y0, w, h), m.font(size, role in ("hero", "head", "val")),
+                    colors[role]))
+    for i, (bx, by) in enumerate(INFO_BARS):
+        x.append(_info_bar(m, i, bx, by, "#4B5C80", accent(), "#101A33"))
+    x.append(_footer(m))
+    x.append("</screen>")
+    return "".join(x)
+
+
+def _rows_info(name):
+    b = _B(name)
+    st = b.st
+    colors = {"hero": st["accent"], "sub": st["muted"], "head": st["accent"], "key": st["muted"],
+              "val": st["text"]}
+    b.header()
+    b.box("panel_l", 80, 190, 1060, 700, 0, st.get("panel"))
+    b.box("panel_r", 1170, 190, 670, 700, 0, st.get("panel"))
+    for nm, x0, y0, w, h, size, role in _info_items():
+        b.lab(nm, x0, y0 - 46, w, h, size, colors[role], "left", 3, bold=role in ("hero", "head", "val"))
+    for i, (bx, by) in enumerate(INFO_BARS):
+        b.x.append(_info_bar(b.m, i, bx, by, st["soft"], st["accent"], st.get("row") or "#1B232E", -46))
+    b.footer()
+    return b.done()
+
+
 def skin_text(name):
+    if name == "O4TInfo":
+        return _rows_info(name) if uses_rows() else _glass_info(name)
     return _rows_text(name) if uses_rows() else _glass_text(name)
 
 
