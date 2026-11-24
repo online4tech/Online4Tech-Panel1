@@ -23,7 +23,8 @@ from .skin import is_flat, metrics, skin_store, store_geometry, uses_rows
 from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, pretty_name,
                     save_favs)
 
-FEED, FAV = "__feed__", "__fav__"
+FEED, FAV, LATEST = "__feed__", "__fav__", "__new__"
+MAX_LATEST = 40
 
 # Sidebar groups live in groups.py (items are sorted by what they do)
 
@@ -156,6 +157,14 @@ class O4TStore(Screen):
             pass
         self.load_category()
 
+    def latest_rows(self):
+        rows = []
+        for it in catalog.latest(MAX_LATEST, None if self.show_all else compatible):
+            c = dict(it)
+            c["where"] = "%s > %s" % (T("nw_skin" if it["type"] == "skin" else "nw_plugin"), it["category"])
+            rows.append(c)
+        return rows
+
     def gname(self, g):
         return T("g_pcomm" if (g == "community" and self.kind == "plugin") else "g_" + g)
 
@@ -166,6 +175,10 @@ class O4TStore(Screen):
             counts[g] = counts.get(g, 0) + 1
         order = group_order(self.kind)
         entries = [(FEED, T("cat_feed"))]
+        if self.kind == "plugin":                      # "Latest additions": newest plugins, skins and tools
+            n = len(self.latest_rows())
+            if n:
+                entries.append((LATEST, "%s (%d)" % (T("cat_new"), n)))
         entries += [(g, "%s (%d)" % (self.gname(g), counts[g])) for g in order if counts.get(g)]
         return entries
 
@@ -192,6 +205,8 @@ class O4TStore(Screen):
             q = self.o4_query.lower()
             self.rows = [i for i in self.visible() if q in i["name"].lower()
                          or q in i.get("desc", "").lower() or q in i.get("pkg", "").lower()]
+        elif cat == LATEST:
+            self.rows = self.latest_rows()
         elif cat == FEED:
             self.rows = []
             self.o4_loading = True
@@ -247,7 +262,7 @@ class O4TStore(Screen):
             self["title"].setText("%s - %s" % (base, T("search_all")))
             self["search"].setText(self.o4_query)
         else:
-            name = T("cat_feed") if cat == FEED else (self.gname(cat) if cat else "")
+            name = T("cat_feed") if cat == FEED else (T("cat_new") if cat == LATEST else (self.gname(cat) if cat else ""))
             self["title"].setText(base if (not name or name == base) else "%s - %s" % (base, name))
             self["search"].setText(T("search_hint"))
         for i in range(self.per):
@@ -271,7 +286,7 @@ class O4TStore(Screen):
             if not self.flat:
                 try:
                     self["ci%d" % i].instance.setPixmap(
-                        self.px("ci_" + icon_key(self.kind, it.get("category", "")),
+                        self.px("ci_" + icon_key(it.get("type") or self.kind, it.get("category", "")),
                                 52 if self.rowsmode else 72))
                 except Exception:
                     pass
@@ -308,14 +323,14 @@ class O4TStore(Screen):
         path = it.get("path") or "-"
         self["dp"].setText(path if len(path) <= 44 else "..." + path[-41:])
         self["dct"].setText(T("category"))
-        self["dc"].setText(clip(it.get("category", "") or "-", 30))
+        self["dc"].setText(clip(it.get("where") or it.get("category", "") or "-", 30))
         self["drt"].setText(T("version"))
         self["dr"].setText(clip(str(it.get("version") or "-"), 30))
         self["db0"].setText(T("k_reinstall") if self.is_installed(it) else T("k_install_now"))
         self["db1"].setText(T("k_remove"))
         if not self.flat:
             try:
-                self["di"].instance.setPixmap(self.px("ci_" + icon_key(self.kind, it.get("category", ""))))
+                self["di"].instance.setPixmap(self.px("ci_" + icon_key(it.get("type") or self.kind, it.get("category", ""))))
             except Exception:
                 pass
 

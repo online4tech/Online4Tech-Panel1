@@ -134,6 +134,7 @@ STR = {
     "reopen": ("Saved. Close and reopen the panel to apply.", "اتحفظ. اقفل البانل وافتحه تاني للتطبيق."),
     "v_auto": ("Auto", "تلقائي"),
     "nw_head": ("%d new item(s) added to the catalog:", "تم اضافة %d عنصر جديد للكتالوج:"),
+    "cat_new": ("Latest additions", "آخر الإضافات"),
     "nw_plugin": ("Plugins", "البلجنات"),
     "nw_skin": ("Skins", "الاسكينات"),
     "nw_channels": ("Channels", "القنوات"),
