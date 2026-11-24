@@ -1,0 +1,12 @@
+{
+  "_help": "ضيف اي بلجن/اسكين هنا ثم Commit. البانل بيتحدث لوحده. اعمل نسخة من _example وحطها جوه items.",
+  "_example": {
+    "name": "اسم البلجن",
+    "desc": "وصف قصير (اختياري)",
+    "category": "Plugins",
+    "cmd": "wget -qO- https://raw.githubusercontent.com/USER/REPO/main/install.sh | sh",
+    "path": "/usr/lib/enigma2/python/Plugins/Extensions/FolderName",
+    "remove": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FolderName'"
+  },
+  "items": []
+}

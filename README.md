@@ -102,3 +102,24 @@ XStreamity/XKlass playlist entry, live console output, optional web shell.
 Security: Basic auth + 5-attempt lockout, CSRF header on POST, install commands come only
 from the validated catalog, web shell is OFF until enabled on the receiver (runs as root).
 Not included on purpose: softcam installers and CCcam/oscam/ncam server-line writers.
+
+## طريقة اضافة اي حاجة للبانل (الأسهل) / Adding anything
+
+1. افتح ملف **`custom.json`** على GitHub (فرع `panel-v2`) واضغط علامة القلم ✏️ (شغالة من الموبايل كمان).
+2. انسخ الجزء اللي جوه `_example` وحطه جوه `"items": [ ... ]` وعدّل الاسم والأمر (لو أكتر من عنصر افصل بينهم بفاصلة).
+3. اضغط **Commit changes**. خلال دقيقة تقريباً بيتبني `catalog.json` لوحده (تابع من تبويب **Actions**).
+4. عند المستخدم: البانل بيحدّث الكتالوج لما يتفتح (او الزر الأصفر) وبيظهر **رسالة بالعناصر الجديدة واتضافت فين** (Plugins > Tools مثلاً).
+
+الحقول: `name` و`cmd` مطلوبين. الباقي اختياري: `desc` (وصف)، `category` (الافتراضي Plugins)، `type` (`plugin` او `skin`)، `path` (مسار التثبيت لعلامة المثبّت)، `remove` (امر الحذف: `rm -rf '/مسار/كامل'`).
+لو العنصر ما ظهرش: افتح تبويب **Actions** وشوف التحذير (غالباً الموقع مش في `TRUSTED_HOSTS` في `utils.py`، او الاسم مكرر).
+العناصر اللي بتتضاف من `custom.json` ليها أولوية، وفلتر كلمات السوفت كام ما بيتطبقش عليها.
+
+الكتالوج بيتحدث كمان **كل يوم 03:00 UTC** تلقائي، ومن الزر **Run workflow** في Actions.
+
+## رسايل التحديث في البانل
+
+* لما يكون في اصدار جديد (`version.txt`) بتظهر رسالة "تحديث دلوقتي؟" مرة واحدة لكل اصدار. السطور بعد اول سطر في `version.txt` بتظهر كملاحظات الاصدار.
+* لما بتتضاف عناصر جديدة للكتالوج بتظهر رسالة بأسمائها وأماكنها.
+* الاثنين بيتقفلوا من **MENU ← Update pop-ups**.
+
+لاصدار جديد: غيّر `VERSION` في `version.py` و`version.txt` (السطر الاول) وشغّل `./build_ipk.sh`.
