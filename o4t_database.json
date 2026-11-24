@@ -2767,6 +2767,19 @@
       "source_attribution": "Original URL preserved from dreambox4u.com; author and redistribution license have not been independently verified.",
       "audit_status": "static_reviewed",
       "enabled": true
+    },
+    {
+      "name": "FootBall Events (مواعيد وأحداث المباريات - Python 3 فقط - يعيد تشغيل الواجهة)",
+      "cmd": "wget -qO- \"https://events.r108.me/api/install.php?t=c08895b8b91eb646a7d5070640dadfb8\" | sh",
+      "path": "/usr/lib/enigma2/python/Plugins/Extensions/FootballEvents",
+      "remove_cmd": "rm -rf '/usr/lib/enigma2/python/Plugins/Extensions/FootballEvents'",
+      "source_url": "https://events.r108.me/api/install.php?t=c08895b8b91eb646a7d5070640dadfb8",
+      "source_host": "events.r108.me",
+      "source_type": "third_party",
+      "mirror_status": "external_source_retained",
+      "source_attribution": "Original URL preserved from events.r108.me; author and redistribution license have not been independently verified.",
+      "audit_status": "static_reviewed",
+      "enabled": true
     }
   ],
   "novaler": [
@@ -5977,6 +5990,17 @@
       "source_type": "third_party",
       "mirror_status": "external_source_retained",
       "source_attribution": "Original URL preserved from dreambox4u.com; author and redistribution license have not been independently verified.",
+      "audit_status": "static_reviewed",
+      "enabled": true
+    },
+    {
+      "name": "Super 17 Plugins (تثبيت 17 بلجن دفعة واحدة - يعيد تشغيل الواجهة)",
+      "cmd": "wget -q -O - https://raw.githubusercontent.com/online4tech/online4Tech/main/online4tech-installer.sh | sh",
+      "source_url": "https://raw.githubusercontent.com/online4tech/online4Tech/main/online4tech-installer.sh",
+      "source_host": "raw.githubusercontent.com",
+      "source_type": "first_party",
+      "mirror_status": "already_hosted_in_online4tech_repo",
+      "source_attribution": "Online4Tech repository-hosted script (online4tech/online4Tech); it fetches 17 third-party installers whose original credits remain upstream.",
       "audit_status": "static_reviewed",
       "enabled": true
     }
