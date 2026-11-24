@@ -28,6 +28,7 @@ TRUSTED_HOSTS = frozenset([
     "objects.githubusercontent.com", "gitlab.com", "dreambox4u.com",
     "www.dreambox4u.com", "xfayez95.github.io", "download.blue-panel.com",
     "feeds2.mynonpublic.com", "updates.mynonpublic.com",
+    "events.r108.me",
 ])
 _URL_RE = re.compile(r"https?://[^\s\"'|;&<>()]+")
 _PM = r"(opkg|apt-get) (install|remove|update|upgrade)( [A-Za-z0-9._+-]+)*"
