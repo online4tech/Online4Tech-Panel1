@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function
 import os
 
-from enigma import ePoint, eTimer
+from enigma import ePoint, eSize, eTimer, gFont
 from Components.ActionMap import NumberActionMap
 from Components.Console import Console
 from Components.Label import Label
@@ -19,7 +19,8 @@ from . import catalog
 from .i18n import T
 from .screens import (_start_clock, mark_opening, mark_shown, ConsoleScreen, FEED_FILTER, FEED_PREFIX, OPKG_INSTALLED, _ask_restart,
                       _guard, _run, _watch_close)
-from .skin import is_flat, metrics, side_slots, skin_store, store_geometry, uses_rows
+from .skin import (is_flat, metrics, side_geometry, side_layout, side_slots, skin_store, store_geometry,
+                   theme, uses_rows)
 from .utils import (compatible, item_key, load_favs, log, parse_opkg_list, pretty_name,
                     save_favs)
 
@@ -95,6 +96,8 @@ class O4TStore(Screen):
         self._px = {}
         for i in range(side_slots()):
             self["sbg%d" % i] = (Label if self.flat else Pixmap)()
+        self["ssel"] = (Label if self.flat else Pixmap)()
+        self.side_pitch, self.side_h = 40, 40
         self["title"] = Label("")
         self["search"] = Label(T("search_hint"))
         self["status"] = Label("")
@@ -173,18 +176,59 @@ class O4TStore(Screen):
             self._groups = groups
         return self._groups
 
-    def show_side_buttons(self, n):
+    def layout_side(self, n):
+        """Spread n category buttons over the whole list height: no scrolling, no empty strip."""
+        pitch, h, size = side_layout(n)
+        self.side_pitch, self.side_h = pitch, h
+        m = metrics()
+        x, y0, w = side_geometry()
+        try:
+            self["cats"].l.setItemHeight(m.S(pitch))
+            face, px = m.font(size, True).split(";")
+            self["cats"].l.setFont(0, gFont(face, int(px)))
+        except Exception as exc:
+            log("side list layout failed: %s" % exc)
+        if self.rowsmode:
+            img, sel = "srow_%d" % h, "srow_sel_%d" % h
+        else:
+            img, sel = "sbtn_%d" % h, "sbtn_sel_%s_%d" % (theme(), h)
         for i in range(side_slots()):
+            wdg = self["sbg%d" % i]
             try:
-                (self["sbg%d" % i].show if i < n else self["sbg%d" % i].hide)()
+                if i >= n:
+                    wdg.hide()
+                    continue
+                wdg.instance.move(ePoint(m.S(x), m.S(y0 + i * pitch + (pitch - h) // 2)))
+                wdg.instance.resize(eSize(m.S(w), m.S(h)))
+                if not self.flat:
+                    wdg.instance.setPixmap(self.px(img))
+                wdg.show()
             except Exception:
                 pass
+        try:
+            self["ssel"].instance.resize(eSize(m.S(w), m.S(h)))
+            if not self.flat:
+                self["ssel"].instance.setPixmap(self.px(sel))
+        except Exception:
+            pass
+        self.update_side_sel()
+
+    def update_side_sel(self):
+        m = metrics()
+        x, y0, _w = side_geometry()
+        try:
+            self["ssel"].instance.move(ePoint(m.S(x), m.S(
+                y0 + self.cat_idx * self.side_pitch + (self.side_pitch - self.side_h) // 2)))
+            self["ssel"].show()
+        except Exception:
+            pass
 
     def build_cats(self):
         self.reset_cache()
         entries = self.cat_entries()
-        self.show_side_buttons(len(entries))
         self.cat_keys = [e[0] for e in entries]
+        self.cat_idx = 0
+        self.layout_side(len(entries))
         self["cats"].setList([e[1] for e in entries])
         start = 1 if len(entries) > 1 else 0
         self.cat_idx = start
@@ -192,6 +236,7 @@ class O4TStore(Screen):
             self["cats"].moveToIndex(start)
         except Exception:
             pass
+        self.update_side_sel()
         self.load_category()
 
     def latest_rows(self):
@@ -227,6 +272,7 @@ class O4TStore(Screen):
         if idx != self.cat_idx and self.cat_keys:
             self.cat_idx = idx
             self.o4_query = ""
+            self.update_side_sel()
             self.cat_timer.start(70, True)
 
     def current_cat(self):
