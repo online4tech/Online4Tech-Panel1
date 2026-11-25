@@ -27,7 +27,7 @@ from .skin import (MAIN_COLS, DESIGNS, FONT_SCALES, MAIN_POS, design, font_scale
 from .utils import (LANGS, THEMES, LOG_FILE, PY3, compatible, cmd_hosts, cycle_setting,
                     detect_image_group, get_setting, item_key, load_favs, log, parse_opkg_list,
                     pretty_name, read_file, save_favs, set_setting, shquote, txt, valid_pkg, valid_url,
-                    version_tuple)
+                    version_tuple, web_port)
 from .version import (INSTALL_URL, SLOGAN, TMP_VERSION, VERSION,
                       VERSION_URL)
 
@@ -293,7 +293,7 @@ class O4TMain(Screen):
             img, ver = image_info()
             ip = local_ip()
             if get_setting("web_enabled", True):
-                web = "http://%s:%s" % (ip, get_setting("web_port", 8080))
+                web = "http://%s:%s" % (ip, web_port())
             else:
                 web = T("web_off")
             vals = [device_name(), "%s  %s" % (img, ver), "v" + VERSION, ip, web]
@@ -908,6 +908,7 @@ class O4TTools(O4TListBase):
             {"id": "lang", "name": "%s: %s" % (T("t_lang"), T("v_" + get_setting("lang", "auto"))),
              "desc": T("d_lang")},
             {"id": "web", "name": T("t_web"), "desc": T("d_web")},
+            {"id": "contact", "name": T("t_contact"), "desc": T("d_contact")},
             {"id": "diag", "name": T("t_diag"), "desc": T("d_diag")},
         ], keep=True)
 
@@ -945,6 +946,8 @@ class O4TTools(O4TListBase):
             self.session.open(MessageBox, T("reopen"), MessageBox.TYPE_INFO, timeout=3)
         elif k == "web":
             self.session.open(O4TWeb)
+        elif k == "contact":
+            self.session.open(O4TContact)
         elif k == "diag":
             self.session.open(O4TDiag)
 
@@ -1181,7 +1184,7 @@ class O4TWeb(O4TTextBase):
 
     def render_info(self, ip="-"):
         from . import webserver
-        port = get_setting("web_port", 8080)
+        port = web_port()
         on = get_setting("web_enabled", True)
         shell = get_setting("web_shell", False)
         ips = []
@@ -1225,6 +1228,29 @@ class O4TWeb(O4TTextBase):
         else:
             webserver.stop()
         self.render_info()
+
+
+@guarded
+class O4TContact(O4TTextBase):
+    """Contact links (WhatsApp, Facebook, store, website, Telegram) + the web control address."""
+    MENU_TITLE = "t_contact"
+
+    def start(self):
+        from .utils import local_ip
+        from .version import (PAGE_URL, SITE_URL, STORE_URL, TELEGRAM_URL, WHATSAPP_NUMBER,
+                              WHATSAPP_URL)
+        rows = [("c_whatsapp", "%s  (+%s)" % (WHATSAPP_URL, WHATSAPP_NUMBER)), ("c_page", PAGE_URL),
+                ("c_store", STORE_URL), ("c_site", SITE_URL), ("c_telegram", TELEGRAM_URL)]
+        lines = []
+        for key, url in rows:
+            if url:
+                lines += ["%s:" % T(key), "    " + url, ""]
+        try:
+            ip = local_ip()
+        except Exception:
+            ip = "<receiver-ip>"
+        lines += [T("c_web") + ":", "    http://%s:%s" % (ip, web_port())]
+        self["detail"].setText("\n".join(lines))
 
 
 @guarded

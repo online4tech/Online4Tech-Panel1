@@ -427,6 +427,18 @@ def get_setting(key, default):
     return data.get(key, default) if isinstance(data, dict) else default
 
 
+def web_port():
+    """Port of the web control page: 9095 by default (the old 8080 default is migrated)."""
+    from .version import WEB_PORT
+    try:
+        port = int(get_setting("web_port", WEB_PORT))
+    except (TypeError, ValueError):
+        return WEB_PORT
+    if port == 8080 or not 1 <= port <= 65535:
+        return WEB_PORT
+    return port
+
+
 def set_setting(key, value):
     data = load_json(SETTINGS_FILE, {})
     if not isinstance(data, dict):
