@@ -11,14 +11,13 @@ from __future__ import absolute_import
 PLUGIN_ORDER = ["o4t", "panels", "players", "iptv", "cams", "subs", "epg", "sat", "maint",
                 "backup", "look", "fun"]
 
-# Online4Tech's own plugins (the store section); matched by exact lower-case name
+# Only plugins Online4Tech builds/brands itself (exact lower-case names); never add third-party ones
 O4T_NAMES = frozenset([
     "online4tech panel & store v7.5 gold", "online4tech web panel", "almoaddin online4tech",
     "multi-iptv-adder_by-online4tech", "multicamadder_by-online4tech",
     "screen-recorder-by-online4tech", "setpicon - online4tech",
     "iptosat_v1.9-modded-by-online4tech", "xtream2audio-by-online4tech",
-    "football events", "super 17 plugins", "estalkerwebcontrol", "emilpanelpro",
-    "ahmed romeh channels", "super script", "enigmaplay",
+    "super 17 plugins", "ahmed romeh channels",
 ])
 
 SKIN_GROUPS = [
