@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Web control panel (default port 8080) - Twisted based, Python 2 / 3 compatible.
+"""Web control panel (default port 9095) - Twisted based, Python 2 / 3 compatible.
 
 * Open on the local network by default; optional Basic auth (user "admin") via Tools > Web control.
 * POST endpoints need the X-O4T-Request header (CSRF protection) and a matching Origin.
@@ -21,8 +21,8 @@ from twisted.web import resource, server
 
 from . import catalog
 from .utils import (device_name, PY3, compatible, get_setting, item_key, log, parse_opkg_list,
-                    read_file, set_setting, shquote, txt, urlparse)
-from .version import (INSTALL_URL, MESSENGER_URL, PAGE_URL, SITE_URL, STORE_URL, VERSION,
+                    read_file, set_setting, shquote, txt, urlparse, web_port)
+from .version import (INSTALL_URL, MESSENGER_URL, PAGE_URL, SITE_URL, STORE_URL, TELEGRAM_URL, VERSION,
                       WEB_PORT, WHATSAPP_NUMBER, WHATSAPP_URL)
 
 try:
@@ -189,7 +189,7 @@ def system_status():
         "image": image[0] if image else "-", "version": VERSION,
         "shell": bool(get_setting("web_shell", False)), "auth": bool(get_setting("web_auth", False)), "busy": running_job() is not None,
         "links": {"whatsapp": WHATSAPP_URL, "messenger": MESSENGER_URL, "page": PAGE_URL,
-                  "store": STORE_URL, "site": SITE_URL},
+                  "store": STORE_URL, "site": SITE_URL, "telegram": TELEGRAM_URL},
         "phone": WHATSAPP_NUMBER,
     }
 
@@ -449,7 +449,7 @@ def start():
     if _state["port"] is not None or not get_setting("web_enabled", True):
         return False
     password()
-    port = int(get_setting("web_port", WEB_PORT))
+    port = web_port()
     site = server.Site(Root())
     site.displayTracebacks = False
     try:

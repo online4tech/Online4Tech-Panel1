@@ -82,12 +82,12 @@ pre{margin:0;background:#04080f;border:1px solid var(--edge);border-radius:12px;
 #drawer{position:fixed;inset-inline:0;bottom:0;z-index:20;background:rgba(6,11,20,.97);border-top:1px solid var(--sig);box-shadow:0 -12px 40px rgba(41,224,255,.15);padding:14px clamp(16px,3vw,40px);display:none}
 #drawer .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0d1a2e;border:1px solid var(--sig);box-shadow:0 0 24px rgba(41,224,255,.3);padding:11px 20px;border-radius:12px;display:none;z-index:30;max-width:90vw}
-.links{display:flex;gap:6px;flex-wrap:nowrap}.links .soc{min-width:38px;min-height:38px;padding:0 6px}
+.links{display:flex;gap:6px;flex-wrap:wrap}.links .soc{min-width:38px;min-height:38px;padding:0 6px}
 .soc{--c:var(--sig);display:inline-flex;align-items:center;gap:10px;color:#eafcff;text-decoration:none;border-radius:13px;border:1px solid var(--c);background:rgba(6,11,20,.6);min-height:42px;min-width:42px;justify-content:center;padding:0 10px;transition:.2s;box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 30%,transparent) inset,0 0 16px color-mix(in srgb,var(--c) 30%,transparent)}
 .soc svg{width:22px;height:22px;fill:none;stroke:var(--c);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .soc:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--c) inset,0 0 30px color-mix(in srgb,var(--c) 65%,transparent)}
-.soc.whatsapp{--c:#25d366}.soc.messenger{--c:#4c8dff}.soc.page{--c:#6aa5ff}.soc.store{--c:var(--sun)}.soc.site{--c:var(--sig)}
-.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}.contact .soc{justify-content:flex-start;padding:0 12px;min-height:44px;font-size:14px}
+.soc.telegram{--c:#29a9eb}.soc.whatsapp{--c:#25d366}.soc.messenger{--c:#4c8dff}.soc.page{--c:#6aa5ff}.soc.store{--c:var(--sun)}.soc.site{--c:var(--sig)}
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}.contact.big{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.contact.big .soc{min-height:64px;font-size:16px;padding:0 18px}.contact.big .soc svg{width:28px;height:28px}.contact .soc{justify-content:flex-start;padding:0 12px;min-height:44px;font-size:14px}
 @media(max-width:860px){
 .shell{display:block}
 aside{position:fixed;z-index:15;inset:auto 0 0 0;top:auto;height:auto;flex-direction:row;padding:8px;border-inline-end:0;border-top:1px solid var(--edge);gap:6px;background:rgba(8,15,28,.97)}
@@ -235,6 +235,10 @@ html[data-skin=prime] #drawer{bottom:88px}}
   <div class="form" style="margin-top:12px"><input id="host" dir="ltr" placeholder="Host"><input id="port" dir="ltr" placeholder="Port"><input id="user" dir="ltr" placeholder="Username"><input id="pass" dir="ltr" placeholder="Password"></div>
   <div class="row" style="margin-top:16px"><button class="btn pri" id="iptv-save" data-i="save_sub"></button><span class="note" data-i="own_only"></span></div></div>
  </section>
+ <section class="page" id="p-contact">
+  <h1 data-i="contact"></h1><p class="sub" data-i="contact_sub"></p>
+  <div class="panel"><div class="contact big" id="contact2"></div><p class="note" style="margin:16px 0 0"><a id="phone2" href="#" dir="ltr" style="color:var(--sig);text-decoration:none"></a></p></div>
+ </section>
  <section class="page" id="p-term">
   <h1 data-i="term"></h1><p class="sub" data-i="term_sub"></p>
   <div class="panel"><div class="warn" id="shellnote" style="display:none"></div>
@@ -259,7 +263,7 @@ plugin_sub:"ثبّت أحدث البلجنات من الكتالوج",skin_sub:"
 search:"ابحث بالاسم...",show_all:"إظهار غير المتوافق",all:"الكل",items:"عنصر",first:"أول",none:"لا توجد نتائج. جرّب كلمة أخرى أو قسماً آخر.",installed:"مثبّت",incompat:"غير متوافق",install:"تثبيت",reinstall:"إعادة تثبيت",remove:"حذف",confirm:"متأكد؟",confirm_rm:"حذف",
 ram:"الرام",flash:"الفلاش",temp:"الحرارة",uptime:"مدة التشغيل",image:"الصورة",m3u:"رابط M3U كامل (اختياري)",save_sub:"حفظ الاشتراك",own_only:"للاشتراكات الخاصة بك فقط.",cmd:"اكتب أمر لينكس",run:"تنفيذ",close:"إغلاق",output:"المخرجات",busy:"عملية أخرى قيد التنفيذ",done:"تم",
 restart_gui:"إعادة تشغيل الواجهة",standby:"ستاندباي",clear_ram:"تنظيف الرام",clean_tmp:"تنظيف الملفات المؤقتة",update_feed:"تحديث الفيد",sync_catalog:"مزامنة الكتالوج",self_update:"تحديث البانل",reboot:"إعادة تشغيل الجهاز",
-contact:"تواصل معنا",contact_sub:"فريق Online4Tech جاهز لمساعدتك",whatsapp:"واتساب",messenger:"ماسنجر",page:"صفحة فيسبوك",store:"المتجر",site:"الموقع",d:"ي",h:"س",m:"د"},
+contact:"تواصل معنا",contact_sub:"فريق Online4Tech جاهز لمساعدتك",whatsapp:"واتساب",telegram:"قناة التلجرام",messenger:"ماسنجر",page:"صفحة فيسبوك",store:"المتجر",site:"الموقع",d:"ي",h:"س",m:"د"},
 en:{lib:"Command library",lib_sub:"Pick a ready command: Use puts it in the box, Run executes it on the receiver",lib_search:"Search commands...",
 use:"Use",save_mine:"Save current command",mine:"My commands",lib_empty:"No commands here",del:"Delete",ask:"Enter a value",bad_val:"Invalid value",
 shell_off:"The terminal is off. Enable it on the receiver: Tools > Web control (yellow button)",confirm_cmd:"This command changes the system. Run it?",caution:"Caution",
@@ -269,20 +273,21 @@ plugin_sub:"Install the latest plugins from the catalog",skin_sub:"Ready-to-inst
 search:"Search by name...",show_all:"Show incompatible",all:"All",items:"items",first:"first",none:"No results. Try another word or category.",installed:"Installed",incompat:"Incompatible",install:"Install",reinstall:"Reinstall",remove:"Remove",confirm:"Are you sure?",confirm_rm:"Remove",
 ram:"RAM",flash:"Flash",temp:"Temperature",uptime:"Uptime",image:"Image",m3u:"Full M3U link (optional)",save_sub:"Save subscription",own_only:"For your own subscriptions only.",cmd:"Type a Linux command",run:"Run",close:"Close",output:"Output",busy:"Another operation is running",done:"Done",
 restart_gui:"Restart GUI",standby:"Standby",clear_ram:"Clear RAM",clean_tmp:"Clean temp files",update_feed:"Update feed",sync_catalog:"Sync catalog",self_update:"Update panel",reboot:"Reboot device",
-contact:"Contact us",contact_sub:"The Online4Tech team is ready to help",whatsapp:"WhatsApp",messenger:"Messenger",page:"Facebook page",store:"Store",site:"Website",d:"d",h:"h",m:"m"}};
+contact:"Contact us",contact_sub:"The Online4Tech team is ready to help",whatsapp:"WhatsApp",telegram:"Telegram channel",messenger:"Messenger",page:"Facebook page",store:"Store",site:"Website",d:"d",h:"h",m:"m"}};
 var lang="ar",cur="home",kind="plugin",cat="",busy=false,last=null;
 try{lang=localStorage.getItem("o4t_lang")||(/^ar/i.test(navigator.language)?"ar":"en")}catch(e){lang=/^ar/i.test(navigator.language||"")?"ar":"en"}
 var mq=/[?&]lang=(ar|en)/.exec(location.search);if(mq)lang=mq[1];
 function t(k){return(I[lang]&&I[lang][k])||k}
 var IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',plugin:'<path d="M9 3v4M15 3v4M7 7h10v5a5 5 0 0 1-10 0z"/><path d="M12 17v4"/>',skin:'<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/><path d="M12 21c-2 0-2-2 0-3 2-1 5-1 5-4"/>',
-channels:'<path d="M4 18a9 9 0 0 1 16 0"/><path d="M8 18a5 5 0 0 1 8 0"/><circle cx="12" cy="18" r="1"/>',picons:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',iptv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',term:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/>'};
-var BR={whatsapp:'<path d="M4 20l1.3-4.2A8.5 8.5 0 1 1 8.4 19z"/><path d="M9.2 8.6c-.3 2.4 2.8 5.9 6 6.2l1.2-1.4-2-1-.9.8c-1-.4-2-1.4-2.4-2.4l.8-.9-1-2z"/>',
+channels:'<path d="M4 18a9 9 0 0 1 16 0"/><path d="M8 18a5 5 0 0 1 8 0"/><circle cx="12" cy="18" r="1"/>',picons:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',iptv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',contact:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',term:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9l3 3-3 3M13 15h4"/>'};
+var BR={telegram:'<path d="M21 4L3 11l6 2.2L18 7l-7.5 7.3.5 5 3-3.3 4.5 3.3z"/>',
+whatsapp:'<path d="M4 20l1.3-4.2A8.5 8.5 0 1 1 8.4 19z"/><path d="M9.2 8.6c-.3 2.4 2.8 5.9 6 6.2l1.2-1.4-2-1-.9.8c-1-.4-2-1.4-2.4-2.4l.8-.9-1-2z"/>',
 messenger:'<path d="M12 3C7 3 3.5 6.6 3.5 11c0 2.4 1.1 4.4 2.8 5.8V21l3.1-1.7c.8.2 1.7.3 2.6.3 5 0 8.5-3.6 8.5-8.6S17 3 12 3z"/><path d="M7.5 13.5l3.2-3.4 2.3 2.2 3.5-2.2-3.2 3.5-2.3-2.2z"/>',
 page:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M15.5 8.5h-1.6c-1 0-1.6.7-1.6 1.7V21M10 13h5"/>',
 store:'<path d="M4 9l1.5-5h13L20 9"/><path d="M4 9c0 1.7 1.3 2.5 2.7 2.5S9.3 10.700 9.300 9c0 1.700 1.300 2.500 2.700 2.500s2.700-.8 2.700-2.500c0 1.700 1.300 2.500 2.700 2.500S20 10.700 20 9"/><path d="M5.500 12v8h13v-8M10 20v-5h4v5"/>',
 site:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>'};
-var CT=[["whatsapp","wa"],["messenger","ms"],["page","pg"],["store","st"],["site","web"]];
-var NAV=["home","plugin","skin","channels","picons","iptv","term"];
+var CT=[["whatsapp","wa"],["messenger","ms"],["page","pg"],["store","st"],["site","web"],["telegram","tg"]];
+var NAV=["home","plugin","skin","channels","picons","iptv","term","contact"];
 function el(tag,c,x){var e=document.createElement(tag);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
 function toast(m){var e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},3800)}
 function api(path,body){var o={headers:{"X-O4T-Request":"1"}};if(body){o.method="POST";o.body=JSON.stringify(body)}
@@ -326,17 +331,17 @@ function renderStatus(s){last=s;drawBox(s.model);$("model").textContent=s.model;
  G.appendChild(gauge(t("temp"),s.temp==null?0:Math.min(100,s.temp),s.temp==null?"-":s.temp+" °C"));
  var M=$("mini");M.textContent="";M.appendChild(mini(t("uptime"),fmt(s.uptime)));M.appendChild(mini("Panel","v"+s.version));
  $("ver").textContent="v"+s.version;buildLinks(s);busy=s.busy;if(window.buildLib)shellNote()}
-function buildLinks(s){["links","contact"].forEach(function(id){var L=$(id);L.textContent="";CT.forEach(function(c){var u=s.links[c[0]];if(!u)return;
+function buildLinks(s){["links","contact","contact2"].forEach(function(id){var L=$(id);L.textContent="";CT.forEach(function(c){var u=s.links[c[0]];if(!u)return;
  var a=el("a","soc "+c[0]);a.href=u;a.target="_blank";a.rel="noopener";a.title=t(c[0]);a.setAttribute("aria-label",t(c[0]));a.innerHTML='<svg viewBox="0 0 24 24">'+BR[c[0]]+'</svg>';
- if(id=="contact")a.appendChild(el("span","",t(c[0])));L.appendChild(a)})});if(s.phone){var p=$("phone");p.textContent="+"+s.phone;p.href="tel:+"+s.phone}}
+ if(id!="links")a.appendChild(el("span","",t(c[0])));L.appendChild(a)})});if(s.phone){["phone","phone2"].forEach(function(i){var p=$(i);p.textContent="+"+s.phone;p.href="tel:+"+s.phone})}}
 function status(){api("/api/status").then(renderStatus).catch(function(e){toast(e.message)})}
 function drawer(on){$("drawer").style.display=on?"block":"none"}$("dx").onclick=function(){drawer(false)};
 function follow(id,title){var from=0,out=$("out");out.textContent="";$("dt").textContent=title||t("output");drawer(true);busy=true;
  (function tick(){api("/api/job?id="+id+"&from="+from).then(function(j){if(j.out){out.textContent+=j.out;out.scrollTop=out.scrollHeight}from=j.next;if(!j.done)setTimeout(tick,1000);else{busy=false;if(NAV.indexOf(cur)>0&&cur!="iptv"&&cur!="term")load()}}).catch(function(e){toast(e.message);busy=false})})()}
 function start(path,body,title){if(busy)return toast(t("busy"));api(path,body).then(function(r){if(r.job)follow(r.job,title);else toast(t("done"))}).catch(function(e){toast(e.message)})}
 function setCatTitle(){if(["plugin","skin","channels","picons"].indexOf(cur)<0)return;$("cat-title").textContent=t(cur);$("cat-sub").textContent=t(cur+"_sub")}
-function go(k){cur=k;NAV.forEach(function(n){var p=$(n=="home"?"p-home":n=="iptv"?"p-iptv":n=="term"?"p-term":"p-cat");p.className="page"});
- var p=k=="home"?"p-home":k=="iptv"?"p-iptv":k=="term"?"p-term":"p-cat";$(p).className="page on";buildMenu();window.scrollTo(0,0);
+function go(k){cur=k;NAV.forEach(function(n){var p=$(n=="home"?"p-home":n=="iptv"?"p-iptv":n=="term"?"p-term":n=="contact"?"p-contact":"p-cat");p.className="page"});
+ var p=k=="home"?"p-home":k=="iptv"?"p-iptv":k=="term"?"p-term":k=="contact"?"p-contact":"p-cat";$(p).className="page on";buildMenu();window.scrollTo(0,0);
  if(p=="p-cat"){kind=k;cat="";$("q").value="";setCatTitle();load()}}
 function chip(name,n,val){var c=el("button","chip"+(cat==val?" on":""),name);if(n!=null)c.appendChild(el("em","",n));c.onclick=function(){cat=val;load()};return c}
 function load(){var u="/api/catalog?kind="+kind+"&cat="+encodeURIComponent(cat)+"&q="+encodeURIComponent($("q").value)+"&all="+($("all").checked?1:0);
@@ -416,5 +421,5 @@ $("savecmd").onclick=function(){var c=$("cmd").value.trim();if(!c)return;var n=p
 $("run").onclick=function(){var c=$("cmd").value.trim();if(!c)return;if(!shellOK()){toast(t("shell_off"));return}start("/api/shell",{cmd:c},c.slice(0,40))};
 $("cmd").onkeydown=function(e){if(e.key=="Enter")$("run").click()};
 $("l-ar").onclick=function(){lang="ar";applyLang()};$("l-en").onclick=function(){lang="en";applyLang()};
-applyLang();buildLib();var pq=/[?&]page=(home|plugin|skin|channels|picons|iptv|term)/.exec(location.search);go(pq?pq[1]:"home");status();setInterval(status,15000);
+applyLang();buildLib();var pq=/[?&]page=(home|plugin|skin|channels|picons|iptv|term|contact)/.exec(location.search);go(pq?pq[1]:"home");status();setInterval(status,15000);
 </script></body></html>

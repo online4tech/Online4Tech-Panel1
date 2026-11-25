@@ -8,8 +8,18 @@ so nothing is ever hidden.
 from __future__ import absolute_import
 
 # ordered by importance (this is the order in the sidebar)
-PLUGIN_ORDER = ["panels", "iptv", "media", "cams", "epg", "ciefp", "islamic", "info",
-                "translation", "look", "tools", "network", "system", "community"]
+PLUGIN_ORDER = ["o4t", "panels", "players", "iptv", "cams", "subs", "epg", "sat", "maint",
+                "backup", "look", "fun"]
+
+# Online4Tech's own plugins (the store section); matched by exact lower-case name
+O4T_NAMES = frozenset([
+    "online4tech panel & store v7.5 gold", "online4tech web panel", "almoaddin online4tech",
+    "multi-iptv-adder_by-online4tech", "multicamadder_by-online4tech",
+    "screen-recorder-by-online4tech", "setpicon - online4tech",
+    "iptosat_v1.9-modded-by-online4tech", "xtream2audio-by-online4tech",
+    "football events", "super 17 plugins", "estalkerwebcontrol", "emilpanelpro",
+    "ahmed romeh channels", "super script", "enigmaplay",
+])
 
 SKIN_GROUPS = [
     ("skins", ["OpenATV", "OpenBH", "Egami", "OpenSPA", "OpenVIX", "PurE2", "TeamNitro"]),
@@ -20,51 +30,56 @@ SKIN_GROUPS = [
 ]
 SKIN_ORDER = [g for g, _c in SKIN_GROUPS]
 
-CAT_FIXED = {          # whole categories that always map to one group
-    "Panels": "panels", "Community": "community", "Translation": "translation",
-    "System": "system", "Multiboot": "system", "Dependencies": "system", "Ciefp": "ciefp",
-}
-CAT_DEFAULT = {        # used when no keyword rule matched
-    "Media": "media", "Audio": "media", "IPTV": "iptv", "Novaler": "iptv",
-    "EPG": "epg", "Settings": "epg", "Tools": "tools", "Plugins": "tools",
-}
-
+# Rules are checked in order on the lower-case NAME; the first keyword that matches wins.
+# Every group is kept between 24 and 35 plugins for the current catalog (see tools/check_groups.py).
 RULES = [
-    ("network", ["dns ", "wifi", "الواي فاي", "ntp", "wireguard", "transmission", "ip_checker",
-                 "net usage", "internet-speedtest", "speedtest"]),
-    ("system", ["arabic-language", "opkg", "wget", "curl", "فهارس", "ترقية", "update enigma2",
-                "format_hdd", "repair-inodes", "password", "fix-", "filecommander", "openwebif",
-                "chromium", "hardwareinfo", "temperature", "حرارة", "bitrate",
-                "معدل البث", "backupflash", "script package", "super script"]),
-    ("islamic", ["مواقيت", "قرآن", "قرأن", "اذكار", "أذكار", "المؤذن", "الأجر", "أنصت", "حصن", "ادعية",
-                 "athan", "azkar", "quran", "prayer", "hisn", "mawaqit", "muaddhin", "moaddin",
-                 "shiavoice", "kareem", "karem", "ansite", "alajre"]),
-    ("translation", ["ترجمة", "مترجم", "subs", "subtitle", "translator", "tmdb", "tmbd",
-                     "معلومات الفيلم", "youre"]),
-    ("info", ["weather", "الطقس", "webcam", "worldcam", "كاميرات", "foreca"]),
-    ("media", ["filmon"]),
-    ("media", ["audio", "radio", "صوتيات", "راديو", "اغاني", "youtube", "e2-tube", "اليوتيوب",
-               "timeshift", "تايم شفت", "movie", "افلام", "الافلام", "ipaudio"]),
-    ("cams", ["cccam", "ciplus", "keyadder", "mycam", "multicam", "satcam", "camm", "كام", "ايميو",
-              "شفرات", "zoom", "سيرفرات", "abertis", "ابيرنس", "novacam", "ultracam",
-              "cam-"]),
-    ("iptv", ["iptv", "stalker", "portal", "بورتل", "xtream", "xstream", "m3u", "xklass", "xport",
-              "tivimate", "ipsat", "iptosat", "ip2sat", "bouquetmaker", "jedi", "playlists",
-              "beengo", "airnet", "total90", "novaler"]),
-    ("epg", ["epg", "دليل", "channel", "القنوات", "قنوات", "bouquet", "signal", "إشارة", "اشارة",
-             "zap", "servicescan", "xmlupdate", "ترددات", "فيد", "feed", "satellites", "quadpip",
-             "tvmanager"]),
-    ("tools", ["mover", "backup", "uninstall", "remove", "crash", "cache", "كاش", "crond", "flash",
-               "zip2", "script", "سكريبت", "حذف", "نسخ", "نقل", "كراش", "imagesdownloader",
-               "تحميل الصور", "تحميل الإضافات", "عمل باكاج", "downloader", "updater", "screen-shot",
-               "screen-recorder", "لقطة", "تسجيل الشاشة", "explorer", "تصفح الملفات"]),
-    ("look", ["picon", "بيكون", "logo", "لوجو", "الشعار", "bootlogo", "spinner", "الدوار", "theme",
-              "ثيم", "skin", "screennames", "اسم الشاشة", "keyboard", "كيبورد", "pluginbrowser",
-              "menusort", "ترتيب القائمة", "infobar", "انفوبار", "xtraevent", "atilehd"]),
-    ("info", ["calendar", "التقويم", "calculator", "الحاسبة", "clock", "ساعة", "horoscope",
-              "الأبراج", "الأعياد", "holiday", "apod", "astronomy", "كوكب", "الكواكب", "sport",
-              "رياضة", "مباريات", "livematch", "footonsat", "speedtest", "الإنترنت", "ip_checker"]),
+    ("panels", ["panel", "aio", "store", "gp4", "dreamarabia", "ajpanel", "enigmaplay", "addons",
+                "dreamosat", "s4a", "levi45-addonsmanager", "ciefpplugins", "ciefpeasysetup",
+                "ciefpsettingsdownloader"]),
+    ("maint", ["opkg tools", "curl", "wget", "set_time_ntp", "audiomerge", "audioselection", "audioshift"]),
+    ("fun", ["match", "football", "foot", "sports", "bundesliga", "horoscope", "youre", "holiday",
+             "astronomy", "apod", "athan", "azkar", "hisn", "prayer", "mawaqit", "muaddhin",
+             "moaddin", "shia", "alajre", "calculator", "weather", "msn", "quran", "kareem",
+             "karem", "clock", "ciefpvibes", "arabicsavior", "webcam", "disk_and_cpu", "hardwareinfo", "devicemanager",
+             "الأجر", "قرآن", "مواقيت"]),
+    ("cams", ["cam", "keyadder", "ip2sat", "iptosat", "airnet", "beengo", "suptv", "total90",
+              "silentrunner", "ipsat", "dns ", "wifi", "wireguard", "ip_checker", "net usage",
+              "speedtest", "3gmodem", "crond"]),
+    ("subs", ["sub", "translat", "tmdb", "tmbd", "xtraevent", "titlovi", "ssupport", "aisubtitles",
+              "ترجمة", "مترجم", "mytranslator"]),
+    ("epg", ["epg", "autotimer", "seriesplugin", "tvprogram", "tvtoday", "mojtv", "jedi",
+             "bouquet", "channel", "chmanager", "numberzap", "duplicate", "m3ubouquet",
+             "streamrelay", "whitelist", "e2editor", "e2converter", "iptvbouquets",
+             "ciefpepg", "emil channels"]),
+    ("sat", ["satellit", "sat editor", "ts-sat", "xmlupdate", "servicescan", "signalfinder",
+             "quicksignal", "evgquick", "raedquick", "ciefpking", "ciefpparabola", "abertis",
+             "motor", "astra sm", "astra-sm", "ciefp —", "morpheus883", "vhannibal", "ciefpsettings", "ciefpselect",
+             "اقمار", "قمر"]),
+    ("iptv", ["iptv", "xtream", "stalker", "m3u", "xklass", "xport", "tivimate", "vavoo",
+              "freearhey", "hasbahca", "audio", "ipaudio", "radio", "e2player hosts"]),
+    ("players", ["player", "tube", "pluto", "rakuten", "samsung", "filmxy", "mystreamer",
+                 "ipstreamer", "movies", "transmission", "tsiplayer", "myhits", "quarter",
+                 "livefeed", "satelliweb", "chromium", "nova", "xstreamity", "e2-tube", "xtreamity",
+                 "dreamxtream", "e2iplayer", "iptvdream", "ciefpvideo", "ciefppicture",
+                 "opendirectories", "ultra", "orange", "estalker"]),
+    ("backup", ["backup", "flash", "boot", "neoboot", "multiboot", "format", "inodes", "mount",
+                "devicemanager", "imagesdownloader", "disk", "arabic-language", "update enigma2",
+                "فهارس", "ترقية", "dependenc", "opkg", "software",
+                "updater", "downloader"]),
+    ("look", ["skin", "spinner", "pluginbrowser", "menusort", "logo", "picon", "screen",
+              "coloring", "keyboard", "infobar", "pluginmover", "pluginskin", "bitrate",
+              "crashlogo", "ozeta", "atilehd", "theme", "ciefpbootlogo", "zoom", "quadpip"]),
+    ("maint", ["fix", "uninstall", "remove", "cache", "explorer", "zip2", "script", "password",
+               "passwd", "openwebif", "hardware", "gemini", "cuts", "acherone", "gioppy",
+               "history", "volume", "patcher", "filecommander", "super", "levi45", "team",
+               "wifi", "adjust"]),
 ]
+CAT_DEFAULT = {        # used when no keyword rule matched
+    "Media": "players", "Audio": "iptv", "IPTV": "iptv", "Novaler": "players", "Ciefp": "epg",
+    "EPG": "epg", "Settings": "sat", "Tools": "maint", "Plugins": "maint", "Panels": "panels",
+    "System": "maint", "Multiboot": "backup", "Dependencies": "backup", "Translation": "subs",
+    "Community": "maint",
+}
 
 
 def _text(item):
@@ -72,15 +87,14 @@ def _text(item):
 
 
 def plugin_group(item):
-    cat = item.get("category", "")
-    if cat in CAT_FIXED:
-        return CAT_FIXED[cat]
-    t = _text(item)
+    name = (item.get("name", "") or "").lower()
+    if name in O4T_NAMES:
+        return "o4t"
     for gid, words in RULES:
         for w in words:
-            if w in t:
+            if w in name:
                 return gid
-    return CAT_DEFAULT.get(cat, "other")
+    return CAT_DEFAULT.get(item.get("category", ""), "other")
 
 
 def skin_group(item):
