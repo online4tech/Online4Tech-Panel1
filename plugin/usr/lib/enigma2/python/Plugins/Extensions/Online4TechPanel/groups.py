@@ -6,6 +6,7 @@ Anything that matches no rule falls back to its catalog category, and finally to
 so nothing is ever hidden.
 """
 from __future__ import absolute_import
+import re
 
 # ordered by importance (this is the order in the sidebar)
 PLUGIN_ORDER = ["o4t", "panels", "players", "iptv", "cams", "subs", "epg", "sat", "maint",
@@ -85,9 +86,13 @@ def _text(item):
     return ("%s %s" % (item.get("name", ""), item.get("desc", ""))).lower()
 
 
+# any plugin whose name has the word "online..." or "o4t" is ours ("FlashOnline" is not: no word start)
+O4T_WORD = re.compile(r"(?<![a-z])(online|o4t)")
+
+
 def plugin_group(item):
     name = (item.get("name", "") or "").lower()
-    if name in O4T_NAMES:
+    if name in O4T_NAMES or O4T_WORD.search(name):
         return "o4t"
     for gid, words in RULES:
         for w in words:
