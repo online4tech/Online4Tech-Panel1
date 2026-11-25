@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import os
 
-VERSION = "1.9.10"
+VERSION = "1.9.11"
 PLUGIN_NAME = "Online4Tech Panel"
 SLOGAN = "خليك دايما اونلاين"
 
@@ -25,7 +25,7 @@ WHATSAPP_URL = "https://wa.me/" + WHATSAPP_NUMBER
 MESSENGER_URL = "https://www.facebook.com/ahmad.m.romeh/"
 PAGE_URL = "https://www.facebook.com/online4tech0"
 # Telegram channel link, e.g. "https://t.me/yourchannel" (empty = button hidden)
-TELEGRAM_URL = ""
+TELEGRAM_URL = "https://t.me/Online4tech"
 STORE_URL = "https://sllr.co/online4tech"
 SITE_URL = "https://online4tech.github.io/online4Tech/"
 SUPPORT_URL = WHATSAPP_URL

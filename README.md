@@ -140,3 +140,6 @@ run `python3 tools/check_groups.py -v` to see the size of every section after ad
 
 Web page: **Contact us** (WhatsApp, Messenger, Facebook page, store, website, Telegram channel).
 Receiver: **Tools > Contact us**. Set the Telegram link in `version.py` (`TELEGRAM_URL`); empty = hidden.
+
+Any plugin whose name contains the word `online...` or `o4t` is placed in the **Online4Tech store** section
+automatically (add others by name in `O4T_NAMES` in `groups.py`).
